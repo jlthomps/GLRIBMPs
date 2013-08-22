@@ -1,8 +1,8 @@
 setwd('/Users/jlthomps/Documents/R/')
 storm_vol_load <- read.csv("EastRiverVolumesLoads.csv",header=T,stringsAsFactors=FALSE)
-storm_vol_load$Start <- strptime(storm_vol_load$Start,format="%m/%d/%y %H:%M")
-storm_vol_load$Stop <- strptime(storm_vol_load$Stop,format="%m/%d/%y %H:%M")
-colnames(storm_vol_load) <- c("Start","End","estimated","type","frozen","num","peakDisch","stormRunoff","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad")
+storm_vol_load$Start <- strptime(storm_vol_load$Start,format="%m/%d/%Y %H:%M")
+storm_vol_load$Stop <- strptime(storm_vol_load$Stop,format="%m/%d/%Y %H:%M")
+colnames(storm_vol_load) <- c("Start","End","estimated","type","frozen","num","num_split","peakDisch","stormRunoff","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad")
 source("M:/NonPoint Evaluation/GLRI Edge-of-field/R/RRainmaker.R")
 library(dataRetrieval)
 site_no <- "441624088045601"
@@ -20,19 +20,30 @@ rainmaker_out <- as.data.frame(RMevents(df,ieHr=2,rainthresh=0,rain="rain",time=
 storm_rainmaker <- RMIntense(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",edate="EndDate",depth="rain",xmin=c(5,10,15,30,60))
 antecedent_rain <- RMarf(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",days=c(1,3,5,7),varnameout="ARF")
 storm_rainmaker <- merge(storm_rainmaker,antecedent_rain,by.x="stormnum",by.y="stormnum")
-adaps_soilmoisture <- read.csv("glri_soilmoisture.txt",header=T,stringsAsFactors=FALSE,sep="\t")
-adaps_soilmoisture$time <- str_pad(adaps_soilmoisture$TIME,6,side="left",pad="0")
-adaps_soilmoisture$pdate <- as.POSIXct(paste(adaps_soilmoisture$DATE,adaps_soilmoisture$time),format="%Y%m%d %H%M%S")
+#adaps_soilmoisture <- read.csv("glri_soilmoisture.txt",header=T,stringsAsFactors=FALSE,sep="\t")
+#adaps_soilmoisture$time <- str_pad(adaps_soilmoisture$TIME,6,side="left",pad="0")
+#adaps_soilmoisture$pdate <- as.POSIXct(paste(adaps_soilmoisture$DATE,adaps_soilmoisture$time),format="%Y%m%d %H%M%S")
 #storm_rainmaker <- read.csv("EastRiverRainmaker.csv",header=T,stringsAsFactors=FALSE)
 #storm_rainmaker$startdate <- strptime(storm_rainmaker$startdate,format="%m/%d/%Y %H:%M")
 #storm_rainmaker$enddate <- strptime(storm_rainmaker$enddate,format="%m/%d/%Y %H:%M")
 storm_vol_load_sub <- storm_vol_load[which(storm_vol_load$frozen=='N' & storm_vol_load$estimated=='N'),]
+storm_vol_load_Start <- aggregate(storm_vol_load_sub$Start, list(storm_vol_load_sub$num), FUN = min)
+colnames(storm_vol_load_Start) <- c("num","Start")
+storm_vol_load_End <- aggregate(storm_vol_load_sub$End, list(storm_vol_load_sub$num), FUN = max)
+colnames(storm_vol_load_End) <- c("num","End")
+storm_vol_load_peak <- aggregate(storm_vol_load_sub$peakDisch, list(storm_vol_load_sub$num), FUN = max)
+colnames(storm_vol_load_peak) <- c("num","peakDisch")
+storm_vol_load_load <- aggregate(storm_vol_load_sub$TPLoad, list(storm_vol_load_sub$num), FUN = sum)
+colnames(storm_vol_load_load) <- c("num","TPLoad")
+storm_vol_load_merge <- merge(storm_vol_load_load, storm_vol_load_Start, by = "num")
+storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_End, by = "num")
+storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_peak, by = "num")
 # removing two partial storms (the other pieces of them are estimates)
-storm_vol_load_sub <- storm_vol_load_sub[which(storm_vol_load_sub$num!=9 & storm_vol_load_sub$num!=57),]
-storms_list <- storm_vol_load_sub[,1:2]
+#storm_vol_load_sub <- storm_vol_load_sub[which(storm_vol_load_sub$num!=9 & storm_vol_load_sub$num!=57),]
+storms_list <- storm_vol_load_merge[,c(3,4)]
 storms_list$Start <- storms_list$Start - (120*60)
 storms_list$num <- c(1:nrow(storms_list))
-norows <- nrow(storm_vol_load_sub)
+norows <- nrow(storm_vol_load_merge)
 noreps <- nrow(storm_rainmaker)
 storm_rainmaker$stormnum <- -9
 for (i in 1:noreps) {
@@ -49,20 +60,23 @@ storm_rainmaker_agg <- aggregate(storm_rainmaker[,c(6:11,15:18)],list(storm_rain
 data_merge <- merge(storm_rainmaker_agg,storm_rainmaker_agg_startdt,by.x="Group.1",by.y="Group.1")
 data_merge <- merge(data_merge,storm_rainmaker_agg_enddt,by.x="Group.1",by.y="Group.1")
 data_merge <- merge(data_merge,storm_rainmaker_agg_sum,by.x="Group.1",by.y="Group.1")
-storm_vol_load_sub$num <- c(1:nrow(storm_vol_load_sub))
-data_merge <- merge(data_merge,storm_vol_load_sub,by.x="Group.1",by.y="num")
-data_merge$decYear <- paste(strftime(data_merge$End,"%Y"),".",data_merge$End$yday+1,sep="")
-data_merge$day_match <- data_merge$x.x-60
-data_merge$start_match <- data_merge$Start-60
-data_merge <- data_merge[which(data_merge$x.x>=min(adaps_soilmoisture$pdate)),]
-data_merge$soil_rain <- adaps_soilmoisture[findInterval(data_merge$day_match,sort(adaps_soilmoisture$pdate)),]$VALUE
-data_merge$soil_storm <- adaps_soilmoisture[findInterval(data_merge$start_match,sort(adaps_soilmoisture$pdate)),]$VALUE
-data_sub <- data_merge[,c(2:11,14:15,21:22,29,32,34,36)]
+storm_vol_load_merge$num <- c(1:nrow(storm_vol_load_merge))
+data_merge <- merge(data_merge,storm_vol_load_merge,by.x="Group.1",by.y="num")
+data_merge$decYear <- paste(strftime(data_merge$End,"%Y"),".",as.POSIXlt(data_merge$End)$yday+1,sep="")
+#data_merge$day_match <- data_merge$x.x-60
+#data_merge$start_match <- data_merge$Start-60
+#data_merge <- data_merge[which(data_merge$x.x>=min(adaps_soilmoisture$pdate)),]
+#data_merge$soil_rain <- adaps_soilmoisture[findInterval(data_merge$day_match,sort(adaps_soilmoisture$pdate)),]$VALUE
+#data_merge$soil_storm <- adaps_soilmoisture[findInterval(data_merge$start_match,sort(adaps_soilmoisture$pdate)),]$VALUE
+#data_sub <- data_merge[,c(2:11,14:15,21:22,29,32,35,36)]
+data_sub <- data_merge[,c(2:11,14:16,19:20)]
+data_sub <- data_merge[,c(2,16,19:20)]
 
 #data_sub <- data_merge[,c(3:8,24,27)]
-colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","peakDisch","stormRunoff","TPLoad","decYear","soil_rain","soil_storm")
-#colnames(data_sub) <- c("p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ei","TPLoad","decYear")
-data_sub$stormRunoff <- ifelse(data_sub$stormRunoff==-9,0,data_sub$stormRunoff)
+#colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","peakDisch","stormRunoff","TPLoad","decYear","soil_rain","soil_storm")
+colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","TPLoad","peakDisch","decYear")
+colnames(data_sub) <- c("intensity","TPLoad","peakDisch","decYear")
+#data_sub$stormRunoff <- ifelse(data_sub$stormRunoff==-9,0,data_sub$stormRunoff)
 data_sub$p5max.inches.per.hour <- ifelse(data_sub$p5max.inches.per.hour==-9,0,data_sub$p5max.inches.per.hour)
 data_sub$p10max.inches.per.hour <- ifelse(data_sub$p10max.inches.per.hour==-9,0,data_sub$p10max.inches.per.hour)
 data_sub$p15max.inches.per.hour <- ifelse(data_sub$p15max.inches.per.hour==-9,0,data_sub$p15max.inches.per.hour)
@@ -71,6 +85,21 @@ data_sub$p60max.inches.per.hour <- ifelse(data_sub$p60max.inches.per.hour==-9,0,
 data_sub$intensity <- ifelse(data_sub$intensity==-9,0,data_sub$intensity)
 data_sub$TPLoad <- ifelse(data_sub$TPLoad==-9,0,data_sub$TPLoad)
 data_sub$remark <- ""
+
+aov_data <- aov(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*soil_rain*soil_storm,data_sub)
+reg_lm <- lm(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*soil_rain*soil_storm,data=data_sub)
+
+pathToSave <- paste("C:/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
+pdf(paste(pathToSave,"/",investigateResponse,"_regression.pdf",sep=""))
+par(mfrow=c(4,1))
+plot(adaps_soilmoisture$pdate,adaps_soilmoisture$VALUE,type="l",ylab="soil moisture")
+#par(new=TRUE)
+plot(adaps_precip_in$pdate,adaps_precip_in$VALUE,type="l",col="blue",ylab="precip")
+#par(new=TRUE)
+plot(storm_vol_load$Start,storm_vol_load$peakDisch,col="red")
+#par(new=TRUE)
+plot(storm_vol_load$End,storm_vol_load$peakDisch,col="red")
+dev.off()
 
 # storm_vol_load_all <- storm_vol_load[which(storm_vol_load$estimated=='N'),]
 # storm_vol_load_all$decYear <- paste(strftime(storm_vol_load_all$End,"%Y"),".",storm_vol_load_all$End$yday+1,sep="")
@@ -151,10 +180,8 @@ mtext(bquote(y==.(lm_coef[2])*x+.(lm_coef[1])),adj=1,padj=0)
 mtext(bquote(R2==.(summary(lm_mod)$adj.r.squared)),adj=0,padj=3)
 dev.off()
 
-data_sub1 <- data_sub[which(data_sub$ARF5>0.5),]
-
 pathToSave <- paste("C:/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
-data_sub_cens <- importQW(data_sub,c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","peakDisch","stormRunoff","decYear","soil_rain","soil_storm"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
+data_sub_cens <- importQW(data_sub,c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF7","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
 #data_sub_cens <- importQW(data_sub,c("p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ei","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
 #data_sub_cens <- importQW(data_all_storms,c("volume.cf","decYear"),"p00530_tons","remark","",0.005,"User","tons","Unk","","00530","p00530")
 ##########################################################

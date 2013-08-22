@@ -1,0 +1,57 @@
+Package: GLRIRegression
+Type: Package
+Title: Load modeling for GLRI monitering.
+Version: 1.0.1
+Date: 2013-07-05
+Author: Laura DeCicco, Steve Corsi
+Maintainer: Laura DeCicco <ldecicco@usgs.gov>
+Description: Load modeling for GLRI monitering.
+License: file LICENSE
+Copyright: This software is in the public domain because it contains materials
+    that originally came from the United States Geological Survey, an agency of
+    the United States Department of Interior. For more information, see the
+    official USGS copyright policy at
+    http://www.usgs.gov/visual-id/credit_usgs.html#copyright
+Collate:
+    'rSqr.R'
+    'longDFResponse.R'
+    'predictVariableScatterPlots.R'
+    'plotQQTransforms.R'
+    'getDecYear.R'
+    'internalStudentRes.R'
+    'externalStudentRes.R'
+    'createFullFormula.R'
+    'getMultipleUV.R'
+    'whatQW.R'
+    'mergeDatasets.R'
+    'getPredictionVariables.R'
+    'plotSteps.R'
+    'prelimModelDev.R'
+    'createFormulaFromDF.R'
+    'generateParamChoices.R'
+    'findOutliers.R'
+    'runFit.R'
+    'runPred.R'
+    'resultPlots.R'
+    'createFullDT.R'
+    'simpleCap.R'
+    'preditionPlot.R'
+    'saveModelResults.R'
+    'summaryPrintout.R'
+    'createModelEquation.R'
+    'GLRIRegression.R'
+    'analyzeSteps.R'
+    'resultResidPlots.R'
+Depends:
+    R (>= 3.0),
+    USGSwsQW,
+    latticeExtra,
+    MASS,
+    dataRetrieval
+Imports:
+    quantreg
+Suggests:
+    xtable,
+    EGRET
+LazyLoad: yes
+LazyData: yes
