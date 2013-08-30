@@ -182,6 +182,8 @@ dev.off()
 
 pathToSave <- paste("C:/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
 data_sub_cens <- importQW(data_sub,c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF7","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
+data_sub_cens <- importQW(data_sub,c("intensity","I5","I10","I15","I30","I60","ARF1","ARF3","ARF5","ARF7","rain","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
+
 #data_sub_cens <- importQW(data_sub,c("p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ei","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
 #data_sub_cens <- importQW(data_all_storms,c("volume.cf","decYear"),"p00530_tons","remark","",0.005,"User","tons","Unk","","00530","p00530")
 ##########################################################
@@ -201,7 +203,7 @@ predictVariables <- names(data_sub_cens)[-which(names(data_sub_cens) %in% invest
 predictVariables <- predictVariables[which(predictVariables != "datetime")]
 predictVariables <- predictVariables[which(predictVariables != "decYear")]
 predictVariables <- predictVariables[which(predictVariables != "stormRunoff")]
-kitchenSink <- createFullFormula(data_sub_cens,c("TPLoading","stormRunoff"))
+kitchenSink <- createFullFormula(data_sub_cens,c("TPLoading","stormRunoff","rain","duration","I30","ARF5"))
 
 returnPrelim <- prelimModelDev(data_sub_cens,investigateResponse,kitchenSink,
                                      "BIC", transformResponse)

@@ -57,8 +57,9 @@ data_merge$decYear <- paste(strftime(data_merge$End,"%Y"),".",as.POSIXlt(data_me
 
 data_sub <- data_merge[,c(2:11,14:16,19:20)]
 colnames(data_sub) <- c("intensity","I5","I10","I15","I30","I60","ARF1","ARF3","ARF5","ARF7","rain","duration","TPLoad","peakDisch","decYear")
+data_sub$TPLoad <- log10(data_sub$TPLoad)
 
-reg_lm <- lm(TPLoad~intensity+ARF7,data=data_sub)
+reg_lm <- lm(TPLoad~intensity+ARF7+peakDisch+rain+ARF5+duration+I60+I5+log(intensity)+log(I30)+log(duration)+log(peakDisch),data=data_sub)
 
 library(GLRIRegression)
 library(dataRetrieval)
@@ -86,10 +87,21 @@ predictVariables <- names(data_sub)[-which(names(data_sub) %in% investigateRespo
 predictVariables <- predictVariables[which(predictVariables != "datetime")]
 predictVariables <- predictVariables[which(predictVariables != "decYear")]
 predictVariables <- predictVariables[which(predictVariables != "stormRunoff")]
-kitchenSink <- createFullFormula(data_sub,c("TPLoad","stormRunoff"))
+kitchenSink <- createFullFormula(data_sub,c("TPLoad","remark","I30","ARF3","ARF5","I15"))
 
-returnPrelim <- prelimModelDev(data_sub_cens,investigateResponse,kitchenSink,
-                                     "BIC", transformResponse)
+k <- log(length(data_sub[,investigateResponse]))
+distribution <- transformResponse
+formulaToUse <- paste(investigateResponse," ~ 1",sep="")
+
+DT.mod <- do.call("stepAIC", args=list(object=call("lm",
+                                                   formulaToUse,
+                                                   data=data_sub),
+                                       scope=list(lower= ~ 1, upper=formula(paste("~ ",kitchenSink,sep=""))), k=k, keep = extractAIC))
+#Plot residuals
+plot(data_sub$TPLoad,DT.mod$residuals,xlab="log(TP Load)",ylab="residuals")
+
+#returnPrelim <- prelimModelDev(data_sub_cens,investigateResponse,kitchenSink,
+ #                                    "BIC", transformResponse)
 steps <- returnPrelim$steps
 modelResult <- returnPrelim$modelStuff
 modelReturn <- returnPrelim$DT.mod
