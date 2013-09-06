@@ -128,7 +128,7 @@ dev.off()
 # plot(McCoyYard_dailyprecip$dateTime,McCoyYard_dailyprecip$value,type="l",ylab="Precip 00045")
 # dev.off()
 
-library(GLRIRegression)
+library(USGSwsQWSR)
 library(dataRetrieval)
 siteName <- "EastRiver"
 siteName$station.nm <- "East River 441624088045601"
@@ -181,7 +181,7 @@ mtext(bquote(R2==.(summary(lm_mod)$adj.r.squared)),adj=0,padj=3)
 dev.off()
 
 pathToSave <- paste("C:/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
-data_sub_cens <- importQW(data_sub,c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF7","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
+#data_sub_cens <- importQW(data_sub,c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF7","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
 data_sub_cens <- importQW(data_sub,c("intensity","I5","I10","I15","I30","I60","ARF1","ARF3","ARF5","ARF7","rain","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
 
 #data_sub_cens <- importQW(data_sub,c("p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ei","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")

@@ -63,7 +63,7 @@ reg_lm <- lm(TPLoad~intensity+ARF7+peakDisch+rain+ARF5+duration+I60+I5+log(inten
 
 library(GLRIRegression)
 library(dataRetrieval)
-siteName <- "EastRiver"
+siteName$site <- "EastRiver"
 siteName$station.nm <- "East River 441624088045601"
 investigateResponse <- "TPLoad"
 transformResponse <- "lognormal"
