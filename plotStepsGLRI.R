@@ -82,7 +82,7 @@ plotStepsGLRI <- function(steps,localDT,transformResponse="lognormal"){
     goodness <- paste("slope: ",formatC(lineFit$coefficients[2],digits=4), 
                       ", cor: ", formatC(corStep,digits=4), 
                       ", R2: ", formatC(modelReturn$RSQ/100, digits=4), 
-                      ", StdErr: ", formatC(steps$Res.St.Error[i], digits=4), sep="")
+                      ", StdErrPercMean: ", formatC(rmse(modelReturn)/mean(modelReturn$YPRED),digits=4), sep="")
     mtext(goodness,side=3,line=0.5,cex=0.7)
     
    

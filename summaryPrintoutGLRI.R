@@ -20,7 +20,7 @@
 #' kitchenSink <- createFullFormula(DT,response)
 #' modelReturn <- censReg(paste(response," ~ ", kitchenSink, sep=""), dist="lognormal", data=DT)
 #' summaryPrintout(modelReturn,siteINFO)
-summaryPrintoutGLRI <- function(modelReturn, modelAnova, siteINFO, saveOutput=FALSE,fileName="output.txt"){
+summaryPrintoutGLRI <- function(modelReturn, steps, siteINFO, saveOutput=FALSE,fileName="output.txt"){
   
   if(saveOutput) sink(fileName)
   
@@ -32,7 +32,7 @@ summaryPrintoutGLRI <- function(modelReturn, modelAnova, siteINFO, saveOutput=FA
   StCoef <- with(modelReturn, PARAML/STDDEV)
   modelStuff <- with(modelReturn, data.frame(Term=c(names(coef(modelReturn)),"logSigma"),
                                         Coefficient=round(PARAML,digits=3), 
-                                        StdError=round(STDDEV,digits=3), 
+                                        StdDev=round(STDDEV,digits=3), 
                                         pValue=round(PVAL,digits=3),
                                         StCoef=round(StCoef,digits=3)
   ))
@@ -47,7 +47,7 @@ summaryPrintoutGLRI <- function(modelReturn, modelAnova, siteINFO, saveOutput=FA
   cat("Number of observations: ", modelReturn$NOBSC, "\n")
   cat("Distribution: ", modelReturn$dist, "\n")
   cat("Method: ", modelReturn$method, "\n")
-  cat("Degrees of freedom: ", modelReturn$DF, "\n")
+  cat("Degrees of freedom: ", steps$Resid.Df[nrow(steps)], "\n")
   cat("StdErrPercMean: ", rmse(modelReturn)/mean(modelReturn$YPRED), "\n")
   cat("RSQ: ", modelReturn$RSQ/100, "\n")
   
@@ -62,8 +62,8 @@ summaryPrintoutGLRI <- function(modelReturn, modelAnova, siteINFO, saveOutput=FA
   rownames(CVdf) <- c(names(coef(modelReturn)),"logSigma")
   print(CVdf)
   cat("\n")
-  cat("ANOVA for model results", "\n")
-  print(modelAnova)
+  cat("Steps","\n")
+  print(steps)
   
   if (saveOutput) sink()
 }

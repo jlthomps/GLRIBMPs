@@ -23,7 +23,7 @@ source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMarf.R")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMEvents.R")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMIntense.R")
 # choose desired dry interval between storms
-stormInt <- .2
+stormInt <- 2
 # choose desired rain amount threshold, in units of precip values
 rainAmt <- 0
 rainmaker_out <- as.data.frame(RMevents(df,ieHr=stormInt,rainthresh=rainAmt,rain="rain",time="pdate")[1])
@@ -34,13 +34,38 @@ storm_rainmaker <- RMIntense(df,date="pdate",rain="rain",rainmaker_out,sdate="St
 arfDays <- c(1,3,5,7)
 antecedent_rain <- RMarf(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",days=arfDays,varnameout="ARF")
 storm_rainmaker <- merge(storm_rainmaker,antecedent_rain,by.x="stormnum",by.y="stormnum")
+# pull in previously saved ADAPS soil moisture unit data b/c soil moisture from NWISWeb starts at 20130513
+#adaps_soilm_in <- retrieveUnitNWISData(siteNo,'74207',StartDt,EndDt,format="tsv")
+adaps_soilmoisture <- read.csv("glri_soilmoisture.txt",header=T,stringsAsFactors=FALSE,sep="\t")
+adaps_soilmoisture$time <- str_pad(adaps_soilmoisture$TIME,6,side="left",pad="0")
+adaps_soilmoisture$pdate <- as.POSIXct(paste(adaps_soilmoisture$DATE,adaps_soilmoisture$time),format="%Y%m%d %H%M%S")
 # merge data for storm loads and rainmaker output
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/stormLoadMatchup.R")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/stormLoadMatchupSplit.R")
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/stormLoadMatchupSoilMoisture.R")
 #choose columns to keep for analysis
 keepVars <- names(storm_rainmaker)[-which(names(storm_rainmaker) %in% c("stormnum","StartDate.x","EndDate.x","StartDate.y","EndDate.y","rain.y"))]
-keepAll <- c("decYear","TPLoad","peakDisch","sinDY","cosDY",keepVars)
-data_sub <- stormLoadMatchupSplit(storm_rainmaker,storm_vol_load,keepAll)
+#keepAll <- c("decYear","TPLoad","peakDisch","sinDY","cosDY",keepVars)
+#data_sub <- stormLoadMatchup(storm_rainmaker,storm_vol_load,keepAll)
+keepAll <- c("decYear","TPLoad","peakDisch","sinDY","cosDY","soil_rain_value","soil_storm_value","num",keepVars)
+data_sub <- stormLoadMatchupSoilMoisture(storm_rainmaker,storm_vol_load,adaps_soilmoisture,keepAll)
+
+DTMaxCols <- na.omit(data_sub)
+DTMaxRows <- data_sub[,colSums(is.na(data_sub)) <= nrow(data_sub)*0.5] 
+DTMaxRows <- na.omit(DTMaxRows)
+
+#List columns removed to maximize rows:
+names(data_sub)[!(names(DTMaxCols) %in% names(data_sub))]
+names(data_sub)[!(names(DTMaxRows) %in% names(data_sub))]
+setdiff(data_sub$num,DTMaxRows$num)
+setdiff(data_sub$num,DTMaxCols$num)
+#Choose which to use: DTMaxCols or DTMaxRows:
+DT <- data_sub[,c("TPLoad",names(DTMaxCols))]
+data_sub <- na.omit(DT)
+
+DT <- data_sub[,c("TPLoad",names(DTMaxRows))]
+data_sub <- na.omit(DT)
+
 # set necessary site information and inputs to step-wise regression
 library(USGSwsQWSR)
 keepCens <- keepAll[-which(keepAll %in% "TPLoad")]
@@ -78,7 +103,8 @@ returnPrelim <- prelimModelDev(data_sub_cens,investigateResponse,kitchenSink,
 steps <- returnPrelim$steps
 modelResult <- returnPrelim$modelStuff
 modelReturn <- returnPrelim$DT.mod
-modelAnova <- returnPrelim$DT.mod$anova
+colnames(steps) <- c("step","BIC","Deviance","Resid.Dev","Resid.Df","Correlation","Slope","RMSE","PRESS","scope","response")
+
 
 #Save plotSteps to file:
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/plotStepsGLRI.R")
@@ -143,7 +169,7 @@ dev.off()
 # Print summary in console:
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/summaryPrintoutGLRI.R")
 fileName <- paste(pathToSave,"/", investigateResponse,"Summary_2.txt", sep="")
-summaryPrintoutGLRI(modelReturn, modelAnova, siteINFO, saveOutput=TRUE,fileName)
+summaryPrintoutGLRI(modelReturn, steps, siteINFO, saveOutput=TRUE,fileName)
 #####################################################
 
 
@@ -153,4 +179,4 @@ write.table(modelResult, fileToSave, row.names=FALSE, sep=",")
 
 # Probably want to save data at this point:
 fileToSave <- paste(pathToSave, "regressionData.csv",sep="/")
-write.table(data_sub, fileToSave, row.names=TRUE, sep=",")
+write.table(data_sub, fileToSave, row.names=FALSE, sep=",")
