@@ -7,7 +7,7 @@
 # pull in pre-calculated QW load values
 library(dataRetrieval)
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/pullLoadData.R")
-setwd('/Users/jlthomps/Documents/R/')
+setwd('C:/Users/jlthomps/Documents/R/')
 loadFile <- "EastRiverVolumesLoads.csv"
 storm_vol_load <- pullLoadData(loadFile)
 
