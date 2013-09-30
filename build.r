@@ -22,3 +22,7 @@ run_examples()
 setwd("C:/Users/jlthomps/Desktop/git/")
 build("NWCCompare")
 install("NWCCompare")
+
+#install.packages("NWCCompare",repos="http://usgs-r.github.com",type="source")
+#in DOS terminal, go to C:\Users\jlthomps\Desktop\git
+#Rcmd INSTALL --build NWCCompare

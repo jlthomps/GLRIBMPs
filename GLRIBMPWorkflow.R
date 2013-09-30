@@ -18,10 +18,12 @@ StartDt <- strftime(min(storm_vol_load[which(storm_vol_load$frozen=='N'),]$Start
 EndDt <- strftime(max(storm_vol_load[which(storm_vol_load$frozen=='N'),]$End,na.rm=TRUE) + (60*60*24*5),'%Y-%m-%d')
 adaps_precip_in <- retrieveUnitNWISData(siteNo,'00045',StartDt,EndDt,format="tsv")
 df <- adaps_precip_in[,c(5,3)]
+df <- df[!duplicated(df),]
 colnames(df) <- c("rain","pdate")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMarf.R")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMEvents.R")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMIntense.R")
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMErosivityIndex.R")
 # choose desired dry interval between storms
 stormInt <- 2
 # choose desired rain amount threshold, in units of precip values
@@ -30,6 +32,8 @@ rainmaker_out <- as.data.frame(RMevents(df,ieHr=stormInt,rainthresh=rainAmt,rain
 # choose desired intensity values (ie 5 minute, 10 minute, 60 minute)
 intens <- c(5,10,15,30,60)
 storm_rainmaker <- RMIntense(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",edate="EndDate",depth="rain",xmin=intens)
+# calculate Erosivity Index for storm_rainmaker
+storm_rainmaker <- RMErosivityIndex(df,storm_rainmaker)
 # choose antecedent rain intervals (ie 1 day, 5 days)
 arfDays <- c(1,3,5,7)
 antecedent_rain <- RMarf(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",days=arfDays,varnameout="ARF")
@@ -45,10 +49,10 @@ source("/Users/jlthomps/Desktop/git/GLRIBMPs/stormLoadMatchupSplit.R")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/stormLoadMatchupSoilMoisture.R")
 #choose columns to keep for analysis
 keepVars <- names(storm_rainmaker)[-which(names(storm_rainmaker) %in% c("stormnum","StartDate.x","EndDate.x","StartDate.y","EndDate.y","rain.y"))]
-#keepAll <- c("decYear","TPLoad","peakDisch","sinDY","cosDY",keepVars)
-#data_sub <- stormLoadMatchup(storm_rainmaker,storm_vol_load,keepAll)
-keepAll <- c("decYear","TPLoad","peakDisch","sinDY","cosDY","soil_rain_value","soil_storm_value","num",keepVars)
-data_sub <- stormLoadMatchupSoilMoisture(storm_rainmaker,storm_vol_load,adaps_soilmoisture,keepAll)
+keepAll <- c("decYear","TPLoad","peakDisch","sinDY","cosDY",keepVars)
+data_sub <- stormLoadMatchup(storm_rainmaker,storm_vol_load,keepAll)
+#keepAll <- c("decYear","TPLoad","peakDisch","sinDY","cosDY","soil_rain_value","soil_storm_value","num",keepVars)
+#data_sub <- stormLoadMatchupSoilMoisture(storm_rainmaker,storm_vol_load,adaps_soilmoisture,keepAll)
 
 DTMaxCols <- na.omit(data_sub)
 DTMaxRows <- data_sub[,colSums(is.na(data_sub)) <= nrow(data_sub)*0.5] 
@@ -131,16 +135,32 @@ choices <- generateParamChoices(predictVariables,modelReturn,pathToSave,save=TRU
 ##########################################################
 
 ##########################################################
+#Example of how to remove auto-generated outliers:
+outliers <- findOutliers(modelReturn,data_sub_cens,transformResponse)
+if(length(outliers) >0) data_sub_cens <- data_sub_cens[-outliers,]
+##########################################################
+
+#####################################################
+# Print summary in console:
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/summaryPrintoutGLRI.R")
+fileName <- paste(pathToSave,"/", investigateResponse,"Summary_2.txt", sep="")
+summaryPrintoutGLRI(modelReturn, steps, siteINFO, saveOutput=TRUE,fileName)
+#####################################################
+
+
+#Want to save a dataframe (aka, save an output)?
+fileToSave <- paste(pathToSave, "modelResult.csv",sep="/")
+write.table(modelResult, fileToSave, row.names=FALSE, sep=",")  
+
+# Probably want to save data at this point:
+fileToSave <- paste(pathToSave, "regressionData.csv",sep="/")
+write.table(data_sub, fileToSave, row.names=FALSE, sep=",")
+
+##########################################################
 # Import model parameters from csv file if desired:
 pathToParam <- paste(pathToSave,"/",investigateResponse,"ModelParams.csv",sep="")
 choicesNew <- read.csv(pathToParam)
 newFormula <-createFormulaFromDF(choicesNew)
-##########################################################
-
-##########################################################
-#Example of how to remove auto-generated outliers:
-outliers <- findOutliers(modelReturn,data_sub_cens,transformResponse)
-if(length(outliers) >0) data_sub_cens <- data_sub_cens[-outliers,]
 ##########################################################
 
 ##########################################################
@@ -164,19 +184,3 @@ pdf(paste(pathToSave,"/",investigateResponse,"_plotSteps_2.pdf",sep=""))
 plotStepsGLRI(steps,data_sub_cens,transformResponse)
 dev.off()
 #####################################################
-
-#####################################################
-# Print summary in console:
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/summaryPrintoutGLRI.R")
-fileName <- paste(pathToSave,"/", investigateResponse,"Summary_2.txt", sep="")
-summaryPrintoutGLRI(modelReturn, steps, siteINFO, saveOutput=TRUE,fileName)
-#####################################################
-
-
-#Want to save a dataframe (aka, save an output)?
-fileToSave <- paste(pathToSave, "modelResult.csv",sep="/")
-write.table(modelResult, fileToSave, row.names=FALSE, sep=",")  
-
-# Probably want to save data at this point:
-fileToSave <- paste(pathToSave, "regressionData.csv",sep="/")
-write.table(data_sub, fileToSave, row.names=FALSE, sep=",")

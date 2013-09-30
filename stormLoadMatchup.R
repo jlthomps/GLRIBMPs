@@ -36,18 +36,12 @@ for (i in 1:noreps) {
 storm_rainmaker_agg_startdt <- aggregate(storm_rainmaker$StartDate.x,list(storm_rainmaker$stormnum), min)
 storm_rainmaker_agg_enddt <- aggregate(storm_rainmaker$EndDate.x,list(storm_rainmaker$stormnum),max)
 storm_rainmaker_agg_sum <- aggregate(storm_rainmaker[,4:5],list(storm_rainmaker$stormnum),sum)
-storm_rainmaker_agg <- aggregate(storm_rainmaker[,c(6:11,15:18)],list(storm_rainmaker$stormnum),max)
+storm_rainmaker_agg <- aggregate(storm_rainmaker[,c(6:12,16:19)],list(storm_rainmaker$stormnum),max)
 data_merge <- merge(storm_rainmaker_agg,storm_rainmaker_agg_startdt,by.x="Group.1",by.y="Group.1")
 data_merge <- merge(data_merge,storm_rainmaker_agg_enddt,by.x="Group.1",by.y="Group.1")
 data_merge <- merge(data_merge,storm_rainmaker_agg_sum,by.x="Group.1",by.y="Group.1")
 storm_vol_load_merge$num <- c(1:nrow(storm_vol_load_merge))
 data_merge <- merge(data_merge,storm_vol_load_merge,by.x="Group.1",by.y="num")
-data_merge$day_match <- data_merge$x.x-60
-data_merge$start_match <- data_merge$Start-60
-data_merge <- data_merge[which(data_merge$x.x>=min(adaps_soilmoisture$pdate)),]
-data_sub$soil_rain <- adaps_soilmoisture[findInterval(data_sub$day_match,sort(adaps_soilmoisture$pdate)),]$VALUE
-data_sub$soil_storm <- adaps_soilmoisture[findInterval(data_sub$start_match,sort(adaps_soilmoisture$pdate)),]$VALUE
-data_sub <- data_merge[,c(2:11,14:15,21:22,29,32,35,36)]
 data_merge$decYear <- paste(strftime(data_merge$End,"%Y"),".",as.POSIXlt(data_merge$End)$yday+1,sep="")
 data_merge$sinDY <- sin(as.numeric(data_merge$decYear)*2*pi)
 data_merge$cosDY <- cos(as.numeric(data_merge$decYear)*2*pi)
