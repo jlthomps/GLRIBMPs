@@ -1,5 +1,5 @@
-install.packages("googleVis")
-install.packages("dataRetrieval",repos="http://usgs-r.github.com",type="source")
+#install.packages("googleVis")
+#install.packages("dataRetrieval",repos="http://usgs-r.github.com",type="source")
 
 library(dataRetrieval)
 library(googleVis)
@@ -8,13 +8,13 @@ source("M:/NonPoint Evaluation/GLRI Edge-of-field/Splitting Record Conversion to
 source("M:/NonPoint Evaluation/GLRI Edge-of-field/Splitting Record Conversion to R/labDataOut.R")
 source("M:/NonPoint Evaluation/GLRI Edge-of-field/Splitting Record Conversion to R/getADAPSData.R")
 # enter NWIS station id for gaging station
-siteNo <- "434250090461401"
+siteNo <- "434034088252401"
 # enter date to begin pulling data (rounded to the day)
-StartDt <- '2013-10-05'
+StartDt <- '2013-11-17'
 # enter date to stop pulling data (rounded to the day)
-EndDt <- '2013-10-05'
+EndDt <- '2013-11-19'
 # enter NWIS station id for precipitation gaging station, may or may not be identical to "siteNo"
-precipSite <- "434254090463201"
+precipSite <- "434034088252401"
 # enter the name of the storm(s) (for plot title)
 storm_name <- "JF5-28"
 
