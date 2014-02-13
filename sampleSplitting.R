@@ -59,7 +59,7 @@ tableOut <- labDataOut(adaps_data_all,StormStart,StormEnd,StormName,maxBottleVol
 print(tableOut)
 
 #if a sample needs to be removed, enter the datetime(s) of the sample(s)
-removeDate <- c(strptime("2013-10-05 03:00:00","%Y-%m-%d %H:%M"))
+removeDate <- c(strptime("2013-10-05 03:00","%Y-%m-%d %H:%M"))
 removeComment <- ""
 #removeComment <- c("","Ignore bottle JF6-2, broken in shipment")
 tableOut <- labDataOut(adaps_data_all,StormStart,StormEnd,StormName,maxBottleVol,maxSampVol,removeDate)
