@@ -62,12 +62,18 @@ for (j in 1:numStorms) {
     }}
   adaps_samp_storm$volume <- 9999
   samplesNum <- nrow(adaps_samp_storm)
+  adaps_data_samp_list <- vector('list',length(samplesNum))
   for (i in 1:samplesNum) {
     sampStart <- ifelse(i>1,adaps_samp_storm$datetime[i-1]+(.5*(adaps_samp_storm$datetime[i]-adaps_samp_storm$datetime[i-1])),min(adaps_data_storm$datetime))
     sampEnd <- ifelse(i<samplesNum,adaps_samp_storm$datetime[i]+(.5*(adaps_samp_storm$datetime[i+1]-adaps_samp_storm$datetime[i])),max(adaps_data_storm$datetime))
     class(sampStart) <- "POSIXct"
     class(sampEnd) <- "POSIXct"
     adaps_samp_storm$volume[i] <- round(sum(adaps_data_storm$volume[which(adaps_data_storm$datetime>sampStart&adaps_data_storm$datetime<=sampEnd)],na.rm=TRUE))
+    adaps_samp_storm$sampStar[i] <- sampStart
+    adaps_samp_storm$sampEnd[i] <- sampEnd
+    adaps_data_storm_temp <- adaps_data_storm[which(adaps_data_storm$datetime>sampStart&adaps_data_storm$datetime<=sampEnd),]
+    adaps_data_storm_temp$samplesNum <- rep(samplesNum,nrow(adaps_data_storm_temp))
+    adaps_data_samp_list[[i]] <- adaps_data_storm_temp 
   }
   adaps_samp_storm$perc <- round(100*(adaps_samp_storm$volume/sum(adaps_data_storm$volume,na.rm=TRUE)),digits=1)
   adaps_samp_storm$mL <- round(adaps_samp_storm$volume*maxBottleVol/max(adaps_samp_storm$volume))

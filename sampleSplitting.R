@@ -42,10 +42,10 @@ maxBottleVol <- 900
 # enter the maximum possible volume for one full storm sample
 maxSampVol <- 3900
 # enter Storm Start date(s)
-StormStart <- c(strptime("2013-10-05 2:30","%Y-%m-%d %H:%M"))
+StormStart <- c(strptime("2013-11-17 7:15","%Y-%m-%d %H:%M"))
 #StormStart <- c(strptime("2013-10-03 15:18","%Y-%m-%d %H:%M"),strptime("2013-10-05 2:30","%Y-%m-%d %H:%M"))
 # enter Storm End date(s) 
-StormEnd <- c(strptime("2013-10-05 04:45","%Y-%m-%d %H:%M"))
+StormEnd <- c(strptime("2013-11-18 10:00","%Y-%m-%d %H:%M"))
 #StormEnd <- c(strptime("2013-10-03 21:15","%Y-%m-%d %H:%M"),strptime("2013-10-05 11:30","%Y-%m-%d %H:%M"))
 # enter Storm Name(s)
 StormName <- c("JF5.28")
@@ -67,7 +67,7 @@ print(tableOut)
 
 #Once you are satisfied with the table output
 #enter date(s) when samples were picked up 
-bottlePickup <- c("2013-10-07")
+bottlePickup <- c("2013-11-18")
 
 # generate text file with storm event sample bottle volume table(s)
 fileName <- paste(storm_name,"sampVol",".txt",sep="")
