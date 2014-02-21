@@ -18,10 +18,10 @@ precipSite <- "441624088045601"
 # enter the name of the storm(s) (for plot title)
 storm_name <- c("ESW1-26","ESW1-27")
 # enter path and name of data file if data is not web-available
-dataFile <- "/Users/jlthomps/GLRIBMPs/GLRIWATERWAY1TEST.RDB"
+dataFile <- "M:/NonPoint Evaluation/GLRI Edge-of-field/Splitting Record Conversion to R/GLRIWATERWAY1TEST.RDB"
 
 # Retrieve data from NWISWeb (if available), or use file names to pull data in from files exported by ADAPS
-adaps_data_all <- getADAPSData(siteNo,StartDt,EndDt,precipSite)
+adaps_data_all <- getADAPSData(siteNo,StartDt,EndDt,precipSite,dataFile)
 # example using files getADAPSData(siteNo,StartDt,EndDt,precipSite,stageFile="jf3stage.txt",dischFile="jf3disch.txt","jf3precip.txt","jf3scod.txt")
 
 # Generate interactive googleVis plot
@@ -56,41 +56,44 @@ StormName <- c("ESW1.26","ESW1.27")
 subNum <- c(1,4)
 
 # generate bottle volume table(s) for lab for each storm
-tableOut <- labDataOut(adaps_data_all,StormStart,StormEnd,StormName,maxBottleVol,maxSampVol,subNum)
+tableOut <- labDataOut(adaps_data_all,StormStart,StormEnd,StormName,maxBottleVol,maxSampVol,subNum=subNum)
 # look at table(s) generated for lab sample instructions for storm event(s). determine if changes are needed
-print(tableOut[[1]])
+for (i in 1:length(StormStart)){
+  print(tableOut[[i]])
+}
 
 #if a sample needs to be removed, enter the datetime(s) of the sample(s)
-removeDate <- c(strptime("2013-10-05 03:00","%Y-%m-%d %H:%M"))
-removeComment <- ""
+removeDate <- c(strptime("2012-07-26 04:52","%Y-%m-%d %H:%M"))
+removeComment <- c("test")
 #removeComment <- c("","Ignore bottle JF6-2, broken in shipment")
-tableOut <- labDataOut(adaps_data_all,StormStart,StormEnd,StormName,maxBottleVol,maxSampVol,removeDate)
-stormNum <- length(StormName)
-print(tableOut[[1:stormNum]])
+tableOut <- labDataOut(adaps_data_all,StormStart,StormEnd,StormName,maxBottleVol,maxSampVol,removeDate=removeDate,subNum=subNum)
+for (i in 1:length(StormStart)){
+  print(tableOut[[i]])
+}
 
 #Output csv file of all intermediate volumes used for calculations
 fileName <- paste(siteNo,"SampleVols.csv",sep="")
 sink(fileName)
 cat("Station:"," ",siteNo,"\t","Start date:"," ",strftime(StartDt),"\t","End date:"," ",strftime(EndDt),"\n\n")
-write.table(tableOut[[stormNum+1]],file="",sep=",",row.names=FALSE)
+write.table(tableOut[[length(StormStart)+1]],file="",sep=",",row.names=FALSE)
 sink()
 
 #Once you are satisfied with the table output
 #enter date(s) when samples were picked up 
-bottlePickup <- c("2013-11-18")
+bottlePickup <- c("2012-07-26")
 
 # generate text file with storm event sample bottle volume table(s)
-fileName <- paste(storm_name,"sampVol",".txt",sep="")
+fileName <- paste(storm_name[1],"sampVol",".txt",sep="")
 sink(fileName)
-for (i in 1:stormNum) {
+for (i in 1:length(storm_name)) {
   cat(StormName[i],"\t",strftime(StormStart[i]),"\t",strftime(StormEnd[i]),"\n\n")
   print(tableOut[[i]],row.names=FALSE)
   cat("\n\n")
-  cat("Lab Sample Volume","\t",sum(tableOut[[i]]$mL),"\t",sum(tableOut[[i]]$perc),"\n\n")
-  cat("Max Bottle Volume","\t",maxBottleVol,"\n\n")
-  cat("Max Sample Runoff Volume","\t",max(tableOut[[i]]$volume),"\n\n")
-  cat("Total Sampled Storm Volume","\t",sum(tableOut[[i]]$volume),"\n\n")
-  cat("Bottles ",tableOut[[i]]$subNum[1]," through ",tableOut[[i]]$subNum[length(tableOut[[i]]$subNum)]," picked up ",bottlePickup[i],"\n\n")
+  cat("Lab Sample Volume","\t",sum(tableOut[[i]]$mL),"mL\t",sum(tableOut[[i]]$perc),"percent\n\n")
+  cat("Max Bottle Volume","\t",maxBottleVol[i],"mL\n\n")
+  cat("Max Sample Runoff Volume","\t",max(tableOut[[i]]$volume),"cubic feet\n\n")
+  cat("Total Sampled Storm Volume","\t",sum(tableOut[[i]]$volume),"cubic feet\n\n")
+  cat("Bottles ",tableOut[[i]]$subNum[1]," through ",tableOut[[i]]$subNum[length(tableOut[[i]]$subNum)]," picked up ",bottlePickup,"\n\n")
   if (length(removeComment[i])>0) {cat(removeComment[i],"\n\n")}
   cat("========================================================================================================","\n\n")
 }

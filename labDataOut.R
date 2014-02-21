@@ -55,7 +55,7 @@ for (j in 1:numStorms) {
     } else {adaps_data_storm$volume[i] <- NA}
   }
   adaps_samp_storm <- adaps_data_samples[which(StartDt<=adaps_data_samples$datetime&adaps_data_samples$datetime<=EndDt),]
-  if (subNum[1]!=-9) {subStart<-subNum[j]} else {subStart<-1}
+  if (subNum[1]>0) {subStart<-subNum[j]} else {subStart<-1}
   subMax <- nrow(adaps_samp_storm)+(subStart-1)
   adaps_samp_storm$subNum <- c(subStart:subMax)
   adaps_samp_storm$subNum <- paste(StormName[j],adaps_samp_storm$subNum,sep="-")
@@ -82,7 +82,7 @@ for (j in 1:numStorms) {
   if (sum(adaps_samp_storm$mL)>maxSampV) {
     currSum <- sum(adaps_samp_storm$mL)
     adaps_samp_storm$mL <- trunc(adaps_samp_storm$mL*(maxSampV/currSum))
-  } 
+  } else { adaps_samp_storm$mL <- trunc(adaps_samp_storm$mL)}
   #StormNameOut <- StormName[j]
   #StormSampleOut <- adaps_samp_storm$subNum[j]
   tableOut[[j]] <- adaps_samp_storm[,c("subNum","datetime","mL","perc","volume","sampStar","sampEnd")]

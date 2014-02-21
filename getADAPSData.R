@@ -44,7 +44,7 @@ if ((length(unique(POR$parameter_cd))+length(unique(POR$parameter_cd)))>=4) {
 }} else {
   adaps_data_in <- read.delim(dataFile,header=TRUE,quote="\"",dec=".",sep="\t",colClasses=c("character"),strip.white=TRUE,fill=TRUE,comment.char="#")
   adaps_data_in <- adaps_data_in[-1, ]
-  adaps_data_in$datetime <- as.POSIXct(strptime(paste(adaps_data_in$YEAR,sprintf("%02s",adaps_data_in$MONTH),sprintf("%02s",adaps_data_in$DAY),sprintf("%02d",as.numeric(adaps_data_in$MINUTE)%/%60),sprintf("%02d",as.numeric(adaps_data_in$MINUTE)%%60),sep=""),"%Y%m%d%H%M"))
+  adaps_data_in$datetime <- as.POSIXct(strptime(paste(adaps_data_in$YEAR,sprintf("%02d",as.numeric(adaps_data_in$MONTH)),sprintf("%02d",as.numeric(adaps_data_in$DAY)),sprintf("%02d",as.numeric(adaps_data_in$MINUTE)%/%60),sprintf("%02d",as.numeric(adaps_data_in$MINUTE)%%60),sep=""),"%Y%m%d%H%M"))
   adaps_data_in$pcode <- substr(adaps_data_in$NAME,mean(nchar(adaps_data_in$NAME))-4,mean(nchar(adaps_data_in$NAME)))
   adaps_scode <- adaps_data_in[which(adaps_data_in$pcode=="99909"),c("datetime","VALUE")]
   colnames(adaps_scode) <- c("datetime","p99909")
