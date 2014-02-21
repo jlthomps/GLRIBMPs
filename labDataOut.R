@@ -7,8 +7,8 @@
 #' @param StormStart vector of datetimes for storm starts
 #' @param StormEnd vector of datetime for storm ends
 #' @param StormName vector of storm names
-#' @param maxBottleVol number for maximum volume in one subsample bottle
-#' @param maxSampVol number for maximum volume of one total sample
+#' @param maxBottleVol vector of maximum volumes in one subsample bottle
+#' @param maxSampVol vector of maximum volumes of one total sample
 #' @param removeDate vector of datetimes to be removed from the calculation
 #' @param subNum vector of starting numbers for first bottle of each storm event
 #' @return tableOut list of a table for each storm event of bottle volumes 
@@ -38,6 +38,8 @@ numStorms <- length(StormStart)
 for (j in 1:numStorms) {
   StartDt <- StormStart[j]
   EndDt <- StormEnd[j]
+  maxBottleV <- maxBottleVol[j]
+  maxSampV <- maxSampVol[j]
   adaps_data_storm <- adaps_data_plot[which(StartDt<=adaps_data_plot$datetime&adaps_data_plot$datetime<=EndDt),]
   adaps_data_storm <- adaps_data_storm[which(!is.na(adaps_data_storm$X02_00060)),]
   data_rows <- nrow(adaps_data_storm)
@@ -76,9 +78,13 @@ for (j in 1:numStorms) {
     adaps_data_samp <- if (i>1) {rbind(adaps_data_samp,adaps_data_storm_temp)} else {adaps_data_storm_temp}
   }
   adaps_samp_storm$perc <- round(100*(adaps_samp_storm$volume/sum(adaps_data_storm$volume,na.rm=TRUE)),digits=1)
-  adaps_samp_storm$mL <- round(adaps_samp_storm$volume*maxBottleVol/max(adaps_samp_storm$volume))
-  StormNameOut <- StormName[j]
-  StormSampleOut <- adaps_samp_storm$subNum[j]
+  adaps_samp_storm$mL <- adaps_samp_storm$volume*maxBottleV/max(adaps_samp_storm$volume)
+  if (sum(adaps_samp_storm$mL)>maxSampV) {
+    currSum <- sum(adaps_samp_storm$mL)
+    adaps_samp_storm$mL <- trunc(adaps_samp_storm$mL*(maxSampV/currSum))
+  } 
+  #StormNameOut <- StormName[j]
+  #StormSampleOut <- adaps_samp_storm$subNum[j]
   tableOut[[j]] <- adaps_samp_storm[,c("subNum","datetime","mL","perc","volume","sampStar","sampEnd")]
 }
 tableOut[[j+1]] <- adaps_data_samp
