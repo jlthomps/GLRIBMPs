@@ -12,9 +12,10 @@ hydrographPDF <- function(adaps_data_all,storm_name) {
   plot_00060 <- adaps_data_plot[which(!is.na(adaps_data_plot$X02_00060)),]
   plot_00065 <- adaps_data_plot[which(!is.na(adaps_data_plot$X01_00065)),]
   plot_samp <- adaps_data_samples[which(!is.na(adaps_data_samples$X02_00060)),]
+  ytop <- ifelse(max(plot_00045$cum_00045)>max(plot_00065$X01_00065),max(plot_00045$cum_00045),max(plot_00065$X01_00065))
   pdf(paste(siteNo,storm_name,"hydrograph.pdf",sep=""),width=10,height=8)
   par(mar=c(8,4,5,4),xpd=T)
-  plot(plot_00065$datetime,plot_00065$X01_00065,xaxt="n",xlab="",ylab="Rain, Stage",col="red",type="l",main=paste(siteNo," storm number ",storm_name,sep=""))
+  plot(plot_00065$datetime,plot_00065$X01_00065,xaxt="n",xlab="",ylim=c(0,ytop),ylab="Rain, Stage",col="red",type="l",main=paste(siteNo," storm number ",storm_name,sep=""))
   lines(plot_00045$datetime,plot_00045$cum_00045,xlab="",ylab="",col="blue",type="l")
   #plot(plot_00045$datetime,plot_00045$cum_00045,xaxt="n",xlab="",ylab="Rain",col="blue",type="l",lwd=.5,main=paste(siteNo," storm number ",storm_name,sep=""))
   #lines(plot_00065$datetime,plot_00065$X01_00065,xlab="",ylab="",col="red",type="l")
@@ -26,6 +27,6 @@ hydrographPDF <- function(adaps_data_all,storm_name) {
   points(plot_samp$datetime,plot_samp$X02_00060,xlab="",ylab="",col="purple",pch="o")
   axis(side=4)
   mtext("Discharge",side=4,line=2)
-  legend("topright",c("ADAPS Corrected Q","ADAPS Corrected Stage","Storm Rain","Samples"),lty=c(1,1,1,NA),lwd=c(2.5,2.5,2.5),pch=c(NA,NA,NA,1),col=c("green","red","blue","purple"))
+  legend("topleft",c("ADAPS Corrected Q","ADAPS Corrected Stage","Storm Rain","Samples"),lty=c(1,1,1,NA),lwd=c(2.5,2.5,2.5),pch=c(NA,NA,NA,1),col=c("green","red","blue","purple"))
   dev.off()
 }
