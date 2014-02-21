@@ -31,10 +31,10 @@ hydrographPDF(adaps_data_all,storm_name)
 
 # save merged data for station/storm event, saved as file, eg 434425090462401data.txt 
 tableOut <- adaps_data_all[,c("agency_cd","site_no","datetime","X01_00065","X02_00060","X05_99909","X04_00045")]
-fileName <- paste(siteNo,"data.txt",sep="")
+fileName <- paste(siteNo,"data.csv",sep="")
 sink(fileName)
-cat(siteNo,"\t",strftime(StartDt),"\t",strftime(EndDt),"\n\n")
-print(tableOut,row.names=FALSE)
+cat("Station:"," ",siteNo,"\t","Start date:"," ",strftime(StartDt),"\t","End date:"," ",strftime(EndDt),"\n\n")
+write.table(tableOut,file="",sep=",",row.names=FALSE)
 sink()
 
 # enter the maximum possible volume for one sample bottle
@@ -42,10 +42,10 @@ maxBottleVol <- 900
 # enter the maximum possible volume for one full storm sample
 maxSampVol <- 3900
 # enter Storm Start date(s)
-StormStart <- c(strptime("2013-11-17 7:15","%Y-%m-%d %H:%M"))
+StormStart <- c(strptime("2013-11-17 12:15","%Y-%m-%d %H:%M"))
 #StormStart <- c(strptime("2013-10-03 15:18","%Y-%m-%d %H:%M"),strptime("2013-10-05 2:30","%Y-%m-%d %H:%M"))
 # enter Storm End date(s) 
-StormEnd <- c(strptime("2013-11-18 10:00","%Y-%m-%d %H:%M"))
+StormEnd <- c(strptime("2013-11-18 00:18","%Y-%m-%d %H:%M"))
 #StormEnd <- c(strptime("2013-10-03 21:15","%Y-%m-%d %H:%M"),strptime("2013-10-05 11:30","%Y-%m-%d %H:%M"))
 # enter Storm Name(s)
 StormName <- c("JF5.28")
@@ -63,7 +63,15 @@ removeDate <- c(strptime("2013-10-05 03:00","%Y-%m-%d %H:%M"))
 removeComment <- ""
 #removeComment <- c("","Ignore bottle JF6-2, broken in shipment")
 tableOut <- labDataOut(adaps_data_all,StormStart,StormEnd,StormName,maxBottleVol,maxSampVol,removeDate)
-print(tableOut)
+stormNum <- length(StormName)
+print(tableOut[[1:stormNum]])
+
+#Output csv file of all intermediate volumes used for calculations
+fileName <- paste(siteNo,"SampleVols.csv",sep="")
+sink(fileName)
+cat("Station:"," ",siteNo,"\t","Start date:"," ",strftime(StartDt),"\t","End date:"," ",strftime(EndDt),"\n\n")
+write.table(tableOut[[stormNum+1]],file="",sep=",",row.names=FALSE)
+sink()
 
 #Once you are satisfied with the table output
 #enter date(s) when samples were picked up 
@@ -71,7 +79,6 @@ bottlePickup <- c("2013-11-18")
 
 # generate text file with storm event sample bottle volume table(s)
 fileName <- paste(storm_name,"sampVol",".txt",sep="")
-stormNum <- length(StormName)
 sink(fileName)
 for (i in 1:stormNum) {
   cat(StormName[i],"\t",strftime(StormStart[i]),"\t",strftime(StormEnd[i]),"\n\n")
