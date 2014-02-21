@@ -8,15 +8,17 @@ source("M:/NonPoint Evaluation/GLRI Edge-of-field/Splitting Record Conversion to
 source("M:/NonPoint Evaluation/GLRI Edge-of-field/Splitting Record Conversion to R/labDataOut.R")
 source("M:/NonPoint Evaluation/GLRI Edge-of-field/Splitting Record Conversion to R/getADAPSData.R")
 # enter NWIS station id for gaging station
-siteNo <- "434034088252401"
+siteNo <- "441624088045601"
 # enter date to begin pulling data (rounded to the day)
-StartDt <- '2013-11-17'
+StartDt <- '2012-07-26'
 # enter date to stop pulling data (rounded to the day)
-EndDt <- '2013-11-19'
+EndDt <- '2012-07-26'
 # enter NWIS station id for precipitation gaging station, may or may not be identical to "siteNo"
-precipSite <- "434034088252401"
+precipSite <- "441624088045601"
 # enter the name of the storm(s) (for plot title)
-storm_name <- "JF5-28"
+storm_name <- c("ESW1-26","ESW1-27")
+# enter path and name of data file if data is not web-available
+dataFile <- "/Users/jlthomps/GLRIBMPs/GLRIWATERWAY1TEST.RDB"
 
 # Retrieve data from NWISWeb (if available), or use file names to pull data in from files exported by ADAPS
 adaps_data_all <- getADAPSData(siteNo,StartDt,EndDt,precipSite)
@@ -38,25 +40,25 @@ write.table(tableOut,file="",sep=",",row.names=FALSE)
 sink()
 
 # enter the maximum possible volume for one sample bottle
-maxBottleVol <- 900
+maxBottleVol <- c(900,800)
 # enter the maximum possible volume for one full storm sample
-maxSampVol <- 3900
+maxSampVol <- c(3900,2000)
 # enter Storm Start date(s)
-StormStart <- c(strptime("2013-11-17 12:15","%Y-%m-%d %H:%M"))
+StormStart <- c(strptime("2012-07-26 03:35","%Y-%m-%d %H:%M"),strptime("2012-07-26 14:10","%Y-%m-%d %H:%M"))
 #StormStart <- c(strptime("2013-10-03 15:18","%Y-%m-%d %H:%M"),strptime("2013-10-05 2:30","%Y-%m-%d %H:%M"))
 # enter Storm End date(s) 
-StormEnd <- c(strptime("2013-11-18 00:18","%Y-%m-%d %H:%M"))
+StormEnd <- c(strptime("2012-07-26 05:45","%Y-%m-%d %H:%M"),strptime("2012-07-26 15:32","%Y-%m-%d %H:%M"))
 #StormEnd <- c(strptime("2013-10-03 21:15","%Y-%m-%d %H:%M"),strptime("2013-10-05 11:30","%Y-%m-%d %H:%M"))
 # enter Storm Name(s)
-StormName <- c("JF5.28")
+StormName <- c("ESW1.26","ESW1.27")
 #StormName <- c("JF6.38","JF6.39")
 # enter number for 1st bottle of each storm, if a number other than 1 is desired
-#subNum <- c(1,1)
+subNum <- c(1,4)
 
 # generate bottle volume table(s) for lab for each storm
-tableOut <- labDataOut(adaps_data_all,StormStart,StormEnd,StormName,maxBottleVol,maxSampVol)
+tableOut <- labDataOut(adaps_data_all,StormStart,StormEnd,StormName,maxBottleVol,maxSampVol,subNum)
 # look at table(s) generated for lab sample instructions for storm event(s). determine if changes are needed
-print(tableOut)
+print(tableOut[[1]])
 
 #if a sample needs to be removed, enter the datetime(s) of the sample(s)
 removeDate <- c(strptime("2013-10-05 03:00","%Y-%m-%d %H:%M"))
