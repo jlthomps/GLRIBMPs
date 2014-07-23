@@ -13,7 +13,8 @@ RMErosivityIndex <- function(df,storm_rainmaker)
   intensity_df <- data.frame(rain_diff,time_diff,pdate_diff)
   intensity_df$rain_diff <- ifelse(intensity_df$rain_diff<0,0,intensity_df$rain_diff)
   intensity_df$intensity <- (intensity_df$rain_diff*60)/as.numeric(intensity_df$time_diff)
-  intensity_df$energy <- ifelse(intensity_df$intensity>3,intensity_df$rain_diff*1074,ifelse(intensity_df$intensity>0,intensity_df$rain_diff*(916+(331*abs(log10(intensity_df$intensity)))),NA))
+  #intensity_df$energy <- ifelse(intensity_df$intensity>3,intensity_df$rain_diff*1074,ifelse(intensity_df$intensity>0,intensity_df$rain_diff*(916+(331*abs(log10(intensity_df$intensity)))),NA))
+  intensity_df$energy <- ifelse(intensity_df$intensity>0,intensity_df$rain_diff*(916+(331*abs(log10(intensity_df$intensity)))),NA)
   intensity_df <- intensity_df[which(intensity_df$energy>0),]
   norows <- nrow(storm_rainmaker)
   noreps <- nrow(intensity_df)
@@ -32,7 +33,7 @@ RMErosivityIndex <- function(df,storm_rainmaker)
       intensity_all$stormnum[k+j+i] <- intensity_sub$stormnum[i]
       intensity_all$pdate_diff[k+j+i] <- intensity_sub$pdate_diff[i]
       intensity_all$energy[k+j+i] <- intensity_sub$energy[i]
-      intensity_all$df.pdate[k+j+i] <- intensity_sub$pdate[i]
+      #intensity_all$df.pdate[k+j+i] <- intensity_sub$pdate[i]
     }
     k <- k+i
   }

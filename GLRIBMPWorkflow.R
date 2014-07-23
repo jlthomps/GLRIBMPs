@@ -29,6 +29,7 @@ stormInt <- 2
 # choose desired rain amount threshold, in units of precip values
 rainAmt <- 0
 rainmaker_out <- as.data.frame(RMevents(df,ieHr=stormInt,rainthresh=rainAmt,rain="rain",time="pdate")[1])
+colnames(rainmaker_out) <- c("stormnum","StartDate","EndDate","rain")
 # choose desired intensity values (ie 5 minute, 10 minute, 60 minute)
 intens <- c(5,10,15,30,60)
 storm_rainmaker <- RMIntense(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",edate="EndDate",depth="rain",xmin=intens)
