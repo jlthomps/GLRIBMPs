@@ -1,0 +1,370 @@
+c     program name: raininterval --  one of the programs run by the /sunbin/RAINMAKER shell
+c     originally coded by HARRY HOUSE
+c     January 2013 -- Annie library rebuilt by John Walker
+c     January 2013 -- arrays expanded to handle larger input files by Robert Bodoh
+c
+      character*60 ifile1, ofile1, filenames(10)
+c      character*123 rec,rainrec(100000)
+      character*123 rec,rainrec(1000000)
+c      real rainsum(10,2000000)
+      real rainsum(10,20000000)
+      integer syear,smonth,sday,shour,sminute,sdate
+      integer eyear,emonth,eday,ehour,eminute,edate
+      integer filetype,smin,emin,filetypes(10),nstats(10)
+      integer stats,state,oldday
+      real rain(10),rainold(10),rainprint(10)
+      nsites=10
+c
+c     print out user messages
+c
+      write(6,*)
+      write(6,*) ' This program can read up to 10 input files.'
+      write(6,*) ' It can read up to a total of 10 rain stations'
+      write(6,*) ' in those files.  If the file is a usgs outwat'
+      write(6,*) ' file, there can only be one gage in the file.'
+      write(6,*) ' The user-supplied output interval can be any'
+      write(6,*) ' even minute interval.  However, the data should'
+      write(6,*) ' be field sensitive to at least that fine of an'
+      write(6,*) ' interval.'
+      write(6,*)
+      write(6,*) ' **************************************************'
+      write(6,*) ' Be sure no input file has over 1000000 records'
+      write(6,*) ' Which is 694 days of 1 minute data'
+      write(6,*)
+      write(6,*)
+     + ' Suspect data records are flagged in an output file named'
+      write(6,*) ' rain.interval.errors'
+      write(6,*)
+c
+c     open output files
+c
+c     write(6,*) ' Enter name of output file: '
+      read (5,'(a)') ofile1
+      open (unit=9,file=ofile1)
+      open (unit=10,file='rain.interval.errors')
+c
+c     read in number of input files
+c
+      write(6,*) ' How many input files are there going to be? '
+      write(6,*) ' (Maximum of ten)'
+      write(6,*)
+      read(5,*) nfiles
+c
+c     read in number of minutes for output interval
+c
+      write(6,*)
+      write(6,*) ' What is the output interval to be in minutes? '
+      write(6,*)
+      read(5,*) nmins
+c
+c     read in start and end date
+c
+      write(6,*)
+      write(6,*) ' Enter date information below.  This will define'
+      write(6,*) ' the date range of the output table generated.'
+      write(6,*)
+      write(6,*) ' Enter date and time for start of output.'
+      write(6,*) ' (Hopefully, you have data back that far)'
+      write(6,*)
+      write(6,*) ' Enter in free format, as follows: '
+      write(6,*) ' yyyy mm dd hh mm '
+      write(6,*)
+      read(5,*) syear,smonth,sday,shour,sminute
+c
+      write(6,*)
+      write(6,*) ' Enter date and time for end of output'
+      write(6,*) ' (Must be at or after all data provided)'
+      write(6,*)
+      write(6,*) ' Enter in free format, as follows: '
+      write(6,*) ' yyyy mm dd hh mm '
+      write(6,*)
+      read(5,*) eyear,emonth,eday,ehour,eminute
+c
+c     convert start and end dates to start and end times in minutes since
+c     1900.
+c
+      nday = ndays(sday,smonth,syear)
+      sdate = nday*1440 + shour*60 + sminute
+      nday = ndays(eday,emonth,eyear)
+      edate = nday*1440 + ehour*60 + eminute
+c
+c
+c     read in information about each file
+c
+c
+      do 50, i=1,nfiles
+c
+c     read in type of input file
+c
+ 5       write(6,6) i
+ 6       format(' Select type of input file for file ',i2,' :',//,
+     +          ' 1 = usgs bcard variable outwat file, 1 station only'
+     +          ,/,
+     +          ' 2 = sewrpc file',/,
+     +          ' 3 = state climatalogist file, 1 station only',/)
+         read(5,*) filetype
+         if(filetype.lt.1.or.filetype.gt.3) then
+            write(6,*)
+            write(6,*) ' Invalid file type selection code, try again..'
+            write(6,*)
+            go to 5
+         end if
+         filetypes(i)=filetype
+c
+         write(6,*)
+         write(6,*) ' Enter the name of the input file: '
+         write(6,*)
+         read(5,'(a)') filenames(i)
+c
+c
+c     read in number of rain stations in the file
+c
+         if(filetype.eq.2) then
+            write(6,*)
+            write(6,*) ' Enter number of rain stations in the file'
+            write(6,*)
+            read(5,*) nstats(i)
+         else
+            nstats(i)=1
+         end if
+ 50   continue
+c
+c
+c     read through files, adding rain totals to sum array where they
+c     fall inside boundaries
+c
+c
+      write(6,*)
+      write(6,*) ' files opened, beginning to read data into array'
+      write(6,*)
+      nstattotal = 0
+      do 1000, ifiles=1,nfiles
+         write(6,*)
+         write(6,51) ifiles
+ 51      format(' reading in file number: ',i2)
+         write(6,*)
+         filetype=filetypes(ifiles)
+         ifile1=filenames(ifiles)
+         nstat=nstats(ifiles)
+c
+         close (unit=7)
+         open (unit=7,file=ifile1)
+c
+c
+c     load a rain file into a buffer array
+c
+c
+c     if file is a sewrpc file, convert cumulative daily rain to
+c     discrete interval rain
+c
+         nrainrecs=0
+         if(filetype.eq.2) then
+ 52         read(7,70,end=75) rec
+            if(rec(3:3).ne.'/') go to 52
+            read(rec,320) imonth,iday,iyear,ihour,iminute
+            do 54, i=1,nstat
+               rainold(i)=0
+ 54         continue
+            iyear = iyear + 1900
+            oldday = ndays(iday,imonth,iyear)
+            backspace 7
+c
+ 55         read(7,70,end=75) rec
+            if(rec(3:3).ne.'/') go to 55
+            read(rec,320) imonth,iday,iyear,ihour,iminute,
+     +        (rain(i),i=1,nstat)
+            iyear = iyear + 1900
+            newday = ndays(iday,imonth,iyear)
+            if(newday.eq.oldday) then
+               do 60, i=1,nstat
+                  rainprint(i)=rain(i)-rainold(i)
+                  rainold(i)=rain(i)
+ 60            continue
+            else
+               do 65, i=1,nstat
+                  rainprint(i)=rain(i)
+                  rainold(i)=rain(i)
+ 65            continue
+               oldday = newday
+            end if
+            nrainrecs=nrainrecs+1
+            write(rainrec(nrainrecs),67) rec(1:14),
+     +           (rainprint(i),i=1,nstat)
+ 67         format(a14,f10.4,9(1x,f10.4))
+            go to 55
+         else if (filetype.eq.1) then
+ 69         read(7,70,end=75) rec
+ 70         format(a123)
+            if(rec(1:1).eq.'B') then
+               nrainrecs=nrainrecs+1
+               write(rainrec(nrainrecs),70) rec
+            end if
+            go to 69
+         else if (filetype.eq.3) then
+ 71         read(7,72,end=75) rec(1:23)
+ 72         format(a23)
+            nrainrecs=nrainrecs+1
+            write(rainrec(nrainrecs),70) rec
+            go to 71
+         end if
+c
+c
+ 75      continue
+         write(6,*)
+         write(6,*) ' File has been read into buffer.'
+         write(6,9123) nrainrecs
+ 9123    format(' Number of records to be processed is ',i10)
+         write(6,*) ' Rain conversions being applied...'
+         write(6,*)
+c
+c     compute start and end station number for this file
+c
+         stats = nstattotal + 1
+         state = stats + nstat - 1
+         nstattotal = state
+c
+c     loop through the current rain file, and update sums of rain
+c     for each interval determined
+c
+c     (iseq is date sequence counter for rainsum array)
+c
+         do 800, nrec = 1,nrainrecs
+            smin=sdate-nmins+1
+            rec=rainrec(nrec)
+c
+c     read in a line of data from rainrec buffer
+c
+ 100        if(filetype.eq.1) then
+               read(rec,300) iyear,imonth,iday,ihour,iminute,
+     +              (rain(i),i=stats,state)
+ 300           format(t17,i4,4i2,t36,f10.0)
+            else if (filetype.eq.2) then
+               read(rec,320) imonth,iday,iyear,ihour,iminute,
+     +              (rain(i),i=stats,state)
+ 320           format(4(i2,1x),i2,f10.0,9(1x,f10.0))
+               iyear = iyear + 1900
+            else if (filetype.eq.3) then
+               read(rec,330) imonth,iday,iyear,ihour,iminute,
+     +         (rain(i),i=stats,state)
+ 330           format(i2,1x,i2,1x,i4,1x,2i2,1x,f7.0)
+            end if
+            nday = ndays(iday,imonth,iyear)
+            idate = nday*1440 + ihour*60 + iminute
+c
+c     determine where data fits into array
+c
+            if(idate.lt.smin) then
+               go to 800
+            else if (idate.gt.edate) then
+               go to 1000
+            else
+               istart = (idate - sdate)/nmins - 2
+               do 350, iseq=istart,istart+10
+                  iupper = sdate + (iseq-1)*nmins
+                  ilower = iupper - nmins + 1
+                  if(idate.ge.ilower.and.idate.le.iupper) then
+                     if(iseq.lt.0) go to 800
+                     do 340,i=stats,state
+                        rainsum(i,iseq) = rainsum(i,iseq) + rain(i)
+ 340                 continue
+                     go to 800
+                  end if
+ 350           continue
+            end if
+c
+ 800     continue
+c
+ 1000 continue
+c
+c     calculate sums of all rows in array
+c
+ 1090 iseq = 0
+      write(6,*)
+      write(6,*) ' all data read into array, beginning to write out'
+      write(6,*)
+      theisen = -9
+      do 1500, imin = sdate,edate,nmins
+         iseq = iseq + 1
+         rsum = 0
+         do 1100, i=1,nstattotal
+            rsum = rsum + rainsum(i,iseq)
+ 1100    continue
+         if(rsum.lt.0.001.and.rsum.gt.-0.001) go to 1500
+c
+c     calculate date from imin
+c
+         jday = imin/1440
+         jmin = imin - jday*1440
+         ihour = jmin/60
+         iminute = jmin - ihour*60
+         call ndyin(jday,iday,imonth,iyear)
+c
+c     write out data to output file
+c
+         if(nstattotal.lt.10) then
+            do 1200, i=nstattotal+1,10
+               rainsum(i,iseq)=-9
+ 1200       continue
+         end if
+         if(rsum.ge.19..or.rsum.le.-100.) then
+            write(6,1250) iyear,imonth,iday,ihour,iminute,
+     +      (rainsum(i,iseq),i=1,nsites),rsum
+ 1250       format(' Suspect rain total on ',i4,2(1x,i2.2),1x,2i2.2,
+     +   /,' Rain totals: ',11f7.2)
+            write(10,1250) iyear,imonth,iday,ihour,iminute,
+     +      (rainsum(i,iseq),i=1,nsites),rsum
+            rsum=0.
+         end if
+c
+         do 1300,i=1,nsites
+            if(rainsum(i,iseq).ge.19..or.rainsum(i,iseq).le.-100.)
+     +           rainsum(i,iseq)=0.
+ 1300    continue
+         write(9,1410) iyear,imonth,iday,ihour,iminute,
+     +     (rainsum(i,iseq),i=1,nsites),rsum,theisen
+ 1410    format(i4,'/',i2.2,'/',i2.2,' ',i2.2,':',i2.2,10(',',f6.3),
+     +          2(',',f7.3))
+c
+ 1500 continue
+c
+c     exit program
+c
+      stop
+      end
+      integer function ndays(idy,imn,iyr)
+c     This function written to replace an imsl library routine ndays
+c     It uses the annie utillib subroutine timdif
+      integer start(6), now(6), nodays,iyr,imn,idy
+      start(1) = 1900
+      start(2) = 1
+      start(3) = 1
+      start(4) = 0
+      start(5) = 0
+      start(6) = 0
+      now(1) = iyr
+      now(2) = imn
+      now(3) = idy
+      now(4) = 0
+      now(5) = 0
+      now(6) = 0
+      call timdif(start,now,4,1,nodays)
+      ndays =  nodays
+      return
+      end
+      subroutine ndyin(jday,idy,imn,iyr)
+c     This function written to replace an imsl library routine ndyin
+c     It uses the annie utillib subroutine timadd
+      integer start(6), nodays, date(6),iyr,imn,idy, jday
+      start(1) = 1900
+      start(2) = 1
+      start(3) = 1
+      start(4) = 0
+      start(5) = 0
+      start(6) = 0
+      nodays = jday
+      call timadd ( start, 4, 1, nodays, date )
+      iyr = date(1)
+      imn = date(2)
+      idy = date(3)
+      return
+      end

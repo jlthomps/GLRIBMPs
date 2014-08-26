@@ -1,0 +1,253 @@
+c
+c     this program computes rain intensities and erosivity indexes for
+c     storms as defined in the rainmaker program.  It puts the data out
+c     in comma-delimited form as follows:
+c
+c     begin date:           yyyy/mm/dd hh:mm
+c     end date:             yyyy/mm/dd hh:mm
+c     maximum 5 minute intensity, inches/hour
+c     maximum 10 minute intensity, inches/hour
+c     maximum 15 minute intensity, inches/hour
+c     maximum 30 minute intensity, inches/hour
+c     maximum 60 minute intensity, inches/hour
+c     erosivity index for storm
+c
+c     input requires two files.  Both are converted to comma-delimited
+c     from the associated rdb table.  One has the 'interval' data,
+c     the other has the 'storm.summary' data.  The program uses the
+c     storm.summary table to determine which rows from the interval table
+c     to analyze for a storm.
+c
+c     program must be compiled with imsl option
+c
+      character*60 ifile1,ifile2, ofile1
+      character*102 rec7
+      character*111 rec8
+      integer sdate,edate
+      real rain(10000),intensity
+c
+      nsites=10
+c
+c     open files
+c     write(6,*) ' Enter name of comma-delimited rdb interval table:'
+      read (5,'(a)') ifile1
+      open (unit=7,file=ifile1)
+c     write(6,*)
+c     write(6,*) ' Enter name of comma-delimited rdb storm summaries:'
+c     write(6,*)
+      read(5,'(a)') ifile2
+      open(unit=8,file=ifile2)
+c     write(6,*)
+c     write(6,*) ' Enter name of output file: '
+c     write(6,*)
+      read (5,'(a)') ofile1
+      open (unit=9,file=ofile1)
+c
+c     calculate interval
+c
+      read(7,50,end=9000) rec7,iyear,imonth,iday,ihour,iminute
+ 50   format(a102,t1,i4,4(1x,i2),t96,f7.0)
+      nday = ndays(iday,imonth,iyear)
+      idate1=nday*1440 + ihour*60 + iminute
+      read(7,50,end=9000) rec7,iyear,imonth,iday,ihour,iminute
+      nday = ndays(iday,imonth,iyear)
+      idate2=nday*1440 + ihour*60 + iminute
+      interval=idate2-idate1
+      rinterval=float(interval)
+      rewind 7
+c
+c     read through storm summary file, and convert begin/end dates
+c     to minutes since 1900.  This information will be used to
+c     define the loop to read through from the interval file.
+c
+ 100  read(8,120,end=9000) rec8, iyears,imonths,idays,ihours,iminutes,
+     + iyeare,imonthe,idaye,ihoure,iminutee
+ 120  format(a111,t1,i4,4(1x,i2),1x,i4,4(1x,i2))
+      nday = ndays(idays,imonths,iyears)
+      sdate = nday*1440 + ihours*60 + iminutes
+      nday = ndays(idaye,imonthe,iyeare)
+      edate = nday*1440 + ihoure*60 + iminutee
+c
+c
+c     read through the interval data file until the defined storm appears
+c
+c
+      energy=0
+      p5max=-9
+      p10max=-9
+      p15max=-9
+      p30max=-9
+      p60max=-9
+      icnt=0
+      ei=-9
+c
+ 200  read(7,50,end=9000) rec7,iyear,imonth,iday,ihour,iminute,train
+      nday = ndays(iday,imonth,iyear)
+      idate=nday*1440 + ihour*60 + iminute
+      if(idate.lt.sdate) then
+         go to 200
+      else if (idate.gt.edate) then
+         do 400, i=2,icnt
+            intensity=60.*rain(i)/rinterval
+            if(intensity.gt.0.and.intensity.le.3.) then
+               energy=energy + rain(i)*(916.+331.*alog10(intensity))
+            else
+               energy=energy + rain(i)*1074.
+            end if
+ 400     continue
+c
+c     calculate 5 minute intensity
+c
+         intp=5
+         if(interval.gt.intp) go to 2000
+         intp2=intp/interval*interval
+         if(intp2.ne.intp) go to 2000
+         rintp=float(intp)
+         do 1500, i=2,icnt
+            itimesofar=(i-1)*interval
+            if(itimesofar.ge.intp) then
+               sumnew=0
+               iback=intp/interval - 1
+               do 1420, j=i-iback,i
+                  sumnew=sumnew+rain(j)
+ 1420          continue
+               p5=60.*sumnew/rintp
+               if(p5.gt.p5max) p5max=p5
+            end if
+ 1500    continue
+c
+c     calculate 10 minute intensity
+c
+ 2000    intp=10
+         if(interval.gt.intp) go to 3000
+         intp2=intp/interval*interval
+         if(intp2.ne.intp) go to 3000
+         rintp=float(intp)
+         do 2500, i=2,icnt
+            itimesofar=(i-1)*interval
+            if(itimesofar.ge.intp) then
+               sumnew=0
+               iback=intp/interval - 1
+               do 2420, j=i-iback,i
+                  sumnew=sumnew+rain(j)
+ 2420          continue
+               p10=60.*sumnew/rintp
+               if(p10.gt.p10max) p10max=p10
+            end if
+ 2500    continue
+c
+c     calculate 15 minute intensity
+c
+ 3000    intp=15
+         if(interval.gt.intp) go to 7000
+         intp2=intp/interval*interval
+         if(intp2.ne.intp) go to 7000
+         rintp=float(intp)
+         do 3500, i=2,icnt
+            itimesofar=(i-1)*interval
+            if(itimesofar.ge.intp) then
+               sumnew=0
+               iback=intp/interval - 1
+               do 3420, j=i-iback,i
+                  sumnew=sumnew+rain(j)
+ 3420          continue
+               p15=60.*sumnew/rintp
+               if(p15.gt.p15max) p15max=p15
+            end if
+ 3500    continue
+c
+c     calculate 30 minute intensity
+c
+ 7000    intp=30
+         if(interval.gt.intp) go to 8000
+         intp2=intp/interval*interval
+         if(intp2.ne.intp) go to 8000
+         rintp=float(intp)
+         do 7500, i=2,icnt
+            itimesofar=(i-1)*interval
+            if(itimesofar.ge.intp) then
+               sumnew=0
+               iback=intp/interval - 1
+               do 7420, j=i-iback,i
+                  sumnew=sumnew+rain(j)
+ 7420          continue
+               p30=60.*sumnew/rintp
+               if(p30.gt.p30max) p30max=p30
+            end if
+ 7500    continue
+c
+c     calculate 60 minute intensity
+c
+ 8000    intp=60
+         if(interval.gt.intp) go to 2000
+         intp2=intp/interval*interval
+         if(intp2.ne.intp) go to 2000
+         rintp=float(intp)
+         do 8500, i=2,icnt
+            itimesofar=(i-1)*interval
+            if(itimesofar.ge.intp) then
+               sumnew=0
+               iback=intp/interval - 1
+               do 8420, j=i-iback,i
+                  sumnew=sumnew+rain(j)
+ 8420          continue
+               p60=60.*sumnew/rintp
+               if(p60.gt.p60max) p60max=p60
+            end if
+ 8500    continue
+c
+c     calculate erosivity index
+c
+         if(p30max.lt.0) go to 8600
+         if(p30max.le.2.5) then
+            ei=p30max*energy*0.01
+         else
+            ei=2.5*energy*0.01
+         end if
+c
+c     write out record
+c
+ 8600    write(9,8700) rec8(1:33),p5max,p10max,p15max,p30max,p60max,ei
+ 8700    format(a33,5(',',f7.3),',',f9.3)
+         backspace 7
+         go to 100
+      else
+         icnt=icnt+1
+         rain(icnt)=train
+         go to 200
+      end if
+c
+c     lets get out of here
+c
+ 9000 stop
+      end
+
+
+
+
+
+
+
+
+
+
+      integer function ndays(idy,imn,iyr)
+c     This function written to replace an imsl library routine ndays
+c     It uses the annie utillib subroutine timdif
+      integer start(6), now(6), nodays,iyr,imn,idy
+      start(1) = 1900
+      start(2) = 1
+      start(3) = 1
+      start(4) = 0
+      start(5) = 0
+      start(6) = 0
+      now(1) = iyr
+      now(2) = imn
+      now(3) = idy
+      now(4) = 0
+      now(5) = 0
+      now(6) = 0
+      call timdif(start,now,4,1,nodays)
+      ndays =  nodays
+      return
+      end
