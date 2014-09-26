@@ -4,21 +4,36 @@
 #install.packages(c("USGSwsData","USGSwsBase","USGSwsGraphs","USGSwsQW","USGSwsStats","dataRetrieval","USGSwsQWSR"),repos="http://usgs-r.github.com")
 ###########################################################################
 
-# pull in pre-calculated QW load values
 library(dataRetrieval)
 siteNo <- "04087119"
-StartDt <- "2009-10-01"
+StartDt <- "2008-10-01"
 EndDt <- "2014-09-01"
-adaps_disch_in <- retrieveUnitNWISData(siteNo,'00060',StartDt,EndDt,format="tsv")
+adaps_disch_in <- retrieveNWISunitData(siteNo,'00060',StartDt,EndDt,format="xml")
 colnames(adaps_disch_in) <- c("agency","siteNo","pdate","tz_cd","disch","rmrk")
-adaps_cond_in <- retrieveUnitNWISData(siteNo,'00095',StartDt,EndDt,format="tsv")
+adaps_cond_in <- retrieveNWISunitData(siteNo,'00095',StartDt,EndDt,format="xml")
 colnames(adaps_cond_in) <- c("agency","siteNo","pdate","tz_cd","cond","rmrk")
-adaps_turb_in <- retrieveUnitNWISData(siteNo,'63680',StartDt,EndDt,format="tsv")
+adaps_turb_in <- retrieveNWISunitData(siteNo,'63680',StartDt,EndDt,format="xml")
 colnames(adaps_turb_in) <- c("agency","siteNo","pdate","tz_cd","turb","rmrk")
-adaps_temp_in <- retrieveUnitNWISData(siteNo,'00010',StartDt,EndDt,format="tsv")
+adaps_temp_in <- retrieveNWISunitData(siteNo,'00010',StartDt,EndDt,format="xml")
 colnames(adaps_temp_in) <- c("agency","siteNo","pdate","tz_cd","temp","rmrk")
-adaps_do_in <- retrieveUnitNWISData(siteNo,'00300',StartDt,EndDt,format="tsv")
+adaps_do_in <- retrieveNWISunitData(siteNo,'00300',StartDt,EndDt,format="xml")
 colnames(adaps_do_in) <- c("agency","siteNo","pdate","tz_cd","do","rmrk")
+
+#00530 TSS
+tss_data <- retrieveNWISqwData(siteNo,'00530',StartDt,EndDt,expanded=TRUE)
+
+#00665 Phosphorus
+tp_data <- retrieveNWISqwData(siteNo,'00665',StartDt,EndDt,expanded=TRUE)
+
+#00940 Chloride
+cl_data <- retrieveNWISqwData(siteNo,'00940',StartDt,EndDt,expanded=TRUE)
+
+#31616 fecal coliform
+fecal_data <- retrieveNWISqwData(siteNo,'31616',StartDt,EndDt,expanded=TRUE)
+
+#50468 E coli
+ecoli_data <- retrieveNWISqwData(siteNo,'50468',StartDt,EndDt,expanded=TRUE)
+
 
 #choose columns to keep for analysis
 keepVars <- names(storm_rainmaker)[-which(names(storm_rainmaker) %in% c("stormnum","StartDate.x","EndDate.x","StartDate.y","EndDate.y","rain.y"))]
