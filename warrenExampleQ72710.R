@@ -31,8 +31,8 @@ for (i in 1:nrow(sites)) {
     cat("no data available for site",site,startdate,enddate,sep=" ")
     Q90[i] <- paste("no data available for site",site,startdate,enddate,sep=" ")
   }
-  startdate2 <- "1969-04-01"
-  enddate2 <- "2008-03-31"
+  startdate2 <- "1970-04-01"
+  enddate2 <- "2009-03-31"
   obs_url2 <- constructNWISURL(site,property,startdate2,enddate2,"dv")
   flowData2 <- getXMLWML1.1Data(obs_url2)
   if (nrow(flowData2)>0) {
@@ -52,10 +52,16 @@ for (i in 1:nrow(sites)) {
     min7daybyyear$rank <- rank(min7daybyyear$min7day)
     min7daybyyear$probability <- min7daybyyear$rank/max(min7daybyyear$rank)
     #plot(log10(min7daybyyear$probability),log10(min7daybyyear$min7day))
+    min7daybyyear <- min7daybyyear[which(min7daybyyear$min7day>0),]
     lmfit <- lm(log10(min7daybyyear$min7day) ~ (log10(min7daybyyear$probability)))
+    mean7daybyyear <- mean(min7daybyyear$min7day)
+    stdev7daybyyear <- sd(min7daybyyear$min7day)
+    skewtemp <- min7daybyyear[,1:2]
+    colnames(skewtemp) <- c("year","discharge")
+    skew7daybyyear <- skew(skewtemp)
     #abline(lmfit)
-    Q72lm[i] <- 10^(log10(unname(lmfit[[1]][1])) + unname(lmfit[[1]][2])*log10(0.5))
-    Q710lm[i] <- 10^(unname(lmfit[[1]][1]) + unname(lmfit[[1]][2])*log10(0.1))
+    Q72lm[i] <- round(10^(unname(lmfit[[1]][1]) + unname(lmfit[[1]][2])*log10(0.5)),digits=2)
+    Q710lm[i] <- round(10^(unname(lmfit[[1]][1]) + unname(lmfit[[1]][2])*log10(0.1)),digits=2)
     Q72[i] <- NWCportalL7Q2(flowData2)
     Q710[i] <- NWCportalL7Q10(flowData2)
     cat(Q72[i],i,site,sites[i,1],sep=" ")
@@ -71,6 +77,6 @@ for (i in 1:nrow(sites)) {
     Q710lm[i] <- paste("no data available for site",site,startdate,enddate,sep=" ")
   }
 }
-stationsQ90Q72Q710 <- data.frame(sites$station,Q90,Q72,Q710,Q72lm,Q710lm,stringsAsFactors=FALSE)
+stationsQ90Q72Q710 <- data.frame(sites$station,Q90,Q72,Q710,Q72lm,Q710lm,minDate,maxDate,numYear,stringsAsFactors=FALSE)
 write.table(stationsQ90Q72Q710,file="stationsQ90Q72Q710.txt",sep="\t",row.names=FALSE)
 
