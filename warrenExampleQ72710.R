@@ -14,6 +14,8 @@ Q710lm <- rep(0,nrow(sites))
 numYear <- rep(0,nrow(sites))
 minDate <- rep(Sys.Date(),nrow(sites))
 maxDate <- rep(Sys.Date(),nrow(sites))
+min7dayperSite <- as.data.frame(cbind(0,0,0))
+colnames(min7dayperSite) <- c("siteNo","year","min7day")
 for (i in 1:nrow(sites)) {
   site <- sites[i,1]
   startdate <- "1969-10-01"
@@ -49,6 +51,8 @@ for (i in 1:nrow(sites)) {
     min7daybyyear <- aggregate(rollingavgs7day$day7mean, 
                                list(rollingavgs7day$wy_val), min, na.rm=TRUE)
     colnames(min7daybyyear) <- c("year","min7day")
+    siteNo <- rep(site,nrow(min7daybyyear))
+    min7dayperSite <- rbind(min7dayperSite,cbind(siteNo,min7daybyyear))
     min7daybyyear$rank <- rank(min7daybyyear$min7day)
     min7daybyyear$probability <- min7daybyyear$rank/max(min7daybyyear$rank)
     #plot(log10(min7daybyyear$probability),log10(min7daybyyear$min7day))
@@ -77,6 +81,8 @@ for (i in 1:nrow(sites)) {
     Q710lm[i] <- paste("no data available for site",site,startdate,enddate,sep=" ")
   }
 }
+min7dayperSite <- min7dayperSite[which(min7dayperSite$siteNo>0),]
+write.table(min7dayperSite,file="annual7dayminimums.txt",sep="\t",row.names=FALSE)
 stationsQ90Q72Q710 <- data.frame(sites$station,Q90,Q72,Q710,Q72lm,Q710lm,minDate,maxDate,numYear,stringsAsFactors=FALSE)
 write.table(stationsQ90Q72Q710,file="stationsQ90Q72Q710.txt",sep="\t",row.names=FALSE)
 
