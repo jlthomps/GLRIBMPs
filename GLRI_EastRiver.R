@@ -3,7 +3,8 @@ storm_vol_load <- read.csv("EastRiverVolumesLoads.csv",header=T,stringsAsFactors
 storm_vol_load$Start <- strptime(storm_vol_load$Start,format="%m/%d/%Y %H:%M")
 storm_vol_load$Stop <- strptime(storm_vol_load$Stop,format="%m/%d/%Y %H:%M")
 colnames(storm_vol_load) <- c("Start","End","estimated","type","frozen","num","num_split","peakDisch","stormRunoff","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad")
-source("M:/NonPoint Evaluation/GLRI Edge-of-field/R/RRainmaker.R")
+#source("M:/NonPoint Evaluation/GLRI Edge-of-field/R/RRainmaker.R")
+library(Rainmaker)
 library(dataRetrieval)
 site_no <- "441624088045601"
 StartDt <- strftime(min(storm_vol_load[which(storm_vol_load$frozen=='N'),]$Start,na.rm=TRUE) - (60*60*24*5),'%Y-%m-%d')
