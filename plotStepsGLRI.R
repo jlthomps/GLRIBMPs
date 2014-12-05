@@ -43,7 +43,13 @@ plotStepsGLRI <- function(steps,localDT,transformResponse="lognormal"){
     cat(formulaToUse, "\n\n")
    
     modelReturn <- do.call("censReg", list(formulaToUse, data=localDT, dist=distribution))
-        
+    StCoef <- with(modelReturn, PARAML/STDDEV)
+    modelStuff <- with(modelReturn, data.frame(Term=c(names(coef(modelReturn)),"logSigma"),
+                                               Coefficient=round(PARAML,digits=3), 
+                                               StdDev=round(STDDEV,digits=3), 
+                                               pValue=round(PVAL,digits=3),
+                                               StCoef=round(StCoef,digits=3)
+    ))   
     outlier <- findOutliers(modelReturn,localDT, transformResponse)
 
     responseValue <- localDT[,responseVariable]@.Data[,2]
