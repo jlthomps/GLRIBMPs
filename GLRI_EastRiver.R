@@ -1,4 +1,4 @@
-setwd('/Users/jlthomps-pr/git/GLRIBMPs/')
+setwd('/Users/jlthomps/Desktop/git/GLRIBMPs/')
 #read in storm event startdate, enddate, estimated, type, frozen, number, peakDisch, runoff amount and loads from file
 storm_vol_load <- read.csv("EastRiverVolumesLoads.csv",header=T,stringsAsFactors=FALSE)
 storm_vol_load$Start <- strptime(storm_vol_load$Start,format="%m/%d/%Y %H:%M")
@@ -21,7 +21,7 @@ rainmaker_out <- as.data.frame(RMevents(df,ieHr=1,rainthresh=0,rain="rain",time=
 colnames(rainmaker_out) <- c("stormnum","StartDate","EndDate","rain")
 storm_rainmaker <- RMIntense(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",edate="EndDate",depth="rain",xmin=c(5,10,15,30,60))
 antecedent_rain <- RMarf(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",days=c(1,3,5,7),varnameout="ARF")
-source("/Users/jlthomps-pr/git/GLRIBMPs/RMErosivityIndex.R")
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMErosivityIndex.R")
 #erosivity_index <- RMErosivityIndex(df,storm_rainmaker)
 storm_rainmaker <- merge(storm_rainmaker,antecedent_rain,by.x="stormnum",by.y="stormnum")
 
@@ -85,7 +85,7 @@ reg_lm <- lm(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15ma
 siteName <- "EastRiver"
 investigateResponse <- "TPLoading"
 transformResponse <- "lognormal"
-pathToSave <- paste("/Users/jlthomps-pr/Documents/R/GLRI/",siteName[1],sep="")
+pathToSave <- paste("/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
 pdf(paste(pathToSave,"/",investigateResponse,"_regressionA.pdf",sep=""))
 par(mfrow=c(4,1))
 plot(adaps_precip_in$pdate,adaps_precip_in$VALUE,type="l",col="blue",ylab="precip")
@@ -101,7 +101,7 @@ siteINFO <-  readNWISsite(siteNo)
 siteINFO$station.nm <- siteINFO$station_nm
 investigateResponse <- "TPLoading"
 transformResponse <- "lognormal"
-pathToSave <- paste("/Users/jlthomps-pr/Documents/R/GLRI/",siteName[1],sep="")
+pathToSave <- paste("/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
 pdf(paste(pathToSave,"/",investigateResponse,"_regression.pdf",sep=""))
 plot(data_sub$ARF7,log(data_sub$TPLoad),xlab="ARF7",ylab="Total P load")
 lm_mod <- lm(log(TPLoad)~ARF7,data=data_sub)
@@ -141,7 +141,7 @@ mtext(bquote(y==.(lm_coef[2])*x+.(lm_coef[1])),adj=1,padj=0)
 mtext(bquote(R2==.(summary(lm_mod)$adj.r.squared)),adj=0,padj=3)
 dev.off()
 
-pathToSave <- paste("/Users/jlthomps-pr/Documents/R/GLRI/",siteName[1],sep="")
+pathToSave <- paste("/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
 data_sub_cens <- importQW(data_sub,c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
 
 ##########################################################
@@ -166,8 +166,8 @@ modelResult <- returnPrelim$modelStuff
 modelReturn <- returnPrelim$DT.mod
 
 #Save plotSteps to file:
-source("/Users/jlthomps-pr/git/GLRIBMPs/plotStepsGLRI.R")
-source("/Users/jlthomps-pr/git/GLRIBMPs/analyzeStepsGLRI.R")
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/plotStepsGLRI.R")
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/analyzeStepsGLRI.R")
 pdf(paste(pathToSave,"/",investigateResponse,"_plotSteps.pdf",sep=""))
 plotStepsGLRI(steps,data_sub_cens,transformResponse)
 dev.off()
@@ -200,7 +200,7 @@ dev.off()
 #####################################################
 # Print summary in console:
 fileName <- paste(pathToSave,"/", investigateResponse,"Summary_2.txt", sep="")
-source("/Users/jlthomps-pr/git/GLRIBMPs/summaryPrintoutGLRI.R")
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/summaryPrintoutGLRI.R")
 summaryPrintoutGLRI(modelReturn, siteINFO, saveOutput=TRUE,fileName)
 #####################################################
 

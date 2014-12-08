@@ -1,4 +1,4 @@
-setwd('/Users/jlthomps-pr/git/GLRIBMPs/')
+setwd('/Users/jlthomps/Desktop/git/GLRIBMPs/')
 #read in storm event startdate, enddate, estimated, type, frozen, number, peakDisch, runoff amount and loads from file
 storm_vol_load <- read.csv("EastRiverVolumesLoads.csv",header=T,stringsAsFactors=FALSE)
 storm_vol_load$Start <- strptime(storm_vol_load$Start,format="%m/%d/%Y %H:%M")
@@ -21,7 +21,7 @@ rainmaker_out <- as.data.frame(RMevents(df,ieHr=.5,rainthresh=0,rain="rain",time
 colnames(rainmaker_out) <- c("stormnum","StartDate","EndDate","rain")
 storm_rainmaker <- RMIntense(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",edate="EndDate",depth="rain",xmin=c(5,10,15,30,60))
 antecedent_rain <- RMarf(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",days=c(1,3,5,7),varnameout="ARF")
-source("/Users/jlthomps-pr/git/GLRIBMPs/RMErosivityIndex.R")
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMErosivityIndex.R")
 #erosivity_index <- RMErosivityIndex(df,storm_rainmaker)
 storm_rainmaker <- merge(storm_rainmaker,antecedent_rain,by.x="stormnum",by.y="stormnum")
 
@@ -34,13 +34,13 @@ storm_vol_load_End <- aggregate(storm_vol_load_sub$End, list(storm_vol_load_sub$
 colnames(storm_vol_load_End) <- c("num","End")
 storm_vol_load_peak <- aggregate(storm_vol_load_sub$peakDisch, list(storm_vol_load_sub$num_split), FUN = max)
 colnames(storm_vol_load_peak) <- c("num","peakDisch")
-storm_vol_load_load <- aggregate(storm_vol_load_sub$TPLoad, list(storm_vol_load_sub$num_split), FUN = sum)
-colnames(storm_vol_load_load) <- c("num","TPLoad")
+storm_vol_load_load <- aggregate(storm_vol_load_sub[,10:18], list(storm_vol_load_sub$num_split), FUN = sum)
+colnames(storm_vol_load_load) <- c("num","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad")
 storm_vol_load_merge <- merge(storm_vol_load_load, storm_vol_load_Start, by = "num")
 storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_End, by = "num")
 storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_peak, by = "num")
 
-storms_list <- storm_vol_load_merge[,c(3,4)]
+storms_list <- storm_vol_load_merge[,c(11,12)]
 storms_list$Start <- storms_list$Start - (120*60)
 storms_list$num <- c(1:nrow(storms_list))
 norows <- nrow(storm_vol_load_merge)
@@ -53,7 +53,7 @@ for (i in 1:noreps) {
 }
 #storm_rainmaker_agg <- aggregate(storm_rainmaker,list(storm_rainmaker$num), c(min(x$startdate),max(x$enddate),max(x$theisen),max(x$p5max.inches.per.hour),max(x$p10max.inches.per.hour),max(x$p15max.inches.per.hour),max(x$p30max.inches.per.hour),max(x$p60max.inches.per.hour),max(x$ei)))
 #storm_rainmaker_agg <- ddply(storm_rainmaker[,2:3], c("storm_rainmaker$num"), summarize, min_start=min(df$enddate),max_theisen=max(df$theisen))
-# aggregate data to the storm level, using min start, max end, sum of rain and duration and max of intensities and ARFs. down to 14
+# aggregate data to the storm level, using min start, max end, sum of rain and duration and max of intensities and ARFs. down to 34
 storm_rainmaker_agg_startdt <- aggregate(storm_rainmaker$StartDate.x,list(storm_rainmaker$stormnum), min)
 storm_rainmaker_agg_enddt <- aggregate(storm_rainmaker$EndDate.x,list(storm_rainmaker$stormnum),max)
 storm_rainmaker_agg_sum <- aggregate(storm_rainmaker[,4:5],list(storm_rainmaker$stormnum),sum)
@@ -64,8 +64,8 @@ data_merge <- merge(data_merge,storm_rainmaker_agg_sum,by.x="Group.1",by.y="Grou
 storm_vol_load_merge$num <- c(1:nrow(storm_vol_load_merge))
 data_merge <- merge(data_merge,storm_vol_load_merge,by.x="Group.1",by.y="num")
 data_merge$decYear <- paste(strftime(data_merge$End,"%Y"),".",as.POSIXlt(data_merge$End)$yday+1,sep="")
-data_sub <- data_merge[,c(2:11,14:16,19:20)]
-colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","TPLoad","peakDisch","decYear")
+data_sub <- data_merge[,c(2:11,14:24,27:28)]
+colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad","peakDisch","decYear")
 data_sub$p5max.inches.per.hour <- ifelse(data_sub$p5max.inches.per.hour==-9,0,data_sub$p5max.inches.per.hour)
 data_sub$p10max.inches.per.hour <- ifelse(data_sub$p10max.inches.per.hour==-9,0,data_sub$p10max.inches.per.hour)
 data_sub$p15max.inches.per.hour <- ifelse(data_sub$p15max.inches.per.hour==-9,0,data_sub$p15max.inches.per.hour)
@@ -74,136 +74,23 @@ data_sub$p60max.inches.per.hour <- ifelse(data_sub$p60max.inches.per.hour==-9,0,
 data_sub$intensity <- ifelse(data_sub$intensity==-9,0,data_sub$intensity)
 data_sub$TPLoad <- ifelse(data_sub$TPLoad==-9,0,data_sub$TPLoad)
 data_sub$remark <- ""
+data_sub$ChlorideLoad <- ifelse(data_sub$ChlorideLoad==-9,0,data_sub$ChlorideLoad)
+data_sub$NitrateLoad <- ifelse(data_sub$NitrateLoad==-9,0,data_sub$NitrateLoad)
+data_sub$AmmoniumLoad <- ifelse(data_sub$AmmoniumLoad==-9,0,data_sub$AmmoniumLoad)
+data_sub$TKNLoad <- ifelse(data_sub$TKNLoad==-9,0,data_sub$TKNLoad)
+data_sub$DissPLoad <- ifelse(data_sub$DissPLoad==-9,0,data_sub$DissPLoad)
+data_sub$TNLoad <- ifelse(data_sub$TNLoad==-9,0,data_sub$TNLoad)
+data_sub$OrgNLoad <- ifelse(data_sub$OrgNLoad==-9,0,data_sub$OrgNLoad)
 
 # save data_sub with merged data ready for regression
-save(data_sub,file="dataSubEastRiver.RData")
-
-aov_data <- aov(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data_sub)
-reg_lm <- lm(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data=data_sub)
+save(data_sub,file="dataSubEastRiverFrozen.RData")
 
 siteName <- "EastRiverFrozen"
-investigateResponse <- "TPLoading"
-transformResponse <- "lognormal"
-pathToSave <- paste("/Users/jlthomps-pr/Documents/R/GLRI/",siteName[1],sep="")
-pdf(paste(pathToSave,"/",investigateResponse,"_regressionA.pdf",sep=""))
+pathToSave <- paste("/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
+pdf(paste(pathToSave,"/","PrecipAndStorms.pdf",sep=""))
 par(mfrow=c(4,1))
 plot(adaps_precip_in$pdate,adaps_precip_in$VALUE,type="l",col="blue",ylab="precip")
 plot(storm_vol_load$Start,storm_vol_load$peakDisch,col="red")
 plot(storm_vol_load$End,storm_vol_load$peakDisch,col="red")
 dev.off()
 
-library(GSqwsr)
-library(dataRetrieval)
-siteName <- "EastRiverFrozen"
-siteNo <- '441624088045601'
-siteINFO <-  readNWISsite(siteNo)
-siteINFO$station.nm <- siteINFO$station_nm
-investigateResponse <- "TPLoading"
-transformResponse <- "lognormal"
-pathToSave <- paste("/Users/jlthomps-pr/Documents/R/GLRI/",siteName[1],sep="")
-pdf(paste(pathToSave,"/",investigateResponse,"_regression.pdf",sep=""))
-plot(data_sub$ARF7,log(data_sub$TPLoad),xlab="ARF7",ylab="Total P load")
-lm_mod <- lm(log(TPLoad)~ARF7,data=data_sub)
-abline(lm_mod,col="red")
-lm_coef <- coef(lm_mod)
-mtext(bquote(y==.(lm_coef[2])*x+.(lm_coef[1])),adj=1,padj=0)
-mtext(bquote(R2==.(summary(lm_mod)$adj.r.squared)),adj=0,padj=3)
-plot(data_sub$rain_amount,log(data_sub$TPLoad),xlab="rain",ylab="Total P load")
-lm_mod <- lm(log(TPLoad)~rain_amount,data=data_sub)
-abline(lm_mod,col="red")
-lm_coef <- coef(lm_mod)
-mtext(bquote(y==.(lm_coef[2])*x+.(lm_coef[1])),adj=1,padj=0)
-mtext(bquote(R2==.(summary(lm_mod)$adj.r.squared)),adj=0,padj=3)
-plot(data_sub$intensity,log(data_sub$TPLoad),xlab="intensity",ylab="Total P load")
-lm_mod <- lm(log(TPLoad)~intensity,data=data_sub)
-abline(lm_mod,col="red")
-lm_coef <- coef(lm_mod)
-mtext(bquote(y==.(lm_coef[2])*x+.(lm_coef[1])),adj=1,padj=0)
-mtext(bquote(R2==.(summary(lm_mod)$adj.r.squared)),adj=0,padj=3)
-plot(data_sub$peakDisch,log(data_sub$TPLoad),xlab="peakDisch",ylab="Total P load")
-lm_mod <- lm(log(TPLoad)~peakDisch,data=data_sub)
-abline(lm_mod,col="red")
-lm_coef <- coef(lm_mod)
-mtext(bquote(y==.(lm_coef[2])*x+.(lm_coef[1])),adj=1,padj=0)
-mtext(bquote(R2==.(summary(lm_mod)$adj.r.squared)),adj=0,padj=3)
-plot(data_sub$p30max.inches.per.hour,log(data_sub$TPLoad),xlab="p30max",ylab="Total P load")
-lm_mod <- lm(log(TPLoad)~p30max.inches.per.hour,data=data_sub)
-abline(lm_mod,col="red")
-lm_coef <- coef(lm_mod)
-mtext(bquote(y==.(lm_coef[2])*x+.(lm_coef[1])),adj=1,padj=0)
-mtext(bquote(R2==.(summary(lm_mod)$adj.r.squared)),adj=0,padj=3)
-plot(data_sub$duration,log(data_sub$TPLoad),xlab="duration",ylab="Total P load")
-lm_mod <- lm(log(TPLoad)~duration,data=data_sub)
-abline(lm_mod,col="red")
-lm_coef <- coef(lm_mod)
-mtext(bquote(y==.(lm_coef[2])*x+.(lm_coef[1])),adj=1,padj=0)
-mtext(bquote(R2==.(summary(lm_mod)$adj.r.squared)),adj=0,padj=3)
-dev.off()
-
-pathToSave <- paste("/Users/jlthomps-pr/Documents/R/GLRI/",siteName[1],sep="")
-data_sub_cens <- importQW(data_sub,c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
-
-##########################################################
-# Preliminary Assessment Plots:
-pdf(paste(pathToSave,"/",investigateResponse,"_InitialQQGraphs.pdf",sep=""))
-plotQQTransforms(data_sub_cens,investigateResponse)
-predictVariableScatterPlots(data_sub_cens,investigateResponse)
-dev.off()
-##########################################################
-
-#################################################################################################
-#Kitchen sink:
-predictVariables <- names(data_sub_cens)[-which(names(data_sub_cens) %in% investigateResponse)]
-predictVariables <- predictVariables[which(predictVariables != "datetime")]
-predictVariables <- predictVariables[which(predictVariables != "decYear")]
-kitchenSink <- createFullFormula(data_sub_cens,investigateResponse)
-
-returnPrelim <- prelimModelDev(data_sub_cens,investigateResponse,kitchenSink,
-                                     "BIC", transformResponse)
-steps <- returnPrelim$steps
-modelResult <- returnPrelim$modelStuff
-modelReturn <- returnPrelim$DT.mod
-
-#Save plotSteps to file:
-source("/Users/jlthomps-pr/git/GLRIBMPs/plotStepsGLRI.R")
-source("/Users/jlthomps-pr/git/GLRIBMPs/analyzeStepsGLRI.R")
-pdf(paste(pathToSave,"/",investigateResponse,"_plotSteps.pdf",sep=""))
-plotStepsGLRI(steps,data_sub_cens,transformResponse)
-dev.off()
-
-pdf(paste(pathToSave,"/",investigateResponse,"_analyzeSteps.pdf",sep=""))
-analyzeSteps(steps, investigateResponse,siteINFO, xCorner = 0.01)
-dev.off()
-
-vif(modelReturn)
-
-#################################################################################################
-
-##########################################################
-#Save steps to file:
-fileToSave <- paste(pathToSave,"/",investigateResponse,"_steps.csv",sep="")
-write.table(steps, fileToSave, row.names=FALSE, sep=",") 
-##########################################################
-
-#####################################################
-# Plot summary plots:
-pdf(paste(pathToSave,"/",investigateResponse,"_summaryPlot_2.pdf",sep=""), paper="a4r") #a4r makes it landscape...if you want that
-resultPlots(data_sub_cens,modelReturn,siteINFO)
-dev.off()
-
-pdf(paste(pathToSave,"/",investigateResponse,"_summaryResidPlot_2.pdf",sep=""), paper="a4r") #a4r makes it landscape...if you want that
-resultResidPlots(data_sub_cens,modelReturn,siteINFO)
-dev.off()
-#####################################################
-
-#####################################################
-# Print summary in console:
-fileName <- paste(pathToSave,"/", investigateResponse,"Summary_2.txt", sep="")
-source("/Users/jlthomps-pr/git/GLRIBMPs/summaryPrintoutGLRI.R")
-summaryPrintoutGLRI(modelReturn, siteINFO, saveOutput=TRUE,fileName)
-#####################################################
-
-
-#Want to save a dataframe (aka, save an output)?
-fileToSave <- paste(pathToSave, "modelResult.csv",sep="/")
-write.table(modelResult, fileToSave, row.names=FALSE, sep=",")  
