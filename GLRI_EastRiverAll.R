@@ -17,7 +17,7 @@ colnames(df) <- c("rain","pdate")
 df$rain <- as.numeric(df$rain)
 
 # run Rainmaker on imported precip data
-rainmaker_out <- as.data.frame(RMevents(df,ieHr=1,rainthresh=0,rain="rain",time="pdate")[1])
+rainmaker_out <- as.data.frame(RMevents(df,ieHr=.5,rainthresh=0,rain="rain",time="pdate")[1])
 colnames(rainmaker_out) <- c("stormnum","StartDate","EndDate","rain")
 storm_rainmaker <- RMIntense(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",edate="EndDate",depth="rain",xmin=c(5,10,15,30,60))
 antecedent_rain <- RMarf(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",days=c(1,3,5,7),varnameout="ARF")
@@ -25,22 +25,24 @@ source("/Users/jlthomps-pr/git/GLRIBMPs/RMErosivityIndex.R")
 #erosivity_index <- RMErosivityIndex(df,storm_rainmaker)
 storm_rainmaker <- merge(storm_rainmaker,antecedent_rain,by.x="stormnum",by.y="stormnum")
 
-# cutting out storms with frozen ground or estimated QW numbers reduces 120 to 38
-storm_vol_load_sub <- storm_vol_load[which(storm_vol_load$frozen=='N' & storm_vol_load$estimated=='N'),]
-# aggregating based on broader num (not split_num) reduces 38 to 30
-storm_vol_load_Start <- aggregate(storm_vol_load_sub$Start, list(storm_vol_load_sub$num), FUN = min)
+# keep all - estimated, frozen, etc
+storm_vol_load_sub <- storm_vol_load
+# keep all events split out, goes to 118 because of two combined
+storm_vol_load_Start <- aggregate(storm_vol_load_sub$Start, list(storm_vol_load_sub$num_split), FUN = min)
 colnames(storm_vol_load_Start) <- c("num","Start")
-storm_vol_load_End <- aggregate(storm_vol_load_sub$End, list(storm_vol_load_sub$num), FUN = max)
+storm_vol_load_End <- aggregate(storm_vol_load_sub$End, list(storm_vol_load_sub$num_split), FUN = max)
 colnames(storm_vol_load_End) <- c("num","End")
-storm_vol_load_peak <- aggregate(storm_vol_load_sub$peakDisch, list(storm_vol_load_sub$num), FUN = max)
+storm_vol_load_peak <- aggregate(storm_vol_load_sub$peakDisch, list(storm_vol_load_sub$num_split), FUN = max)
 colnames(storm_vol_load_peak) <- c("num","peakDisch")
-storm_vol_load_load <- aggregate(storm_vol_load_sub$TPLoad, list(storm_vol_load_sub$num), FUN = sum)
+storm_vol_load_load <- aggregate(storm_vol_load_sub$TPLoad, list(storm_vol_load_sub$num_split), FUN = sum)
 colnames(storm_vol_load_load) <- c("num","TPLoad")
+storm_vol_info <- unique(storm_vol_load_sub[,c(3,5,7)])
+colnames(storm_vol_info) <- c("estimated","frozen","num")
 storm_vol_load_merge <- merge(storm_vol_load_load, storm_vol_load_Start, by = "num")
 storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_End, by = "num")
 storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_peak, by = "num")
-# removing two partial storms (the other pieces of them are estimates)
-storm_vol_load_sub <- storm_vol_load_sub[which(storm_vol_load_sub$num!=9 & storm_vol_load_sub$num!=57),]
+storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_info, by="num")
+
 storms_list <- storm_vol_load_merge[,c(3,4)]
 storms_list$Start <- storms_list$Start - (120*60)
 storms_list$num <- c(1:nrow(storms_list))
@@ -54,7 +56,7 @@ for (i in 1:noreps) {
 }
 #storm_rainmaker_agg <- aggregate(storm_rainmaker,list(storm_rainmaker$num), c(min(x$startdate),max(x$enddate),max(x$theisen),max(x$p5max.inches.per.hour),max(x$p10max.inches.per.hour),max(x$p15max.inches.per.hour),max(x$p30max.inches.per.hour),max(x$p60max.inches.per.hour),max(x$ei)))
 #storm_rainmaker_agg <- ddply(storm_rainmaker[,2:3], c("storm_rainmaker$num"), summarize, min_start=min(df$enddate),max_theisen=max(df$theisen))
-# aggregate data to the storm level, using min start, max end, sum of rain and duration and max of intensities and ARFs
+# aggregate data to the storm level, using min start, max end, sum of rain and duration and max of intensities and ARFs. down to 14
 storm_rainmaker_agg_startdt <- aggregate(storm_rainmaker$StartDate.x,list(storm_rainmaker$stormnum), min)
 storm_rainmaker_agg_enddt <- aggregate(storm_rainmaker$EndDate.x,list(storm_rainmaker$stormnum),max)
 storm_rainmaker_agg_sum <- aggregate(storm_rainmaker[,4:5],list(storm_rainmaker$stormnum),sum)
@@ -65,8 +67,8 @@ data_merge <- merge(data_merge,storm_rainmaker_agg_sum,by.x="Group.1",by.y="Grou
 storm_vol_load_merge$num <- c(1:nrow(storm_vol_load_merge))
 data_merge <- merge(data_merge,storm_vol_load_merge,by.x="Group.1",by.y="num")
 data_merge$decYear <- paste(strftime(data_merge$End,"%Y"),".",as.POSIXlt(data_merge$End)$yday+1,sep="")
-data_sub <- data_merge[,c(2:11,14:16,19:20)]
-colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","TPLoad","peakDisch","decYear")
+data_sub <- data_merge[,c(2:11,14:16,19:22)]
+colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","TPLoad","peakDisch","estimated","frozen","decYear")
 data_sub$p5max.inches.per.hour <- ifelse(data_sub$p5max.inches.per.hour==-9,0,data_sub$p5max.inches.per.hour)
 data_sub$p10max.inches.per.hour <- ifelse(data_sub$p10max.inches.per.hour==-9,0,data_sub$p10max.inches.per.hour)
 data_sub$p15max.inches.per.hour <- ifelse(data_sub$p15max.inches.per.hour==-9,0,data_sub$p15max.inches.per.hour)
@@ -77,12 +79,12 @@ data_sub$TPLoad <- ifelse(data_sub$TPLoad==-9,0,data_sub$TPLoad)
 data_sub$remark <- ""
 
 # save data_sub with merged data ready for regression
-save(data_sub,file="dataSubEastRiver.RData")
+save(data_sub,file="dataSubEastRiverAll.RData")
 
 aov_data <- aov(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data_sub)
 reg_lm <- lm(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data=data_sub)
 
-siteName <- "EastRiver"
+siteName <- "EastRiverAll"
 investigateResponse <- "TPLoading"
 transformResponse <- "lognormal"
 pathToSave <- paste("/Users/jlthomps-pr/Documents/R/GLRI/",siteName[1],sep="")
@@ -95,7 +97,7 @@ dev.off()
 
 library(GSqwsr)
 library(dataRetrieval)
-siteName <- "EastRiver"
+siteName <- "EastRiverAll"
 siteNo <- '441624088045601'
 siteINFO <-  readNWISsite(siteNo)
 siteINFO$station.nm <- siteINFO$station_nm
@@ -157,6 +159,8 @@ dev.off()
 predictVariables <- names(data_sub_cens)[-which(names(data_sub_cens) %in% investigateResponse)]
 predictVariables <- predictVariables[which(predictVariables != "datetime")]
 predictVariables <- predictVariables[which(predictVariables != "decYear")]
+predictVariables <- predictVariables[which(predictVariables != "estimated")]
+predictVariables <- predictVariables[which(predictVariables != "frozen")]
 kitchenSink <- createFullFormula(data_sub_cens,investigateResponse)
 
 returnPrelim <- prelimModelDev(data_sub_cens,investigateResponse,kitchenSink,
