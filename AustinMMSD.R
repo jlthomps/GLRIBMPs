@@ -12,19 +12,19 @@ if (!is.na(dataReq$xLogTURB)) {dataDown <- paste(dataDown,"Turb",sep=",")}
 if (!is.na(dataReq$xLogCond)) {dataDown <- paste(dataDown,"Cond",sep=",")}
 if (!is.na(dataReq$xTemp)) {dataDown <- paste(dataDown,"Temp",sep=",")}
 if (sum(grep("Turb",dataDown),0)==1) {
-  adaps_turb_in <- retrieveNWISunitData(siteNo,'63680',StartDt,EndDt,format="xml")
-  colnames(adaps_turb_in) <- c("agency","siteNo","pdate","tz_cd","turb","rmrk")
+  adaps_turb_in <- readNWISuv(siteNo,'63680',StartDt,EndDt)
+  colnames(adaps_turb_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","turb")
 }
 if (sum(grep("Cond",dataDown),0)==1) {
-  adaps_cond_in <- retrieveNWISunitData(siteNo,'00095',StartDt,EndDt,format="xml")
-  colnames(adaps_cond_in) <- c("agency","siteNo","pdate","tz_cd","cond","rmrk")
+  adaps_cond_in <- readNWISuv(siteNo,'00095',StartDt,EndDt,tz="America/Chicago")
+  colnames(adaps_cond_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","cond")
 }
 if (sum(grep("Temp",dataDown),0)==1) {
-  adaps_temp_in <- retrieveNWISunitData(siteNo,'00010',StartDt,EndDt,format="xml")
-  colnames(adaps_temp_in) <- c("agency","siteNo","pdate","tz_cd","temp","rmrk")
+  adaps_temp_in <- readNWISuv(siteNo,'00010',StartDt,EndDt)
+  colnames(adaps_temp_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","temp")
 }
-adaps_disch_in <- retrieveNWISunitData(siteNo,'00060',StartDt,EndDt,format="xml")
-colnames(adaps_disch_in) <- c("agency","siteNo","pdate","tz_cd","disch","rmrk")
+adaps_disch_in <- readNWISuv(siteNo,'00060',StartDt,EndDt,tz="America/Chicago")
+colnames(adaps_disch_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","disch")
 
 # to calculate daily load
 # user will enter type (daily, monthly, annual), site, start and end date, qw pcode
