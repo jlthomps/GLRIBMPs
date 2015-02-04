@@ -1,23 +1,66 @@
 ###########################################################################
 # Do once:
 #library(devtools)
-#install.packages(c("USGSwsData","USGSwsBase","USGSwsGraphs","USGSwsQW","USGSwsStats","dataRetrieval","USGSwsQWSR"),repos="http://usgs-r.github.com")
+#install.packages(c("USGSwsData","USGSwsBase","USGSwsGraphs","USGSwsQW","USGSwsStats","dataRetrieval","GSqwsr"),repos="http://usgs-r.github.com")
 ###########################################################################
 
 library(dataRetrieval)
 siteNo <- "04087119"
-StartDt <- "2008-10-01"
-EndDt <- "2014-09-01"
+StartDt <- "2008-11-01"
+EndDt <- "2009-12-31"
 adaps_disch_in <- getNWISunitData(siteNo,'00060',StartDt,EndDt,format="xml")
-colnames(adaps_disch_in) <- c("agency","siteNo","pdate","tz_cd","disch","rmrk")
 adaps_cond_in <- getNWISunitData(siteNo,'00095',StartDt,EndDt,format="xml")
-colnames(adaps_cond_in) <- c("agency","siteNo","pdate","tz_cd","cond","rmrk")
 adaps_turb_in <- getNWISunitData(siteNo,'63680',StartDt,EndDt,format="xml")
-colnames(adaps_turb_in) <- c("agency","siteNo","pdate","tz_cd","turb","rmrk")
 adaps_temp_in <- getNWISunitData(siteNo,'00010',StartDt,EndDt,format="xml")
-colnames(adaps_temp_in) <- c("agency","siteNo","pdate","tz_cd","temp","rmrk")
 adaps_do_in <- getNWISunitData(siteNo,'00300',StartDt,EndDt,format="xml")
+StartDt <- "2010-01-01"
+EndDt <- "2010-12-31"
+adaps_disch_in2 <- getNWISunitData(siteNo,'00060',StartDt,EndDt,format="xml")
+adaps_cond_in2 <- getNWISunitData(siteNo,'00095',StartDt,EndDt,format="xml")
+adaps_turb_in2 <- getNWISunitData(siteNo,'63680',StartDt,EndDt,format="xml")
+adaps_temp_in2 <- getNWISunitData(siteNo,'00010',StartDt,EndDt,format="xml")
+adaps_do_in2 <- getNWISunitData(siteNo,'00300',StartDt,EndDt,format="xml")
+StartDt <- "2011-01-01"
+EndDt <- "2011-12-31"
+adaps_disch_in3 <- getNWISunitData(siteNo,'00060',StartDt,EndDt,format="xml")
+adaps_cond_in3 <- getNWISunitData(siteNo,'00095',StartDt,EndDt,format="xml")
+adaps_turb_in3 <- getNWISunitData(siteNo,'63680',StartDt,EndDt,format="xml")
+adaps_temp_in3 <- getNWISunitData(siteNo,'00010',StartDt,EndDt,format="xml")
+adaps_do_in3 <- getNWISunitData(siteNo,'00300',StartDt,EndDt,format="xml")
+StartDt <- "2012-01-01"
+EndDt <- "2012-12-31"
+adaps_disch_in4 <- getNWISunitData(siteNo,'00060',StartDt,EndDt,format="xml")
+adaps_cond_in4 <- getNWISunitData(siteNo,'00095',StartDt,EndDt,format="xml")
+adaps_turb_in4 <- getNWISunitData(siteNo,'63680',StartDt,EndDt,format="xml")
+adaps_temp_in4 <- getNWISunitData(siteNo,'00010',StartDt,EndDt,format="xml")
+adaps_do_in4 <- getNWISunitData(siteNo,'00300',StartDt,EndDt,format="xml")
+StartDt <- "2013-01-01"
+EndDt <- "2013-12-31"
+adaps_disch_in5 <- getNWISunitData(siteNo,'00060',StartDt,EndDt,format="xml")
+adaps_cond_in5 <- getNWISunitData(siteNo,'00095',StartDt,EndDt,format="xml")
+adaps_turb_in5 <- getNWISunitData(siteNo,'63680',StartDt,EndDt,format="xml")
+adaps_temp_in5 <- getNWISunitData(siteNo,'00010',StartDt,EndDt,format="xml")
+adaps_do_in5 <- getNWISunitData(siteNo,'00300',StartDt,EndDt,format="xml")
+StartDt <- "2014-01-01"
+EndDt <- "2014-12-31"
+adaps_disch_in6 <- getNWISunitData(siteNo,'00060',StartDt,EndDt,format="xml")
+adaps_cond_in6 <- getNWISunitData(siteNo,'00095',StartDt,EndDt,format="xml")
+adaps_turb_in6 <- getNWISunitData(siteNo,'63680',StartDt,EndDt,format="xml")
+adaps_temp_in6 <- getNWISunitData(siteNo,'00010',StartDt,EndDt,format="xml")
+adaps_do_in6 <- getNWISunitData(siteNo,'00300',StartDt,EndDt,format="xml")
+adaps_disch_in <- rbind(adaps_disch_in,adaps_disch_in2,adaps_disch_in3,adaps_disch_in4,adaps_disch_in5,adaps_disch_in6)
+colnames(adaps_disch_in) <- c("agency","siteNo","pdate","tz_cd","disch","rmrk")
+adaps_cond_in <- rbind(adaps_cond_in,adaps_cond_in2,adaps_cond_in3,adaps_cond_in4,adaps_cond_in5,adaps_cond_in6)
+colnames(adaps_cond_in) <- c("agency","siteNo","pdate","tz_cd","cond","rmrk")
+adaps_turb_in <- rbind(adaps_turb_in,adaps_turb_in2,adaps_turb_in3,adaps_turb_in4,adaps_turb_in5,adaps_turb_in6)
+colnames(adaps_turb_in) <- c("agency","siteNo","pdate","tz_cd","turb","rmrk")
+adaps_temp_in <- rbind(adaps_temp_in,adaps_temp_in2,adaps_temp_in3,adaps_temp_in4,adaps_temp_in5,adaps_temp_in6)
+colnames(adaps_temp_in) <- c("agency","siteNo","pdate","tz_cd","temp","rmrk")
+adaps_do_in <- rbind(adaps_do_in,adaps_do_in2,adaps_do_in3,adaps_do_in4,adaps_do_in5,adaps_do_in6)
 colnames(adaps_do_in) <- c("agency","siteNo","pdate","tz_cd","do","rmrk")
+
+StartDt <- "2008-11-01"
+EndDt <- "2014-12-31"
 
 #00530 TSS
 tss_data <- getNWISqwData(siteNo,'00530',StartDt,EndDt,expanded=TRUE)
@@ -42,10 +85,10 @@ adaps_temp_in$pdate2 <- force_tz(adaps_temp_in$pdate,tzone="UTC")
 adaps_turb_in$pdate2 <- force_tz(adaps_turb_in$pdate,tzone="UTC")
 
 # Merge response variable samples 
-dataMerge <- merge(cl_data[,c(1:4,8)],fecal_data[,c(1,3:4,8)],by="dateTime",all=TRUE)
-dataMerge <- merge(dataMerge,tss_data[,c(1,3,4,8)],by="dateTime",all=TRUE)
-dataMerge <- merge(dataMerge,tp_data[,c(1,4,5,9)],by="dateTime",all=TRUE)
-dataMerge <- merge(dataMerge,ecoli_data[,c(1,3,4,8)],by="dateTime",all=TRUE)
+dataMerge <- merge(cl_data[,c(2,9,15:16,20)],fecal_data[,c(9,15:16,20)],by="startDateTime",all=TRUE)
+dataMerge <- merge(dataMerge,tss_data[,c(9,15:16,20)],by="startDateTime",all=TRUE)
+dataMerge <- merge(dataMerge,tp_data[,c(9,15:16,20)],by="startDateTime",all=TRUE)
+dataMerge <- merge(dataMerge,ecoli_data[,c(9,15:16,20)],by="startDateTime",all=TRUE)
 colnames(dataMerge) <- c("dateTime","site","remark00940Cl","result00940Cl","rptlev00940Cl","remark31616Fec","result31616Fec","rptlev31616Fec","remark00530TSS","result00530TSS","rptlev00530TSS","remark00665TP","result00665TP","rptlev00665TP","remark50468Ec","result50468Ec","rptlev50468Ec")
 
 # Add nearest instantaneous measurements to response variable samples
@@ -84,6 +127,7 @@ for (i in 1:n) {
   }
 }
 
+library(GSqwsr)
 dataMerge$decYear <- getDecYear(dataMerge$dateTime)
 dataMerge$sinDY <- sin(dataMerge$decYear*2*pi)
 dataMerge$cosDY <- cos(dataMerge$decYear*2*pi)
@@ -103,7 +147,7 @@ data_sub$result00940Cl <- log(data_sub$result00940Cl)
 data_sub$rptlev00940Cl <- log(data_sub$rptlev00940Cl)
 
 # set necessary site information and inputs to step-wise regression
-library(GSqwsr)
+#library(GSqwsr)
 data_sub_cens <- importQW(data_sub,c("q","decYear","sinDY","cosDY"),"result00940Cl","remark00940Cl","","rptlev00940Cl","User","tons","Unk","","00940","CompCl")
 #data_sub_cens <- importQW(data_sub,c("intensity","I5","I10","I60","ARF1","rain","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
 siteName <- "Honey Creek"
@@ -113,16 +157,7 @@ investigateResponse <- "CompCl"
 # choose 'normal' or 'lognormal' distribution for data
 transformResponse <- "lognormal"
 
-pathToSave <- paste("/Users/jlthomps/Documents/R/MMSD/",siteName,sep="")
-
-# ##########################################################
-# # Preliminary Assessment Plots:
-# # pdf(paste(pathToSave,"/InitialQQGraphs",investigateResponse,".pdf",sep=""))
-# pdf(paste(pathToSave,"/",investigateResponse,"_InitialQQGraphs.pdf",sep=""))
-# plotQQTransforms(data_sub_cens,investigateResponse)
-# predictVariableScatterPlots(data_sub_cens,investigateResponse)
-# dev.off()
-# ##########################################################
+pathToSave <- paste("/Users/jlthomps/R/",siteName,sep="")
 
 #################################################################################################
 #Kitchen sink:
@@ -142,13 +177,13 @@ colnames(steps) <- c("step","BIC","Deviance","Resid.Dev","Resid.Df","Correlation
 
 
 #Save plotSteps to file:
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/plotStepsGLRI.R")
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/analyzeStepsGLRI.R")
-pdf(paste(pathToSave,"/",investigateResponse,"_plotSteps.pdf",sep=""))
+source("/Users/jlthomps/GLRIBMPs/plotStepsGLRI.R")
+source("/Users/jlthomps/GLRIBMPs/analyzeStepsGLRI.R")
+pdf(paste(siteName,investigateResponse,"_plotSteps.pdf",sep=""))
 plotStepsGLRI(steps,data_sub_cens,transformResponse)
 dev.off()
 
-pdf(paste(pathToSave,"/",investigateResponse,"_analyzeSteps.pdf",sep=""))
+pdf(paste(siteName,investigateResponse,"_analyzeSteps.pdf",sep=""))
 analyzeStepsGLRI(steps, investigateResponse,siteINFO, xCorner = 0.01)
 dev.off()
 
@@ -156,7 +191,7 @@ dev.off()
 
 ##########################################################
 #Save steps to file:
-fileToSave <- paste(pathToSave,"/",investigateResponse,"_steps.csv",sep="")
+fileToSave <- paste(siteName,investigateResponse,"_steps.csv",sep="")
 write.table(steps, fileToSave, row.names=FALSE, sep=",") 
 ##########################################################
 
@@ -167,9 +202,9 @@ choices <- generateParamChoices(predictVariables,modelReturn,pathToSave,save=TRU
 
 #####################################################
 # Print summary in console:
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/summaryPrintoutGLRI.R")
-fileName <- paste(pathToSave,"/", investigateResponse,"Summary_2.txt", sep="")
-summaryPrintoutGLRI(modelReturn, steps, siteINFO, saveOutput=TRUE,fileName)
+source("/Users/jlthomps/GLRIBMPs/summaryPrintoutGLRI.R")
+fileName <- paste(siteName, investigateResponse,"Summary_2.txt", sep="")
+summaryPrintoutGLRI(modelReturn, siteINFO, saveOutput=TRUE,fileName)
 #####################################################
 
 ##############################################################################
