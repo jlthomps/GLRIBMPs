@@ -1,30 +1,18 @@
 modelCoefs <- read.delim(file="MMSDmodelCoef.csv",stringsAsFactors=FALSE)
 siteNo <- "04087119"
-StartDt <- "2012-10-01"
-EndDt <- "2014-09-01"
+StartDt <- "2008-11-01"
+EndDt <- "2014-12-31"
 compQW <- 'Cl' # one of c('Cl','Fec','Ec','TSS','TP')
 
 library(dataRetrieval)
 library(USGSHydroTools)
-dataReq <- modelCoefs[which(modelCoefs$type=='R' & modelCoefs$y==compQW),]
-dataDown <- ""
-if (!is.na(dataReq$xLogTURB)) {dataDown <- paste(dataDown,"Turb",sep=",")}
-if (!is.na(dataReq$xLogCond)) {dataDown <- paste(dataDown,"Cond",sep=",")}
-if (!is.na(dataReq$xTemp)) {dataDown <- paste(dataDown,"Temp",sep=",")}
-if (sum(grep("Turb",dataDown),0)==1) {
-  adaps_turb_in <- readNWISuv(siteNo,'63680',StartDt,EndDt)
-  colnames(adaps_turb_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","turb")
-}
-if (sum(grep("Cond",dataDown),0)==1) {
-  adaps_cond_in <- readNWISuv(siteNo,'00095',StartDt,EndDt,tz="America/Chicago")
-  colnames(adaps_cond_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","cond")
-}
-if (sum(grep("Temp",dataDown),0)==1) {
-  adaps_temp_in <- readNWISuv(siteNo,'00010',StartDt,EndDt)
-  colnames(adaps_temp_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","temp")
-}
-adaps_disch_in <- readNWISuv(siteNo,'00060',StartDt,EndDt,tz="America/Chicago")
-colnames(adaps_disch_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","disch")
+library(GSqwsr)
+dataReg1 <- modelCoefs[which(modelCoefs$type=='R' & modelCoefs$y==compQW & modelCoefs$staid==as.numeric(siteNo)),]
+dataReg2 <- modelCoefs[which(modelCoefs$type=='Q' & modelCoefs$y==compQW & modelCoefs$staid==as.numeric(siteNo)),]
+dataReg1[is.na(dataReg1)] <- 0
+dataReg2[is.na(dataReg2)] <- 0
+load("C:/Users/jlthomps/Desktop/git/GLRIBMPs/AustinDataHoney.RData")
+
 
 # to calculate daily load
 # user will enter type (daily, monthly, annual), site, start and end date, qw pcode
@@ -39,17 +27,47 @@ colnames(adaps_disch_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","disch")
 # correctly if this is so. also, need discharge data set to start before and end after continuous QW for LoadInstantaneous
 # issue - LoadInstantaneous (and HydroVol) are hella slow with large data sets. Try rewriting with dplyr
 # couldn't reproduce regressions, I think b/c differing data sets, not all on nwisweb and maybe some removed?
-if ("Turb" %in% dataDown) {
-  if nrow()
-}
-difftime(strptime(EndDt,format="%Y-%m-%d"),strptime(StartDt,format="%Y-%m-%d"))
-logcompQW <- dataReq$b + (dataReq$xLogCond * log10(adaps_cond_in$cond))
-dfQW <- cbind(adaps_cond_in[,c(1:4)],10^logcompQW)
-colnames(dfQW) <- c("agency","siteNo","pdate","tz_cd","logcompQW")
-smalldfQW <- dfQW[which(dfQW$pdate<=strptime("2012-10-31","%Y-%m-%d")),]
+
+
+adaps_disch_in <- unique(adaps_disch_in[,c(1:3,5)])
+adaps_disch_in[adaps_disch_in$disch<=0,]$disch <- NA
+temp <- diff(adaps_disch_in$pdate,lag=1)
+temp <- c(1,temp)
+adaps_disch_in
+adaps_data_reg <- merge(adaps_cond_in,adaps_turb_in[,c(3,5)],by="pdate")
+adaps_data_reg <- merge(adaps_data_reg,adaps_temp_in[,c(3,5)],by="pdate")
+adaps_data_reg$compQWreg1 <- 10 ^ ((log10(adaps_data_reg$cond) * dataReg1$xLogCond) + (log10(adaps_data_reg$turb) * dataReg1$xLogTURB) + (adaps_data_reg$temp * dataReg1$xTemp) + dataReg1$b)
+adaps_data_reg <- merge(adaps_data_reg,adaps_disch_in[,3:4],by="pdate",all=TRUE)
+adaps_data_reg$decYear <- getDecYear(adaps_data_reg$pdate)
+adaps_data_reg$sinDY <- sin(adaps_data_reg$decYear*2*pi)
+adaps_data_reg$cosDY <- cos(adaps_data_reg$decYear*2*pi)
+adaps_data_reg$compQWreg2 <- ((log10(adaps_data_reg$disch) * dataReg2$xLogQ) + (adaps_data_reg$disch * dataReg2$xQ) + (adaps_data_reg$sinDY * dataReg2$sinDY) + (adaps_data_reg$cosDY * dataReg2$cosDY) + dataReg2$b)
+adaps_data_reg$compQWreg <- ifelse(!is.na(adaps_data_reg$compQWreg1),adaps_data_reg$compQWreg1,adaps_data_reg$compQWreg2)
+
+
+
+adaps_data_regFit <- adaps_data_reg[!is.na(adaps_data_reg$disch),c(1,10)]
+adaps_data_regFit$pdate2 <- as.numeric(adaps_data_regFit$pdate)
+fit <- loess(disch ~ pdate2, adaps_data_regFit)
+adaps_data_reg$dischint <- predict(fit,adaps_data_reg$pdate)
+
+adaps_data_regInt <- adaps_data_reg[is.na(adaps_data_reg$disch),]
+adaps_data_regFit$pdate2 <- as.numeric(adaps_data_regFit$pdate)
+fit <- loess(disch ~ pdate2, adaps_data_regFit)
+
+
+adaps_data_reg2 <- adaps_data_reg[is.na(adaps_data_reg$compQWreg1),]
+temp <- diff(adaps_data_reg$pdate,lag=1)
+temp <- c(1,temp)
+adaps_data_reg$difftime <- temp
+adaps_data_reg
+
+smalldfQW <- adaps_data_reg[which(adaps_data_reg$pdate<=strptime("2012-10-31","%Y-%m-%d")),]
 smalladaps_disch_in <- adaps_disch_in[which(adaps_disch_in$pdate<=strptime("2012-10-31","%Y-%m-%d")),]
 smalldfQW <- smalldfQW[which(smalldfQW$pdate %in% smalladaps_disch_in$pdate),]
 n <- nrow(smalldfQW)-1
 smalldfQW <- smalldfQW[c(2:n),]
-instLoad <- LoadInstantaneous(smalldfQW,Conc="logcompQW",sample.time="pdate",Conc2liters=1,df.Q=smalladaps_disch_in,Q="disch",Q.time="pdate",Q2liters=28.3168466)
+instLoad <- LoadInstantaneous(smalldfQW,Conc="logcompQWreg1",sample.time="pdate",Conc2liters=1,df.Q=smalladaps_disch_in,Q="disch",Q.time="pdate",Q2liters=28.3168466)
 
+
+cl_check <- merge(smalldfQW[,c(1,5,13)],cl_data[,c(15,23)],by.x="pdate",by.y="startDateTime")

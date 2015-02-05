@@ -25,9 +25,9 @@ summaryPrintoutGLRI <- function (modelReturn, siteINFO, saveOutput = FALSE, file
   printFormula <- paste(responseVariable, " ~ ", termNames, 
                         sep = "")
   numCensored <- sum(modelReturn$CENSFLAG)
-  prettyName <- simpleCap(siteINFO$station.nm)
+  prettyName <- simpleCap(siteINFO$station_nm)
   prettyName <- gsub("Wi", "WI", prettyName)
-  cat(responseVariable, " at ", prettyName, " (", siteINFO$site.no, 
+  cat(responseVariable, " at ", prettyName, " (", siteINFO$site_no, 
       ")\n")
   cat("Number of observations: ", modelReturn$NOBSC, "\n")
   cat("Distribution: ", modelReturn$dist, "\n")

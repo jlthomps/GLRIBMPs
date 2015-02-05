@@ -45,7 +45,7 @@ analyzeStepsGLRI <- function(steps, responseVariable, siteINFO, xCorner = 0.65, 
   legend(x1, y1, c("Correlation", "Slope", "RMSE", "PRESS"), 
          pch=c(20, 20, 20, 20),col=c("black", "red","blue","forestgreen"))
   
-  prettyName <- simpleCap(siteINFO$station.nm)
+  prettyName <- simpleCap(siteINFO$station_nm)
   prettyName <- gsub("Wi", "WI",prettyName) #Consider other states.
   
   title(paste(prettyName, " \n ", responseVariable, sep=""))
