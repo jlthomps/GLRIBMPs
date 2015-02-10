@@ -1,5 +1,5 @@
 modelCoefs <- read.delim(file="MMSDmodelCoef.csv",stringsAsFactors=FALSE)
-siteNo <- "04087119"
+siteNo <- "04087088"
 StartDt <- "2008-11-01"
 EndDt <- "2014-12-31"
 compQW <- 'Cl' # one of c('Cl','Fec','Ec','TSS','TP')
@@ -11,7 +11,7 @@ dataReg1 <- modelCoefs[which(modelCoefs$type=='R' & modelCoefs$y==compQW & model
 dataReg2 <- modelCoefs[which(modelCoefs$type=='Q' & modelCoefs$y==compQW & modelCoefs$staid==as.numeric(siteNo)),]
 dataReg1[is.na(dataReg1)] <- 0
 dataReg2[is.na(dataReg2)] <- 0
-load("C:/Users/jlthomps/Desktop/git/GLRIBMPs/AustinDataHoney.RData")
+load("C:/Users/jlthomps/Documents/R/AustinDataUnderwood.RData")
 
 
 # to calculate daily load
@@ -29,19 +29,18 @@ load("C:/Users/jlthomps/Desktop/git/GLRIBMPs/AustinDataHoney.RData")
 # couldn't reproduce regressions, I think b/c differing data sets, not all on nwisweb and maybe some removed?
 
 
-adaps_disch_in <- unique(adaps_disch_in[,c(1:3,5)])
-adaps_disch_in[adaps_disch_in$disch<=0,]$disch <- NA
+if (min(adaps_disch_in$disch,na.rm=TRUE)<=0) {adaps_disch_in[which(adaps_disch_in$disch<=0),]$disch <- NA}
 temp <- diff(adaps_disch_in$pdate,lag=1)
 temp <- c(1,temp)
-adaps_disch_in
-adaps_data_reg <- merge(adaps_cond_in,adaps_turb_in[,c(3,5)],by="pdate")
-adaps_data_reg <- merge(adaps_data_reg,adaps_temp_in[,c(3,5)],by="pdate")
+
+adaps_data_reg <- merge(adaps_cond_in,adaps_turb_in[,c(3,6)],by="pdate")
+adaps_data_reg <- merge(adaps_data_reg,adaps_temp_in[,c(3,6)],by="pdate")
 adaps_data_reg$compQWreg1 <- 10 ^ ((log10(adaps_data_reg$cond) * dataReg1$xLogCond) + (log10(adaps_data_reg$turb) * dataReg1$xLogTURB) + (adaps_data_reg$temp * dataReg1$xTemp) + dataReg1$b)
-adaps_data_reg <- merge(adaps_data_reg,adaps_disch_in[,3:4],by="pdate",all=TRUE)
+adaps_data_reg <- merge(adaps_data_reg,adaps_disch_in[,c(3,6)],by="pdate",all=TRUE)
 adaps_data_reg$decYear <- getDecYear(adaps_data_reg$pdate)
 adaps_data_reg$sinDY <- sin(adaps_data_reg$decYear*2*pi)
 adaps_data_reg$cosDY <- cos(adaps_data_reg$decYear*2*pi)
-adaps_data_reg$compQWreg2 <- ((log10(adaps_data_reg$disch) * dataReg2$xLogQ) + (adaps_data_reg$disch * dataReg2$xQ) + (adaps_data_reg$sinDY * dataReg2$sinDY) + (adaps_data_reg$cosDY * dataReg2$cosDY) + dataReg2$b)
+adaps_data_reg$compQWreg2 <- exp(1) ^ ((log10(adaps_data_reg$disch) * dataReg2$xLogQ) + (adaps_data_reg$disch * dataReg2$xQ) + (adaps_data_reg$sinDY * dataReg2$sinDY) + (adaps_data_reg$cosDY * dataReg2$cosDY) + dataReg2$b)
 adaps_data_reg$compQWreg <- ifelse(!is.na(adaps_data_reg$compQWreg1),adaps_data_reg$compQWreg1,adaps_data_reg$compQWreg2)
 
 
@@ -52,8 +51,6 @@ fit <- loess(disch ~ pdate2, adaps_data_regFit)
 adaps_data_reg$dischint <- predict(fit,adaps_data_reg$pdate)
 
 adaps_data_regInt <- adaps_data_reg[is.na(adaps_data_reg$disch),]
-adaps_data_regFit$pdate2 <- as.numeric(adaps_data_regFit$pdate)
-fit <- loess(disch ~ pdate2, adaps_data_regFit)
 
 
 adaps_data_reg2 <- adaps_data_reg[is.na(adaps_data_reg$compQWreg1),]

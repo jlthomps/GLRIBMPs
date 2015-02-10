@@ -27,6 +27,13 @@ adaps_cond_in3 <- readNWISuv(siteNo,'00095',StartDt,EndDt,tz="America/Chicago")
 adaps_turb_in3 <- readNWISuv(siteNo,'63680',StartDt,EndDt,tz="America/Chicago")
 adaps_temp_in3 <- readNWISuv(siteNo,'00010',StartDt,EndDt,tz="America/Chicago")
 adaps_do_in3 <- readNWISuv(siteNo,'00300',StartDt,EndDt,tz="America/Chicago")
+adaps_disch_in <- rbind(adaps_disch_in,adaps_disch_in2,adaps_disch_in3)
+adaps_cond_in <- rbind(adaps_cond_in,adaps_cond_in2,adaps_cond_in3)
+adaps_turb_in <- rbind(adaps_turb_in,adaps_turb_in2,adaps_turb_in3)
+adaps_temp_in <- rbind(adaps_temp_in,adaps_temp_in2,adaps_temp_in3)
+adaps_do_in <- rbind(adaps_do_in,adaps_do_in2,adaps_do_in3)
+
+siteNo <- "04087088"
 StartDt <- "2012-01-01"
 EndDt <- "2012-12-31"
 adaps_disch_in4 <- readNWISuv(siteNo,'00060',StartDt,EndDt,tz="America/Chicago")
@@ -48,15 +55,16 @@ adaps_cond_in6 <- readNWISuv(siteNo,'00095',StartDt,EndDt,tz="America/Chicago")
 adaps_turb_in6 <- readNWISuv(siteNo,'63680',StartDt,EndDt,tz="America/Chicago")
 adaps_temp_in6 <- readNWISuv(siteNo,'00010',StartDt,EndDt,tz="America/Chicago")
 adaps_do_in6 <- readNWISuv(siteNo,'00300',StartDt,EndDt,tz="America/Chicago")
-adaps_disch_in <- rbind(adaps_disch_in,adaps_disch_in2,adaps_disch_in3,adaps_disch_in4,adaps_disch_in5,adaps_disch_in6)
+
+adaps_disch_in <- rbind(adaps_disch_in,adaps_disch_in4,adaps_disch_in5,adaps_disch_in6)
 colnames(adaps_disch_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","disch")
-adaps_cond_in <- rbind(adaps_cond_in,adaps_cond_in2,adaps_cond_in3,adaps_cond_in4,adaps_cond_in5,adaps_cond_in6)
+adaps_cond_in <- rbind(adaps_cond_in,adaps_cond_in4,adaps_cond_in5,adaps_cond_in6)
 colnames(adaps_cond_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","cond")
-adaps_turb_in <- rbind(adaps_turb_in,adaps_turb_in2,adaps_turb_in3,adaps_turb_in4,adaps_turb_in5,adaps_turb_in6)
+adaps_turb_in <- rbind(adaps_turb_in,adaps_turb_in4,adaps_turb_in5,adaps_turb_in6)
 colnames(adaps_turb_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","turb")
-adaps_temp_in <- rbind(adaps_temp_in,adaps_temp_in2,adaps_temp_in3,adaps_temp_in4,adaps_temp_in5,adaps_temp_in6)
+adaps_temp_in <- rbind(adaps_temp_in,adaps_temp_in4,adaps_temp_in5,adaps_temp_in6)
 colnames(adaps_temp_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","temp")
-adaps_do_in <- rbind(adaps_do_in,adaps_do_in2,adaps_do_in3,adaps_do_in4,adaps_do_in5,adaps_do_in6)
+adaps_do_in <- rbind(adaps_do_in,adaps_do_in4,adaps_do_in5,adaps_do_in6)
 colnames(adaps_do_in) <- c("agency","siteNo","pdate","tz_cd","rmrk","do")
 
 StartDt <- "2008-11-01"
@@ -126,6 +134,8 @@ for (i in 1:n) {
     dataMerge$turb[i] <- NA
   }
 }
+
+save(adaps_disch_in,adaps_do_in,adaps_temp_in,adaps_turb_in,adaps_cond_in,dataMerge,file="AustinDataUnderwood.RData")
 
 library(GSqwsr)
 dataMerge$decYear <- getDecYear(dataMerge$dateTime)
