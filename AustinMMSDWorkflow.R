@@ -5,7 +5,7 @@
 ###########################################################################
 
 library(dataRetrieval)
-siteNo <- "04087088"
+siteNo <- "04087120"
 StartDt <- "2008-11-01"
 EndDt <- "2009-12-31"
 adaps_disch_in <- readNWISuv(siteNo,'00060',StartDt,EndDt,tz="America/Chicago")
@@ -33,7 +33,7 @@ adaps_turb_in <- rbind(adaps_turb_in,adaps_turb_in2,adaps_turb_in3)
 adaps_temp_in <- rbind(adaps_temp_in,adaps_temp_in2,adaps_temp_in3)
 adaps_do_in <- rbind(adaps_do_in,adaps_do_in2,adaps_do_in3)
 
-siteNo <- "04087088"
+siteNo <- "04087120"
 StartDt <- "2012-01-01"
 EndDt <- "2012-12-31"
 adaps_disch_in4 <- readNWISuv(siteNo,'00060',StartDt,EndDt,tz="America/Chicago")
@@ -135,7 +135,9 @@ for (i in 1:n) {
   }
 }
 
-save(adaps_disch_in,adaps_do_in,adaps_temp_in,adaps_turb_in,adaps_cond_in,dataMerge,file="AustinDataUnderwood.RData")
+save(adaps_disch_in,adaps_do_in,adaps_temp_in,adaps_turb_in,adaps_cond_in,dataMerge,file="AustinDataWawa.RData")
+
+siteNo <- "04087120"
 
 library(GSqwsr)
 dataMerge$decYear <- getDecYear(dataMerge$dateTime)
@@ -161,7 +163,7 @@ data_sub <- data_sub[,c("dateTime","remark00940Cl","result00940Cl","rptlev00940C
 #library(GSqwsr)
 data_sub_cens <- importQW(data_sub,c("q","decYear","sinDY","cosDY"),"result00940Cl","remark00940Cl","","rptlev00940Cl","User","tons","Unk","","00940","CompCl")
 #data_sub_cens <- importQW(data_sub,c("intensity","I5","I10","I60","ARF1","rain","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
-siteName <- "Underwood"
+siteName <- "MenomoneeWawa"
 siteINFO <-  readNWISsite(siteNo)
 # name of value column in data_sub_cens object
 investigateResponse <- "CompCl"
@@ -225,7 +227,7 @@ data_sub <- data_sub[,c("dateTime","remark31616Fec","result31616Fec","rptlev3161
 #library(GSqwsr)
 data_sub_cens <- importQW(data_sub,c("q","decYear","sinDY","cosDY"),"result31616Fec","remark31616Fec","","rptlev31616Fec","User","tons","Unk","","31616","CompFec")
 #data_sub_cens <- importQW(data_sub,c("intensity","I5","I10","I60","ARF1","rain","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
-siteName <- "Underwood"
+siteName <- "MenomoneeWawa"
 siteINFO <-  readNWISsite(siteNo)
 # name of value column in data_sub_cens object
 investigateResponse <- "CompFec"
@@ -289,7 +291,7 @@ data_sub <- data_sub[,c("dateTime","remark00530TSS","result00530TSS","rptlev0053
 #library(GSqwsr)
 data_sub_cens <- importQW(data_sub,c("q","decYear","sinDY","cosDY"),"result00530TSS","remark00530TSS","","rptlev00530TSS","User","tons","Unk","","00530","CompTSS")
 #data_sub_cens <- importQW(data_sub,c("intensity","I5","I10","I60","ARF1","rain","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
-siteName <- "Underwood"
+siteName <- "MenomoneeWawa"
 siteINFO <-  readNWISsite(siteNo)
 # name of value column in data_sub_cens object
 investigateResponse <- "CompTSS"
@@ -353,7 +355,7 @@ data_sub <- data_sub[,c("dateTime","remark00665TP","result00665TP","rptlev00665T
 #library(GSqwsr)
 data_sub_cens <- importQW(data_sub,c("q","decYear","sinDY","cosDY"),"result00665TP","remark00665TP","","rptlev00665TP","User","tons","Unk","","00665","CompTP")
 #data_sub_cens <- importQW(data_sub,c("intensity","I5","I10","I60","ARF1","rain","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
-siteName <- "Underwood"
+siteName <- "MenomoneeWawa"
 siteINFO <-  readNWISsite(siteNo)
 # name of value column in data_sub_cens object
 investigateResponse <- "CompTP"
@@ -419,7 +421,7 @@ data_sub <- data_sub[,c("dateTime","remark50468Ec","result50468Ec","rptlev50468E
 #library(GSqwsr)
 data_sub_cens <- importQW(data_sub,c("q","decYear","sinDY","cosDY"),"result50468Ec","remark50468Ec","","rptlev50468Ec","User","tons","Unk","","50468","CompEc")
 #data_sub_cens <- importQW(data_sub,c("intensity","I5","I10","I60","ARF1","rain","duration","peakDisch","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
-siteName <- "Underwood"
+siteName <- "MenomoneeWawa"
 siteINFO <-  readNWISsite(siteNo)
 # name of value column in data_sub_cens object
 investigateResponse <- "CompEc"
