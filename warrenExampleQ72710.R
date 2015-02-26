@@ -3,7 +3,7 @@ library(USGSwsStats)
 library(EflowStats)
 library(NWCCompare)
 library(zoo)
-setwd("/Users/jlthomps/GLRIBMPs")
+setwd("C:/Users/jlthomps/Desktop/git/GLRIBMPs")
 sites <- c("055451345","05435950","05435943","05426500","05408500","05403000","05402500","05400500","05400000","05399000","05398500","05397000","05396000","05394000","05392400","05392000","05370500","040085119","05367000","05364500","05358000","05355500","04084445","04083545","04083500","04083000","04075500","04068000","04028000")
 files <- paste(sites,"data.rdb",sep="")
 #sites <- read.table("Gaging stations Warren.txt",header=TRUE,sep="\t",stringsAsFactors=FALSE,colClasses="character")
@@ -24,7 +24,7 @@ for (i in 1:length(sites)) {
   startdate <- "1969-10-01"
   enddate <- "2008-09-30"
   property <- "00060"
-  dataPath <- "/Users/jlthomps/GLRIBMPs/"
+  dataPath <- "C:/Users/jlthomps/Desktop/git/GLRIBMPs/"
   flowData <- read.table(paste(dataPath, file, sep = ""), sep = "\t", stringsAsFactors = FALSE, header = TRUE)
   flowData <- flowData[-1, c(1,3)]
   flowData$DATE <- strptime(flowData$DATE, format = "%Y%m%d")
@@ -58,7 +58,7 @@ for (i in 1:length(sites)) {
     min7daybyyear <- aggregate(rollingavgs7day$day7mean, 
                                list(rollingavgs7day$wy_val), min, na.rm=TRUE)
     colnames(min7daybyyear) <- c("year","min7day")
-    siteNo <- rep(site,nrow(min7daybyyear))
+    siteNo <- rep(sites[i],nrow(min7daybyyear))
     min7dayperSite <- rbind(min7dayperSite,cbind(siteNo,min7daybyyear))
     sort_7day <- sort(min7daybyyear$min7day)
     rank_50 <- floor(findrank(length(sort_7day), 0.5))
