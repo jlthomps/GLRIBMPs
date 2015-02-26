@@ -1,11 +1,11 @@
-siteNos <- c("04087119","04087050","04087142","04087030","04087129","04087088")
+siteNos <- c("04087119","04087050","04087142","04087030","04087120","04087088")
 startDts <- c("2008-11-01","2008-11-01","2008-11-01","2008-11-01","2008-11-01","2010-02-01")
 endDts <- c("2014-12-31","2014-12-31","2014-12-31","2014-12-31","2014-12-31","2014-12-31")
 loadFiles <- c("AustinDataHoney.RData","AustinDataLittleMenomonee.RData","AustinDataMenomonee16.RData","AustinDataMenomoneeFalls.RData","AustinDataWawa.RData","AustinDataUnderwood.RData")
 compQWs <- c("Cl","Fec","Ec","TSS","TP")
 modelCoefs <- read.delim(file="/Users/jlthomps/GLRIBMPs/MMSDmodelCoef.csv",stringsAsFactors=FALSE)
 
-for (k in 1:6) {
+for (k in 5:6) {
   siteNo <- siteNos[k]
   StartDt <- startDts[k]
   EndDt <- endDts[k]
