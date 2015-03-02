@@ -3,15 +3,15 @@ startDts <- c("2008-11-01","2008-11-01","2008-11-01","2008-11-01","2008-11-01","
 endDts <- c("2014-12-31","2014-12-31","2014-12-31","2014-12-31","2014-12-31","2014-12-31")
 loadFiles <- c("AustinDataHoney.RData","AustinDataLittleMenomonee.RData","AustinDataMenomonee16.RData","AustinDataMenomoneeFalls.RData","AustinDataWawa.RData","AustinDataUnderwood.RData")
 compQWs <- c("Cl","Fec","Ec","TSS","TP")
-modelCoefs <- read.delim(file="/Users/jlthomps/GLRIBMPs/MMSDmodelCoef.csv",stringsAsFactors=FALSE)
+modelCoefs <- read.delim(file="/Users/jlthomps/Desktop/git/GLRIBMPs/MMSDmodelCoef.csv",stringsAsFactors=FALSE)
 
-for (k in 5:6) {
+for (k in 1:6) {
   siteNo <- siteNos[k]
   StartDt <- startDts[k]
   EndDt <- endDts[k]
   loadFile <- loadFiles[k]
   #load previously saved continuous and merged data for appropriate site
-  load(paste("/Users/jlthomps/GLRIBMPs/",loadFile,sep=""))
+  load(paste("/Users/jlthomps/Desktop/git/GLRIBMPs/",loadFile,sep=""))
   for (j in 1:5) {
     compQW <- compQWs[j] # one of c('Cl','Fec','Ec','TSS','TP')
     
