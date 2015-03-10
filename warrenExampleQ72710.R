@@ -4,7 +4,7 @@ library(EflowStats)
 library(NWCCompare)
 library(zoo)
 setwd("C:/Users/jlthomps/Desktop/git/GLRIBMPs")
-sites <- c("055451345","05435950","05435943","05426500","05408500","05403000","05402500","05400500","05400000","05399000","05398500","05397000","05396000","05394000","05392400","05392000","05370500","040085119","05367000","05364500","05358000","05355500","04084445","04083545","04083500","04083000","04075500","04068000","04028000")
+sites <- c("055451345","05435950","05435943","05426500","05408500","05403000","05402500","05400500","05400000","05399000","05398500","05397000","05396000","05394000","05392400","05392000","05370500","04085119","05367000","05364500","05358000","05355500","04084445","04083545","04083500","04083000","04075500","04068000","04028000")
 files <- paste(sites,"data.rdb",sep="")
 #sites <- read.table("Gaging stations Warren.txt",header=TRUE,sep="\t",stringsAsFactors=FALSE,colClasses="character")
 #sites$station <- ifelse(nchar(sites$station)<9,paste('0',sites$station,sep=""),sites$station)
@@ -21,8 +21,8 @@ colnames(min7dayperSite) <- c("siteNo","year","min7day")
 for (i in 1:length(sites)) {
   #site <- sites[i,1]
   file <- files[i]
-  startdate <- "1969-10-01"
-  enddate <- "2008-09-30"
+  startdate <- "1900-10-01"
+  enddate <- "2013-09-30"
   property <- "00060"
   dataPath <- "C:/Users/jlthomps/Desktop/git/GLRIBMPs/"
   flowData <- read.table(paste(dataPath, file, sep = ""), sep = "\t", stringsAsFactors = FALSE, header = TRUE)
@@ -41,8 +41,8 @@ for (i in 1:length(sites)) {
     cat("no data available for site",sites[i],startdate,enddate,sep=" ")
     Q90[i] <- paste("no data available for site",sites[i],startdate,enddate,sep=" ")
   }
-  startdate2 <- "1970-04-01"
-  enddate2 <- "2009-03-31"
+  startdate2 <- "1901-04-01"
+  enddate2 <- "2014-03-31"
   #obs_url2 <- constructNWISURL(site,property,startdate2,enddate2,"dv")
   flowData2 <- flowData[which(flowData$DATE>=strptime(startdate2,format="%Y-%m-%d")),]
   if (nrow(flowData2)>0 & max(flowData2$VALUE,na.rm=TRUE)!=-Inf) {
