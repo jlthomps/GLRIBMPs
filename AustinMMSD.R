@@ -63,18 +63,30 @@ for (k in 1:6) {
     adaps_data_reg$loadFlux <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWreg/1000000)
     
     #roll up to daily
-    adaps_data_regLoad <- adaps_data_reg[!is.na(adaps_data_reg$loadFlux),c(1,9,16:19)]
+    adaps_data_regLoad <- adaps_data_reg[!is.na(adaps_data_reg$loadFlux),c(1,9,13,16:19)]
     temp <- diff(adaps_data_regLoad$pdate,lag=1)
     temp2 <- diff(adaps_data_regLoad$pdate,lead=1)
     adaps_data_regLoad$date <- as.Date(adaps_data_regLoad$pdate)
-    temp <- c(0,temp)
-    temp2 <- c(temp2,0)
-    adaps_data_regLoad$diff <- temp
-    adaps_data_regLoad$diff2 <- temp2
+    temp <- c(0,temp*60)
+    temp2 <- c(temp2*60,0)
+    adaps_data_regLoad$bpdate <- adaps_data_regLoad$pdate-temp
+    adaps_data_regLoad$epdate <- adaps_data_regLoad$pdate+temp2
     adaps_data_regLoad$duration <- (temp + temp2)/2
-    adaps_data_regLoad$load <- adaps_data_regLoad$loadFlux * (adaps_data_regLoad$duration*60)
+    adaps_data_regLoad$load <- adaps_data_regLoad$loadFlux * (adaps_data_regLoad$duration)
     adaps_data_regLoad$compQWreg1 <- ifelse(!is.na(adaps_data_regLoad$compQWreg1),1,0)
     adaps_data_regLoad$compQWreg2 <- ifelse(!is.na(adaps_data_regLoad$compQWreg2) & adaps_data_regLoad$compQWreg1==0,1,0)
+    
+    hydroAll <- Hydrovol(dfQ=adaps_data_regLoad,Q="dischComb",time="pdate",df.dates=adaps_data_regLoad,bdate="bpdate",edate="epdate",volume="event.vol",Qmax="Qmax",duration="Eduration")
+    
+    #df.dates <- aggregate(bpdate ~ date,adaps_data_regLoad,min)
+    #df.datese <- aggregate(epdate ~ date, adaps_data_regLoad,max)
+    #df.dates <- merge(df.dates,df.datese,by="date")
+    minDate <- as.POSIXct(strptime(min(adaps_data_regLoad$date),format="%Y-%m-%d"))
+    maxDate <- as.POSIXct(strptime(max(adaps_data_regLoad$date),format="%Y-%m-%d"))
+    df.dates <- 
+    df.dates <- Hydrovol(dfQ=adaps_data_regLoad,Q="dischComb",time="pdate",df.dates=df.dates,bdate="bpdate",edate="epdate",volume="event.vol",Qmax="Qmax",duration="Eduration")
+    df.dates$load <- (df.dates$)
+    
     dailyLoad <- aggregate(load ~ date,data=adaps_data_regLoad,sum)
     dailyCount <- aggregate(load ~ date,data=adaps_data_regLoad,length)
     dailyRegCount <- aggregate(compQWreg1 ~ date,data=adaps_data_regLoad,sum)
