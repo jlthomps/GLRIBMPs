@@ -31,8 +31,15 @@ for (k in 1:6) {
     #merge continuous data frame with discharge data 
     adaps_data_reg <- merge(adaps_data_reg,adaps_disch_in[,c(3,6)],by="pdate",all=TRUE)
     #interpolate discharge data where missing
-    library(GSqwsr)
-    adaps_data_reg$decYear <- getDecYear(adaps_data_reg$pdate)
+    #library(GSqwsr)
+    dateTime <- as.POSIXlt(adaps_data_reg$pdate)
+    year <- dateTime$year + 1900
+    jan1 <- as.POSIXlt(paste(year,"-01-01",sep=""),format="%Y-%m-%d")
+    jan1NextYear <- as.POSIXlt(paste(year+1,"-01-01",sep=""),format="%Y-%m-%d")
+    decimal <- as.numeric(difftime(adaps_data_reg$pdate, jan1, units = "secs"))
+    decimal <- decimal/as.numeric(difftime(jan1NextYear, jan1, units = "secs"))
+    adaps_data_reg$decYear <- year + decimal
+    #adaps_data_reg$decYear <- getDecYear(adaps_data_reg$pdate)
     
     mindecYear <- 2010
     maxdecYear <- 2015
@@ -50,6 +57,25 @@ for (k in 1:6) {
     }
     if (min(adaps_data_reg$dischint,na.rm=TRUE)<=0) {adaps_data_reg[which(adaps_data_reg$dischint<=0),]$dischint <- NA}
     adaps_data_reg$dischComb <- ifelse(!is.na(adaps_data_reg$disch),adaps_data_reg$disch,adaps_data_reg$dischint)
+    date.sequence <- as.data.frame(seq(strptime(StartDt,format="%Y-%m-%d"),strptime(EndDt,format="%Y-%m-%d"),3600))
+    colnames(date.sequence) <- "pdate"
+    adaps_data_reg <- merge(adaps_data_reg,date.sequence,by="pdate",all=TRUE)
+    library(dataRetrieval)
+    daily_disch <- readNWISdv(siteNo,"00060",StartDt,EndDt,statCd="00003")
+    adaps_data_reg$day <- as.Date(adaps_data_reg$pdate)
+    adaps_data_reg <- merge(adaps_data_reg,daily_disch[,c(3,5)],by.x="day",by.y="Date",all.x=TRUE)
+    adaps_data_reg$dischComb <- ifelse(!is.na(adaps_data_reg$dischComb),adaps_data_reg$dischComb,adaps_data_reg$X_00060_00003)
+    adaps_data_reg <- adaps_data_reg[order(adaps_data_reg$pdate),]
+    adaps_data_reg <- adaps_data_reg[which(!is.na(adaps_data_reg$dischComb)),]
+    
+    dateTime <- as.POSIXlt(adaps_data_reg$pdate)
+    year <- dateTime$year + 1900
+    jan1 <- as.POSIXlt(paste(year,"-01-01",sep=""),format="%Y-%m-%d")
+    jan1NextYear <- as.POSIXlt(paste(year+1,"-01-01",sep=""),format="%Y-%m-%d")
+    decimal <- as.numeric(difftime(adaps_data_reg$pdate, jan1, units = "secs"))
+    decimal <- decimal/as.numeric(difftime(jan1NextYear, jan1, units = "secs"))
+    adaps_data_reg$decYear <- year + decimal
+    
     
     #calculate compQW based on Q-only regression
     adaps_data_reg$sinDY <- sin(adaps_data_reg$decYear*2*pi)
@@ -63,29 +89,28 @@ for (k in 1:6) {
     adaps_data_reg$loadFlux <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWreg/1000000)
     
     #roll up to daily
-    adaps_data_regLoad <- adaps_data_reg[!is.na(adaps_data_reg$loadFlux),c(1,9,13,16:19)]
+    adaps_data_regLoad <- adaps_data_reg[!is.na(adaps_data_reg$loadFlux),c(2,10,14,18:21)]
+    adaps_data_regLoad <- adaps_data_regLoad[order(adaps_data_regLoad$pdate),]
     temp <- diff(adaps_data_regLoad$pdate,lag=1)
     temp2 <- diff(adaps_data_regLoad$pdate,lead=1)
-    adaps_data_regLoad$date <- as.Date(adaps_data_regLoad$pdate)
+    #adaps_data_regLoad$date <- as.Date(adaps_data_regLoad$pdate)
+    #dateXlt <- as.POSIXlt(adaps_data_reg$pdate)
+    #adaps_data_regLoad$date <- paste(dateXlt$year+1900,dateXlt$mon+1,dateXlt$mday,sep=".")
+    adaps_data_regLoad$date <- strftime(adaps_data_regLoad$pdate,format="%Y-%m-%d")
     temp <- c(0,temp*60)
     temp2 <- c(temp2*60,0)
-    adaps_data_regLoad$bpdate <- adaps_data_regLoad$pdate-temp
-    adaps_data_regLoad$epdate <- adaps_data_regLoad$pdate+temp2
+    adaps_data_regLoad$bpdate <- adaps_data_regLoad$pdate-temp/2
+    adaps_data_regLoad$epdate <- adaps_data_regLoad$pdate+temp2/2
     adaps_data_regLoad$duration <- (temp + temp2)/2
     adaps_data_regLoad$load <- adaps_data_regLoad$loadFlux * (adaps_data_regLoad$duration)
     adaps_data_regLoad$compQWreg1 <- ifelse(!is.na(adaps_data_regLoad$compQWreg1),1,0)
     adaps_data_regLoad$compQWreg2 <- ifelse(!is.na(adaps_data_regLoad$compQWreg2) & adaps_data_regLoad$compQWreg1==0,1,0)
     
-    hydroAll <- Hydrovol(dfQ=adaps_data_regLoad,Q="dischComb",time="pdate",df.dates=adaps_data_regLoad,bdate="bpdate",edate="epdate",volume="event.vol",Qmax="Qmax",duration="Eduration")
-    
-    #df.dates <- aggregate(bpdate ~ date,adaps_data_regLoad,min)
-    #df.datese <- aggregate(epdate ~ date, adaps_data_regLoad,max)
-    #df.dates <- merge(df.dates,df.datese,by="date")
-    minDate <- as.POSIXct(strptime(min(adaps_data_regLoad$date),format="%Y-%m-%d"))
-    maxDate <- as.POSIXct(strptime(max(adaps_data_regLoad$date),format="%Y-%m-%d"))
-    df.dates <- 
-    df.dates <- Hydrovol(dfQ=adaps_data_regLoad,Q="dischComb",time="pdate",df.dates=df.dates,bdate="bpdate",edate="epdate",volume="event.vol",Qmax="Qmax",duration="Eduration")
-    df.dates$load <- (df.dates$)
+    #library(GSHydroTools)
+    #hydroAll <- Hydrovol(dfQ=adaps_data_regLoad,Q="dischComb",time="pdate",df.dates=adaps_data_regLoad,bdate="bpdate",edate="epdate",volume="event.vol",Qmax="Qmax",duration="Eduration")
+    #hydroTest <- adaps_data_regLoad[which(adaps_data_regLoad$pdate<=strptime("11/30/2008",format="%m/%d/%Y")),]
+    #hydroDates <- hydroTest[1:(nrow(hydroTest)-1),]
+    #hydroTest <- Hydrovol(dfQ=hydroTest,Q="dischComb",time="pdate",df.dates=hydroDates,bdate="bpdate",edate="epdate",volume="event.vol",Qmax="Qmax",duration="Eduration")
     
     dailyLoad <- aggregate(load ~ date,data=adaps_data_regLoad,sum)
     dailyCount <- aggregate(load ~ date,data=adaps_data_regLoad,length)
@@ -102,27 +127,53 @@ for (k in 1:6) {
     
     dailyLoadCounts$month_val <- substr(dailyLoadCounts$date,6,7)
     dailyLoadCounts$year_val <- substr(dailyLoadCounts$date,1,4)
+    dailyLoadCounts$monYear <- paste(dailyLoadCounts$month_val,dailyLoadCounts$year_val,sep=".")
     dailyLoadCounts$wy_val <- ifelse(as.numeric(dailyLoadCounts$month_val)>=10,as.character(as.numeric(dailyLoadCounts$year_val)+1),dailyLoadCounts$year_val)
+    monthlyLoads <- aggregate(loadKg ~ monYear,data=dailyLoadCounts,sum)
+    monthlyCount <- aggregate(loadKg ~ monYear,data=dailyLoadCounts,length)
+    monthlyLoadCounts <- merge(monthlyLoads,monthlyCount,by="monYear")
+    colnames(monthlyLoadCounts) <- c("monYear","loadKg","daysCount")
+    monthlyLoadCounts <- monthlyLoadCounts[order(monthlyLoadCounts$monYear),]
+    
     annualLoads <- aggregate(loadKg ~ wy_val,data=dailyLoadCounts,sum)
+    annualCount <- aggregate(loadKg ~ wy_val,data=dailyLoadCounts,length)
+    annualLoadCounts <- merge(annualLoads,annualCount,by="wy_val")
+    colnames(annualLoadCounts) <- c("waterYear","loadKg","daysCount")
+    annualLoadCounts <- annualLoadCounts[order(annualLoadCounts$waterYear),]
     
     fileSave <- paste(siteNo,compQW,"daily.txt",sep="")
     write.table(dailyLoadCounts,file=fileSave)
+    fileSave <- paste(siteNo,compQW,"monthly.txt",sep="")
+    write.table(monthlyLoadCounts,file=fileSave)
     fileSave <- paste(siteNo,compQW,"annual.txt",sep="")
-    write.table(annualLoads,file=fileSave)
+    write.table(annualLoadCounts,file=fileSave)
     
     dailyLoadCounts$cumLoad <- (cumsum(dailyLoadCounts$loadKg))/1000000
+    dailyLoadCounts$plotDate <- strptime(dailyLoadCounts$date,format="%Y-%m-%d")
     mainTxt <- paste("Cumulative load (kilotons) of ",compQW," at station ",siteNo,sep="")
     pdf(paste(siteNo,compQW,"cumLoadPlot.pdf",sep=""),width=10,height=8)
-    plot(dailyLoadCounts$date,dailyLoadCounts$cumLoad,xlab="Date",type="l",ylab="Cumulative load (kilotons)",main=mainTxt)
+    plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLoad,xlab="Date",type="l",ylab="Cumulative load (kilotons)",main=mainTxt)
     dev.off()
     
     #dailyLoadCounts$pdate <- as.POSIXct(dailyLoadCounts$date,tz="America/Chicago",format="%Y-%m-%d")
-    loadQPlot <- merge(adaps_data_reg,dailyLoadCounts,by.x="pdate",by.y="date",all=TRUE)
-    mainTxt <- paste("Load (",compQW,") and discharge vs time at station ",siteNo,sep="")
+    dailyLoadCounts$plotPOS <- as.POSIXct(dailyLoadCounts$plotDate)
+    loadQPlot <- merge(adaps_data_reg,dailyLoadCounts,by.x="pdate",by.y="plotPOS",all=TRUE)
+    mainTxt <- paste("Daily load (",compQW,") and instantaneous discharge vs time at station ",siteNo,sep="")
     pdf(paste(siteNo,compQW,"loadQPlot.pdf",sep=""),width=10,height=8)
     plot(loadQPlot$pdate,loadQPlot$loadKg,xlab="Date",type="p",ylab="Load (kgs)",main=mainTxt,col="red")
     par(new=T)
     plot(loadQPlot$pdate,loadQPlot$dischComb,axes=F,xlab="",ylab="",type="l",col="blue")
+    axis(side=4)
+    mtext("Discharge (cfs)",side=4,line=2,col="blue")
+    legend("topright",c("Load (kgs)","Discharge (cfs)"),lty=c(NA,1),lwd=c(2.5,2.5),pch=c(1,NA),col=c("red","blue"))
+    dev.off()
+    
+    
+    mainTxt <- paste("Load (",compQW,") and discharge vs time at station ",siteNo,sep="")
+    pdf(paste(siteNo,compQW,"loadInstQPlot.pdf",sep=""),width=10,height=8)
+    plot(adaps_data_regLoad$pdate,adaps_data_regLoad$load,xlab="Date",type="p",ylab="Load (kgs)",main=mainTxt,col="red")
+    par(new=T)
+    plot(adaps_data_regLoad$pdate,adaps_data_regLoad$dischComb,axes=F,xlab="",ylab="",type="l",col="blue")
     axis(side=4)
     mtext("Discharge (cfs)",side=4,line=2,col="blue")
     legend("topright",c("Load (kgs)","Discharge (cfs)"),lty=c(NA,1),lwd=c(2.5,2.5),pch=c(1,NA),col=c("red","blue"))
