@@ -27,6 +27,7 @@ for (k in 1:6) {
     #merge continuous data and calculate compQW based on original regression model
     adaps_data_reg <- merge(adaps_cond_in,adaps_turb_in[,c(3,6)],by="pdate",all=TRUE)
     adaps_data_reg <- merge(adaps_data_reg,adaps_temp_in[,c(3,6)],by="pdate",all=TRUE)
+    adaps_data_reg$compQWlog1 <- ((log10(adaps_data_reg$cond) * dataReg1$xLogCond) + (log10(adaps_data_reg$turb) * dataReg1$xLogTURB) + (adaps_data_reg$temp * dataReg1$xTemp) + dataReg1$b)
     adaps_data_reg$compQWreg1 <- 10 ^ ((log10(adaps_data_reg$cond) * dataReg1$xLogCond) + (log10(adaps_data_reg$turb) * dataReg1$xLogTURB) + (adaps_data_reg$temp * dataReg1$xTemp) + dataReg1$b)
     #merge continuous data frame with discharge data 
     adaps_data_reg <- merge(adaps_data_reg,adaps_disch_in[,c(3,6)],by="pdate",all=TRUE)
@@ -49,7 +50,7 @@ for (k in 1:6) {
       startDY <- mindecYear + (i-1)*0.25
       endDY <- startDY + 0.25
       adaps_data_reg_sub <- adaps_data_reg[which(adaps_data_reg$decYear>=startDY & adaps_data_reg$decYear<=endDY),]
-      adaps_data_Int <- adaps_data_reg_sub[!is.na(adaps_data_reg_sub$disch),c(1,10)]
+      adaps_data_Int <- adaps_data_reg_sub[!is.na(adaps_data_reg_sub$disch),c(1,11)]
       adaps_data_Int$pdate2 <- as.numeric(adaps_data_Int$pdate)
       fit <- loess(disch ~ pdate2, adaps_data_Int)
       adaps_data_reg_sub$dischint <- predict(fit,adaps_data_reg[which(adaps_data_reg$decYear>=startDY & adaps_data_reg$decYear<=endDY),]$pdate)
@@ -80,16 +81,27 @@ for (k in 1:6) {
     #calculate compQW based on Q-only regression
     adaps_data_reg$sinDY <- sin(adaps_data_reg$decYear*2*pi)
     adaps_data_reg$cosDY <- cos(adaps_data_reg$decYear*2*pi)
+    adaps_data_reg$compQWlog2 <- ((log10(adaps_data_reg$dischComb) * dataReg2$xLogQ) + (adaps_data_reg$dischComb * dataReg2$xQ) + (adaps_data_reg$sinDY * dataReg2$sinDY) + (adaps_data_reg$cosDY * dataReg2$cosDY) + dataReg2$b)
     adaps_data_reg$compQWreg2 <- exp(1) ^ ((log10(adaps_data_reg$dischComb) * dataReg2$xLogQ) + (adaps_data_reg$dischComb * dataReg2$xQ) + (adaps_data_reg$sinDY * dataReg2$sinDY) + (adaps_data_reg$cosDY * dataReg2$cosDY) + dataReg2$b)
+    adaps_data_reg$compQWreg1Error <- dataReg1$SE*dataReg1$t95
+    adaps_data_reg$compQWreg2Error <- dataReg2$SE * dataReg2$t95
+    adaps_data_reg$compQWHigh1 <- 10 ^ (adaps_data_reg$compQWlog1 + adaps_data_reg$compQWreg1Error)
+    adaps_data_reg$compQWLow1 <- 10 ^ (adaps_data_reg$compQWlog1 - adaps_data_reg$compQWreg1Error)
+    adaps_data_reg$compQWHigh2 <- exp(1) ^ (adaps_data_reg$compQWlog2 + adaps_data_reg$compQWreg2Error)
+    adaps_data_reg$compQWLow2 <- exp(1) ^ (adaps_data_reg$compQWlog2 - adaps_data_reg$compQWreg2Error)
     #create composite compQW based on original model when continuous data is available, then Q-only model
     adaps_data_reg$compQWreg <- ifelse(!is.na(adaps_data_reg$compQWreg1),adaps_data_reg$compQWreg1,adaps_data_reg$compQWreg2)
+    adaps_data_reg$compQWhigh <- ifelse(!is.na(adaps_data_reg$compQWreg1),adaps_data_reg$compQWHigh1,adaps_data_reg$compQWHigh2)
+    adaps_data_reg$compQWlow <- ifelse(!is.na(adaps_data_reg$compQWreg1),adaps_data_reg$compQWLow1,adaps_data_reg$compQWLow2)
     
     #calculate instantaneous load flux
     adaps_data_reg$dischCombL <- adaps_data_reg$dischComb*28.3168466
     adaps_data_reg$loadFlux <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWreg/1000000)
+    adaps_data_reg$loadFluxhigh <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWhigh/1000000)
+    adaps_data_reg$loadFluxlow <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWlow/1000000)
     
     #roll up to daily
-    adaps_data_regLoad <- adaps_data_reg[!is.na(adaps_data_reg$loadFlux),c(2,10,14,18:21)]
+    adaps_data_regLoad <- adaps_data_reg[!is.na(adaps_data_reg$loadFlux),c(2,11,15,20,27:33)]
     adaps_data_regLoad <- adaps_data_regLoad[order(adaps_data_regLoad$pdate),]
     temp <- diff(adaps_data_regLoad$pdate,lag=1)
     temp2 <- diff(adaps_data_regLoad$pdate,lead=1)
@@ -105,6 +117,8 @@ for (k in 1:6) {
     adaps_data_regLoad$load <- adaps_data_regLoad$loadFlux * (adaps_data_regLoad$duration)
     adaps_data_regLoad$compQWreg1 <- ifelse(!is.na(adaps_data_regLoad$compQWreg1),1,0)
     adaps_data_regLoad$compQWreg2 <- ifelse(!is.na(adaps_data_regLoad$compQWreg2) & adaps_data_regLoad$compQWreg1==0,1,0)
+    adaps_data_regLoad$loadHigh <- adaps_data_regLoad$loadFluxhigh * (adaps_data_regLoad$duration)
+    adaps_data_regLoad$loadLow <- adaps_data_regLoad$loadFluxlow * (adaps_data_regLoad$duration)
     
     #library(GSHydroTools)
     #hydroAll <- Hydrovol(dfQ=adaps_data_regLoad,Q="dischComb",time="pdate",df.dates=adaps_data_regLoad,bdate="bpdate",edate="epdate",volume="event.vol",Qmax="Qmax",duration="Eduration")
@@ -116,10 +130,14 @@ for (k in 1:6) {
     dailyCount <- aggregate(load ~ date,data=adaps_data_regLoad,length)
     dailyRegCount <- aggregate(compQWreg1 ~ date,data=adaps_data_regLoad,sum)
     dailyRegQCount <- aggregate(compQWreg2 ~ date,data=adaps_data_regLoad,sum)
+    dailyLoadHigh <- aggregate(loadHigh ~ date,data=adaps_data_regLoad,sum)
+    dailyLoadLow <- aggregate(loadLow ~ date,data=adaps_data_regLoad,sum)
     dailyLoadCounts <- merge(dailyLoad,dailyCount,by="date")
     dailyLoadCounts <- merge(dailyLoadCounts,dailyRegCount,by="date")
     dailyLoadCounts <- merge(dailyLoadCounts,dailyRegQCount,by="date")
-    colnames(dailyLoadCounts) <- c("date","loadKg","loadCount","regCount","QregCount")
+    dailyLoadCounts <- merge(dailyLoadCounts,dailyLoadHigh,by="date")
+    dailyLoadCounts <- merge(dailyLoadCounts,dailyLoadLow,by="date")
+    colnames(dailyLoadCounts) <- c("date","loadKg","loadCount","regCount","QregCount","loadHighkg","loadLowkg")
     sites <- rep(siteNo,nrow(dailyLoadCounts))
     compQws <- rep(compQW,nrow(dailyLoadCounts))
     dailyLoadCounts$site <- sites
@@ -131,14 +149,22 @@ for (k in 1:6) {
     dailyLoadCounts$wy_val <- ifelse(as.numeric(dailyLoadCounts$month_val)>=10,as.character(as.numeric(dailyLoadCounts$year_val)+1),dailyLoadCounts$year_val)
     monthlyLoads <- aggregate(loadKg ~ monYear,data=dailyLoadCounts,sum)
     monthlyCount <- aggregate(loadKg ~ monYear,data=dailyLoadCounts,length)
+    monthlyLoadHigh <- aggregate(loadHighkg ~ monYear,data=dailyLoadCounts,sum)
+    monthlyLoadLow <- aggregate(loadLowkg ~ monYear,data=dailyLoadCounts,sum)
     monthlyLoadCounts <- merge(monthlyLoads,monthlyCount,by="monYear")
-    colnames(monthlyLoadCounts) <- c("monYear","loadKg","daysCount")
+    monthlyLoadCounts <- merge(monthlyLoadCounts,monthlyLoadHigh,by="monYear")
+    monthlyLoadCounts <- merge(monthlyLoadCounts,monthlyLoadLow,by="monYear")
+    colnames(monthlyLoadCounts) <- c("monYear","loadKg","daysCount","loadHighkg","loadLowkg")
     monthlyLoadCounts <- monthlyLoadCounts[order(monthlyLoadCounts$monYear),]
     
     annualLoads <- aggregate(loadKg ~ wy_val,data=dailyLoadCounts,sum)
     annualCount <- aggregate(loadKg ~ wy_val,data=dailyLoadCounts,length)
+    annualLoadHigh <- aggregate(loadHighkg ~ wy_val,data=dailyLoadCounts,sum)
+    annualLoadLow <- aggregate(loadLowkg ~ wy_val,data=dailyLoadCounts,sum)
     annualLoadCounts <- merge(annualLoads,annualCount,by="wy_val")
-    colnames(annualLoadCounts) <- c("waterYear","loadKg","daysCount")
+    annualLoadCounts <- merge(annualLoadCounts,annualLoadHigh,by="wy_val")
+    annualLoadCounts <- merge(annualLoadCounts,annualLoadLow,by="wy_val")
+    colnames(annualLoadCounts) <- c("waterYear","loadKg","daysCount","lowHighkg","loadLowkg")
     annualLoadCounts <- annualLoadCounts[order(annualLoadCounts$waterYear),]
     
     fileSave <- paste(siteNo,compQW,"daily.txt",sep="")
@@ -149,10 +175,25 @@ for (k in 1:6) {
     write.table(annualLoadCounts,file=fileSave)
     
     dailyLoadCounts$cumLoad <- (cumsum(dailyLoadCounts$loadKg))/1000000
+    dailyLoadCounts$cumHigh <- (cumsum(dailyLoadCounts$loadHighkg))/1000000
+    dailyLoadCounts$cumLow <- (cumsum(dailyLoadCounts$loadLowkg))/1000000
     dailyLoadCounts$plotDate <- strptime(dailyLoadCounts$date,format="%Y-%m-%d")
-    mainTxt <- paste("Cumulative load (kilotons) of ",compQW," at station ",siteNo,sep="")
+    mainTxt <- paste("Cumulative load (kilotons) of ",compQW," at station ",siteNo," with 95% CIs",sep="")
     pdf(paste(siteNo,compQW,"cumLoadPlot.pdf",sep=""),width=10,height=8)
-    plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLoad,xlab="Date",type="l",ylab="Cumulative load (kilotons)",main=mainTxt)
+    plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLoad,xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,max(dailyLoadCounts$cumHigh)))
+    par(new=T)
+    plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumHigh,xlab="",type="l",col="blue",lty="dashed",ylab="",)
+    par(new=T)
+    plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLow,xlab="",type="l",col="blue",lty="dashed",ylab="")
+    dev.off()
+    
+    mainTxt <- paste("Load (kilograms) of ",compQW," at station ",siteNo," with 95% CIs",sep="")
+    pdf(paste(siteNo,compQW,"loadPlot.pdf",sep=""),width=10,height=8)
+    plot(dailyLoadCounts$plotDate,dailyLoadCounts$loadKg,xlab="Date",log="y",type="l",lwd=3,ylab="Load (kg)",main=mainTxt,ylim=c(1,max(dailyLoadCounts$loadHighkg)))
+    par(new=T)
+    plot(dailyLoadCounts$plotDate,dailyLoadCounts$loadHighkg,xlab="",log="y",type="l",col="blue",lty="dashed",ylab="",ylim=c(1,max(dailyLoadCounts$loadHighkg)))
+    par(new=T)
+    plot(dailyLoadCounts$plotDate,dailyLoadCounts$loadLowkg,xlab="",log="y",type="l",col="blue",lty="dashed",ylab="",ylim=c(1,max(dailyLoadCounts$loadHighkg)))
     dev.off()
     
     #dailyLoadCounts$pdate <- as.POSIXct(dailyLoadCounts$date,tz="America/Chicago",format="%Y-%m-%d")
@@ -169,15 +210,15 @@ for (k in 1:6) {
     dev.off()
     
     
-    mainTxt <- paste("Load (",compQW,") and discharge vs time at station ",siteNo,sep="")
-    pdf(paste(siteNo,compQW,"loadInstQPlot.pdf",sep=""),width=10,height=8)
-    plot(adaps_data_regLoad$pdate,adaps_data_regLoad$load,xlab="Date",type="p",ylab="Load (kgs)",main=mainTxt,col="red")
-    par(new=T)
-    plot(adaps_data_regLoad$pdate,adaps_data_regLoad$dischComb,axes=F,xlab="",ylab="",type="l",col="blue")
-    axis(side=4)
-    mtext("Discharge (cfs)",side=4,line=2,col="blue")
-    legend("topright",c("Load (kgs)","Discharge (cfs)"),lty=c(NA,1),lwd=c(2.5,2.5),pch=c(1,NA),col=c("red","blue"))
-    dev.off()
+#     mainTxt <- paste("Load (",compQW,") and discharge vs time at station ",siteNo,sep="")
+#     pdf(paste(siteNo,compQW,"loadInstQPlot.pdf",sep=""),width=10,height=8)
+#     plot(adaps_data_regLoad$pdate,adaps_data_regLoad$load,xlab="Date",type="p",ylab="Load (kgs)",main=mainTxt,col="red")
+#     par(new=T)
+#     plot(adaps_data_regLoad$pdate,adaps_data_regLoad$dischComb,axes=F,xlab="",ylab="",type="l",col="blue")
+#     axis(side=4)
+#     mtext("Discharge (cfs)",side=4,line=2,col="blue")
+#     legend("topright",c("Load (kgs)","Discharge (cfs)"),lty=c(NA,1),lwd=c(2.5,2.5),pch=c(1,NA),col=c("red","blue"))
+#     dev.off()
   }
 }
   
