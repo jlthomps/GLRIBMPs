@@ -28,7 +28,7 @@ for (k in 1:6) {
     adaps_data_reg <- merge(adaps_cond_in,adaps_turb_in[,c(3,6)],by="pdate",all=TRUE)
     adaps_data_reg <- merge(adaps_data_reg,adaps_temp_in[,c(3,6)],by="pdate",all=TRUE)
     adaps_data_reg$compQWlog1 <- ((log10(adaps_data_reg$cond) * dataReg1$xLogCond) + (log10(adaps_data_reg$turb) * dataReg1$xLogTURB) + (adaps_data_reg$temp * dataReg1$xTemp) + dataReg1$b)
-    adaps_data_reg$compQWreg1 <- 10 ^ ((log10(adaps_data_reg$cond) * dataReg1$xLogCond) + (log10(adaps_data_reg$turb) * dataReg1$xLogTURB) + (adaps_data_reg$temp * dataReg1$xTemp) + dataReg1$b)
+    adaps_data_reg$compQWreg1 <- (10 ^ ((log10(adaps_data_reg$cond) * dataReg1$xLogCond) + (log10(adaps_data_reg$turb) * dataReg1$xLogTURB) + (adaps_data_reg$temp * dataReg1$xTemp) + dataReg1$b)) * dataReg1$BiasCorr
     #merge continuous data frame with discharge data 
     adaps_data_reg <- merge(adaps_data_reg,adaps_disch_in[,c(3,6)],by="pdate",all=TRUE)
     #interpolate discharge data where missing
