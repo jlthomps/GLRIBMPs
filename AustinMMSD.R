@@ -167,28 +167,31 @@ for (k in 1:6) {
     colnames(annualLoadCounts) <- c("waterYear","loadKg","daysCount","lowHighkg","loadLowkg")
     annualLoadCounts <- annualLoadCounts[order(annualLoadCounts$waterYear),]
     
-    fileSave <- paste(siteNo,compQW,"daily.txt",sep="")
+    pathToSave <- "/Users/jlthomps/Documents/R/MMSD/MMSDoutput"
+    fileSave <- paste(pathToSave,"/",siteNo,compQW,"daily.txt",sep="")
     write.table(dailyLoadCounts,file=fileSave)
-    fileSave <- paste(siteNo,compQW,"monthly.txt",sep="")
+    fileSave <- paste(pathToSave,"/",siteNo,compQW,"monthly.txt",sep="")
     write.table(monthlyLoadCounts,file=fileSave)
-    fileSave <- paste(siteNo,compQW,"annual.txt",sep="")
+    fileSave <- paste(pathToSave,"/",siteNo,compQW,"annual.txt",sep="")
     write.table(annualLoadCounts,file=fileSave)
     
     dailyLoadCounts$cumLoad <- (cumsum(dailyLoadCounts$loadKg))/1000000
+    #dailyLoadCounts$cumHigh <- dailyLoadCounts$cumLoad + (dailyLoadCounts$loadHighkg - dailyLoadCounts$loadKg)/1000000
     dailyLoadCounts$cumHigh <- (cumsum(dailyLoadCounts$loadHighkg))/1000000
+    #dailyLoadCounts$cumLow <- dailyLoadCounts$cumLoad + (dailyLoadCounts$loadLowkg - dailyLoadCounts$loadKg)/1000000
     dailyLoadCounts$cumLow <- (cumsum(dailyLoadCounts$loadLowkg))/1000000
     dailyLoadCounts$plotDate <- strptime(dailyLoadCounts$date,format="%Y-%m-%d")
     mainTxt <- paste("Cumulative load (kilotons) of ",compQW," at station ",siteNo," with 95% CIs",sep="")
-    pdf(paste(siteNo,compQW,"cumLoadPlot.pdf",sep=""),width=10,height=8)
+    pdf(paste(pathToSave,"/",siteNo,compQW,"cumLoadPlot.pdf",sep=""),width=10,height=8)
     plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLoad,xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,max(dailyLoadCounts$cumHigh)))
     par(new=T)
-    plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumHigh,xlab="",type="l",col="blue",lty="dashed",ylab="",)
+    plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumHigh,xlab="",type="l",col="blue",lty="dashed",ylab="",ylim=c(0,max(dailyLoadCounts$cumHigh)))
     par(new=T)
-    plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLow,xlab="",type="l",col="blue",lty="dashed",ylab="")
+    plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLow,xlab="",type="l",col="blue",lty="dashed",ylab="",ylim=c(0,max(dailyLoadCounts$cumHigh)))
     dev.off()
     
     mainTxt <- paste("Load (kilograms) of ",compQW," at station ",siteNo," with 95% CIs",sep="")
-    pdf(paste(siteNo,compQW,"loadPlot.pdf",sep=""),width=10,height=8)
+    pdf(paste(pathToSave,"/",siteNo,compQW,"loadPlot.pdf",sep=""),width=10,height=8)
     plot(dailyLoadCounts$plotDate,dailyLoadCounts$loadKg,xlab="Date",log="y",type="l",lwd=3,ylab="Load (kg)",main=mainTxt,ylim=c(1,max(dailyLoadCounts$loadHighkg)))
     par(new=T)
     plot(dailyLoadCounts$plotDate,dailyLoadCounts$loadHighkg,xlab="",log="y",type="l",col="blue",lty="dashed",ylab="",ylim=c(1,max(dailyLoadCounts$loadHighkg)))
@@ -200,7 +203,7 @@ for (k in 1:6) {
     dailyLoadCounts$plotPOS <- as.POSIXct(dailyLoadCounts$plotDate)
     loadQPlot <- merge(adaps_data_reg,dailyLoadCounts,by.x="pdate",by.y="plotPOS",all=TRUE)
     mainTxt <- paste("Daily load (",compQW,") and instantaneous discharge vs time at station ",siteNo,sep="")
-    pdf(paste(siteNo,compQW,"loadQPlot.pdf",sep=""),width=10,height=8)
+    pdf(paste(pathToSave,"/",siteNo,compQW,"loadQPlot.pdf",sep=""),width=10,height=8)
     plot(loadQPlot$pdate,loadQPlot$loadKg,xlab="Date",type="p",ylab="Load (kgs)",main=mainTxt,col="red")
     par(new=T)
     plot(loadQPlot$pdate,loadQPlot$dischComb,axes=F,xlab="",ylab="",type="l",col="blue")
