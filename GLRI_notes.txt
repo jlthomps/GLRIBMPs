@@ -1,0 +1,50 @@
+GLRI notes
+
+2015 next steps:
+
+GLRI EoF
+
+Current regressions for East River look good, want to refine and finalize, then move on to other sites. Using all storm events split out (not grouped), running all together, all non-estimated and non-frozen and all non-estimated and frozen. Rainmaker interval of 1 hour gets the storms. Soil moisture from NWIS wasn't that great, plus isn't always available, so not using. Maybe still want to look into snowmelt, snow depth, other NOAA data. Maybe temperature? 
+
+* Fix erosivity calculation to match old one, and also to run faster. Then add to regressions.
+* Finalize regressions for East River, streamline process
+* Work on training for other offices on regressions, sample splitting
+* Start pulling data and running regressions for other sites
+* Start writing up work
+* Add ability to us multi-gages/polygons for a edge of field site, like the old program
+* run regressions for responses other than suspended sediment and phosphorus, nitrogen and maybe others
+* Look at adding calculation of loads (in spreadsheet) into R
+* implement paired sites
+* baseflow separation? using HISEP output? Or add in HISEP?
+* deal with missing data (alternate staid estimates, other) and censored data (1/2 non-detect, other?)
+* other possible forcing factors (temperature, manure application, snow, etc)
+* AWRA presentation
+
+refinement/finishing of surrogate regressions workflow, run regressions for many sites and quantify possibility of change detection
+look at adding an element of monte carlo (talk to John)
+Todd would like to maybe examine strength of regression and percentage change necessary for detection: ie maybe this will only work for sites with very good regressions that make drastic changes
+
+
+Extra - move GCLAS to R for use in computing loads in stream sites? 
+
+
+
+
+
+
+GLRI
+have events defined
+forcing factors - rainfall volume, timing, intensity, others (soil moisture, manure application, etc)
+response - phosphorus and nitrogen loads
+have field, tile and stream sites
+//projects/nonpoint/glri/edge of field/saginaw, blanchard, upper east
+eventually will want to handle missing data (alternate staid estimates, other) and censored data (1/2 non-detect, other)
+may eventually want to do some baseflow separation - maybe using pre and post-event flow and just draw a straight line? in reality base flow goes up some during events
+HISEP - fortran program Laura will call from R to calculate baseflow
+RRainmaker - will eventually want to add ability to use multi-rain gages/polygons for one staid, like in old program
+add to rainmaker ability to aggregate for a storm event, like we did for Matt's storms that span rainmaker events, also could remove events that don't match up with precip (snowmelt, dam release, other)
+	steve's qwcompos function for aggregating multiple samples during one storm does something similar
+snowpack and volume of water - get NOAA files w/ snow depth and water content (%), depth*content after - depth*content before gives contribution. also need to account for depth added during event
+JF5 - 434250090461401
+JF3 - 434246090465801
+JF6 - 434425090462401

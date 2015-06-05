@@ -4,6 +4,7 @@ endDts <- c("2014-12-31","2014-12-31","2014-12-31","2014-12-31","2014-12-31","20
 loadFiles <- c("AustinDataHoney.RData","AustinDataLittleMenomonee.RData","AustinDataMenomonee16.RData","AustinDataMenomoneeFalls.RData","AustinDataWawa.RData","AustinDataUnderwood.RData")
 compQWs <- c("Cl","Fec","Ec","TSS","TP")
 modelCoefs <- read.delim(file="/Users/jlthomps/Desktop/git/GLRIBMPs/MMSDmodelCoef.csv",stringsAsFactors=FALSE)
+dailyResults=list()
 
 for (k in 1:6) {
   siteNo <- siteNos[k]
@@ -147,6 +148,7 @@ for (k in 1:6) {
     dailyLoadCounts$year_val <- substr(dailyLoadCounts$date,1,4)
     dailyLoadCounts$monYear <- paste(dailyLoadCounts$month_val,dailyLoadCounts$year_val,sep=".")
     dailyLoadCounts$wy_val <- ifelse(as.numeric(dailyLoadCounts$month_val)>=10,as.character(as.numeric(dailyLoadCounts$year_val)+1),dailyLoadCounts$year_val)
+    dailyResults[[i]] <- dailyLoadCounts
     monthlyLoads <- aggregate(loadKg ~ monYear,data=dailyLoadCounts,sum)
     monthlyCount <- aggregate(loadKg ~ monYear,data=dailyLoadCounts,length)
     monthlyLoadHigh <- aggregate(loadHighkg ~ monYear,data=dailyLoadCounts,sum)
