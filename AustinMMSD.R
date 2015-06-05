@@ -228,4 +228,53 @@ for (k in 1:6) {
 #     dev.off()
   }
 }
+
+allDailyResults <- do.call(cbind,dailyResults)
+allDailyResults$cumLoad <- (cumsum(allDailyResults$loadKg))/1000000
+allDailyResults$cumHigh <- (cumsum(allDailyResults$loadHighkg))/1000000
+allDailyResults$cumLow <- (cumsum(allDailyResults$loadLowkg))/1000000
+allDailyResults$plotDate <- strptime(allDailyResults$date,format="%Y-%m-%d")
+if (allDailyResults$siteNo=="04087119") {allDailyResults$plotColor <- "blue"}
+else if (allDailyResults$siteNo=="04087050") {allDailyResults$plotColor <- "red"}
+else if (allDailyResults$siteNo=="04087142") {allDailyResults$plotColor <- "green"}
+else if (allDailyResults$siteNo=="04087030") {allDailyResults$plotColor <- "pink"}
+else if (allDailyResults$siteNo=="04087120") {allDailyResults$plotColor <- "yellow"}
+else {allDailyResults$plotColor <- "purple"}
+
+dailyLoadEcHoney <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087119"),]
+dailyLoadEcLittleMen <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087050"),]
+dailyLoadEcMen16 <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087142"),]
+dailyLoadEcMenFalls <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087030"),]
+dailyLoadEcMenWawa <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087120"),]
+dailyLoadEcUnder <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087088"),]
+
+dailyLoadFecHoney <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087119"),]
+dailyLoadFecLittleMen <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087050"),]
+dailyLoadFecMen16 <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087142"),]
+dailyLoadFecMenFalls <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087030"),]
+dailyLoadFecMenWawa <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087120"),]
+dailyLoadFecUnder <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087088"),]
+
+dailyLoadFecHoney <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087119"),]
+dailyLoadFecLittleMen <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087050"),]
+dailyLoadFecMen16 <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087142"),]
+dailyLoadFecMenFalls <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087030"),]
+dailyLoadFecMenWawa <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087120"),]
+dailyLoadFecUnder <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087088"),]
+dailyLoadTP <- allDailyResults[which(allDailyResults$compQW=="TP"),]
+dailyLoadTSS <- allDailyResults[which(allDailyResults$compQW=="TSS"),]
+
+mainTxt <- "Cumulative load (kilotons) of E Coli"
+pdf(paste(pathToSave,"/","EcCumLoadPlot.pdf",sep=""),width=10,height=8)
+par(mfrom=c(3,3))
+dailyLoad
+
+mainTxt <- paste("Cumulative load (kilotons) of ",compQW," at station ",siteNo," with 95% CIs",sep="")
+pdf(paste(pathToSave,"/",siteNo,compQW,"cumLoadPlot.pdf",sep=""),width=10,height=8)
+plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLoad,xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,max(dailyLoadCounts$cumHigh)))
+par(new=T)
+plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumHigh,xlab="",type="l",col="blue",lty="dashed",ylab="",ylim=c(0,max(dailyLoadCounts$cumHigh)))
+par(new=T)
+plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLow,xlab="",type="l",col="blue",lty="dashed",ylab="",ylim=c(0,max(dailyLoadCounts$cumHigh)))
+dev.off()
   
