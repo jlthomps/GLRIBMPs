@@ -148,7 +148,7 @@ for (k in 1:6) {
     dailyLoadCounts$year_val <- substr(dailyLoadCounts$date,1,4)
     dailyLoadCounts$monYear <- paste(dailyLoadCounts$month_val,dailyLoadCounts$year_val,sep=".")
     dailyLoadCounts$wy_val <- ifelse(as.numeric(dailyLoadCounts$month_val)>=10,as.character(as.numeric(dailyLoadCounts$year_val)+1),dailyLoadCounts$year_val)
-    dailyResults[[i]] <- dailyLoadCounts
+    dailyResults[[k*j]] <- dailyLoadCounts
     monthlyLoads <- aggregate(loadKg ~ monYear,data=dailyLoadCounts,sum)
     monthlyCount <- aggregate(loadKg ~ monYear,data=dailyLoadCounts,length)
     monthlyLoadHigh <- aggregate(loadHighkg ~ monYear,data=dailyLoadCounts,sum)
@@ -213,6 +213,8 @@ for (k in 1:6) {
     mtext("Discharge (cfs)",side=4,line=2,col="blue")
     legend("topright",c("Load (kgs)","Discharge (cfs)"),lty=c(NA,1),lwd=c(2.5,2.5),pch=c(1,NA),col=c("red","blue"))
     dev.off()
+    
+    cat(paste(mainTxt,"\n"))
     
     
 #     mainTxt <- paste("Load (",compQW,") and discharge vs time at station ",siteNo,sep="")
