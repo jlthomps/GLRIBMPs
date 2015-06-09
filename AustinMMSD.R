@@ -229,52 +229,626 @@ for (k in 1:6) {
   }
 }
 
-allDailyResults <- do.call(cbind,dailyResults)
-allDailyResults$cumLoad <- (cumsum(allDailyResults$loadKg))/1000000
-allDailyResults$cumHigh <- (cumsum(allDailyResults$loadHighkg))/1000000
-allDailyResults$cumLow <- (cumsum(allDailyResults$loadLowkg))/1000000
+allDailyResults <- do.call(rbind,dailyResults)
 allDailyResults$plotDate <- strptime(allDailyResults$date,format="%Y-%m-%d")
-if (allDailyResults$siteNo=="04087119") {allDailyResults$plotColor <- "blue"}
-else if (allDailyResults$siteNo=="04087050") {allDailyResults$plotColor <- "red"}
-else if (allDailyResults$siteNo=="04087142") {allDailyResults$plotColor <- "green"}
-else if (allDailyResults$siteNo=="04087030") {allDailyResults$plotColor <- "pink"}
-else if (allDailyResults$siteNo=="04087120") {allDailyResults$plotColor <- "yellow"}
-else {allDailyResults$plotColor <- "purple"}
 
-dailyLoadEcHoney <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087119"),]
-dailyLoadEcLittleMen <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087050"),]
-dailyLoadEcMen16 <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087142"),]
-dailyLoadEcMenFalls <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087030"),]
-dailyLoadEcMenWawa <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087120"),]
-dailyLoadEcUnder <- allDailyResults[which(allDailyResults$compQW=="Ec" && allDailyResults$siteNo=="04087088"),]
+dailyLoadEc <- allDailyResults[which(allDailyResults$compQW=="Ec"),]
+dailyLoadEc$cumLoad <- (cumsum(dailyLoadEc$loadKg))/1000000
+dailyLoadEc09 <- dailyLoadEc[which(dailyLoadEc$wy_val=="2009"),]
+dailyLoadEc09$cumLoad <- (cumsum(dailyLoadEc09$loadKg))/1000000
+dailyLoadEc10 <- dailyLoadEc[which(dailyLoadEc$wy_val=="2010"),]
+dailyLoadEc10$cumLoad <- (cumsum(dailyLoadEc10$loadKg))/1000000
+dailyLoadEc11 <- dailyLoadEc[which(dailyLoadEc$wy_val=="2011"),]
+dailyLoadEc11$cumLoad <- (cumsum(dailyLoadEc11$loadKg))/1000000
+dailyLoadEc12 <- dailyLoadEc[which(dailyLoadEc$wy_val=="2012"),]
+dailyLoadEc12$cumLoad <- (cumsum(dailyLoadEc12$loadKg))/1000000
+dailyLoadEc13 <- dailyLoadEc[which(dailyLoadEc$wy_val=="2013"),]
+dailyLoadEc13$cumLoad <- (cumsum(dailyLoadEc13$loadKg))/1000000
+dailyLoadEc14 <- dailyLoadEc[which(dailyLoadEc$wy_val=="2014"),]
+dailyLoadEc14$cumLoad <- (cumsum(dailyLoadEc14$loadKg))/1000000
+dailyLoadEc15 <- dailyLoadEc[which(dailyLoadEc$wy_val=="2015"),]
+dailyLoadEc15$cumLoad <- (cumsum(dailyLoadEc15$loadKg))/1000000
 
-dailyLoadFecHoney <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087119"),]
-dailyLoadFecLittleMen <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087050"),]
-dailyLoadFecMen16 <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087142"),]
-dailyLoadFecMenFalls <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087030"),]
-dailyLoadFecMenWawa <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087120"),]
-dailyLoadFecUnder <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087088"),]
+dailyLoadFec <- allDailyResults[which(allDailyResults$compQW=="Fec"),]
+dailyLoadFec$cumLoad <- (cumsum(dailyLoadFec$loadKg))/1000000
+dailyLoadFec09 <- dailyLoadFec[which(dailyLoadFec$wy_val=="2009"),]
+dailyLoadFec09$cumLoad <- (cumsum(dailyLoadFec09$loadKg))/1000000
+dailyLoadFec10 <- dailyLoadFec[which(dailyLoadFec$wy_val=="2010"),]
+dailyLoadFec10$cumLoad <- (cumsum(dailyLoadFec10$loadKg))/1000000
+dailyLoadFec11 <- dailyLoadFec[which(dailyLoadFec$wy_val=="2011"),]
+dailyLoadFec11$cumLoad <- (cumsum(dailyLoadFec11$loadKg))/1000000
+dailyLoadFec12 <- dailyLoadFec[which(dailyLoadFec$wy_val=="2012"),]
+dailyLoadFec12$cumLoad <- (cumsum(dailyLoadFec12$loadKg))/1000000
+dailyLoadFec13 <- dailyLoadFec[which(dailyLoadFec$wy_val=="2013"),]
+dailyLoadFec13$cumLoad <- (cumsum(dailyLoadFec13$loadKg))/1000000
+dailyLoadFec14 <- dailyLoadFec[which(dailyLoadFec$wy_val=="2014"),]
+dailyLoadFec14$cumLoad <- (cumsum(dailyLoadFec14$loadKg))/1000000
+dailyLoadFec15 <- dailyLoadFec[which(dailyLoadFec$wy_val=="2015"),]
+dailyLoadFec15$cumLoad <- (cumsum(dailyLoadFec15$loadKg))/1000000
 
-dailyLoadFecHoney <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087119"),]
-dailyLoadFecLittleMen <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087050"),]
-dailyLoadFecMen16 <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087142"),]
-dailyLoadFecMenFalls <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087030"),]
-dailyLoadFecMenWawa <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087120"),]
-dailyLoadFecUnder <- allDailyResults[which(allDailyResults$compQW=="Fec" && allDailyResults$siteNo=="04087088"),]
+dailyLoadCl <- allDailyResults[which(allDailyResults$compQW=="Cl"),]
+dailyLoadCl$cumLoad <- (cumsum(dailyLoadCl$loadKg))/1000000
+dailyLoadCl09 <- dailyLoadCl[which(dailyLoadCl$wy_val=="2009"),]
+dailyLoadCl09$cumLoad <- (cumsum(dailyLoadCl09$loadKg))/1000000
+dailyLoadCl10 <- dailyLoadCl[which(dailyLoadCl$wy_val=="2010"),]
+dailyLoadCl10$cumLoad <- (cumsum(dailyLoadCl10$loadKg))/1000000
+dailyLoadCl11 <- dailyLoadCl[which(dailyLoadCl$wy_val=="2011"),]
+dailyLoadCl11$cumLoad <- (cumsum(dailyLoadCl11$loadKg))/1000000
+dailyLoadCl12 <- dailyLoadCl[which(dailyLoadCl$wy_val=="2012"),]
+dailyLoadCl12$cumLoad <- (cumsum(dailyLoadCl12$loadKg))/1000000
+dailyLoadCl13 <- dailyLoadCl[which(dailyLoadCl$wy_val=="2013"),]
+dailyLoadCl13$cumLoad <- (cumsum(dailyLoadCl13$loadKg))/1000000
+dailyLoadCl14 <- dailyLoadCl[which(dailyLoadCl$wy_val=="2014"),]
+dailyLoadCl14$cumLoad <- (cumsum(dailyLoadCl14$loadKg))/1000000
+dailyLoadCl15 <- dailyLoadCl[which(dailyLoadCl$wy_val=="2015"),]
+dailyLoadCl15$cumLoad <- (cumsum(dailyLoadCl15$loadKg))/1000000
+
 dailyLoadTP <- allDailyResults[which(allDailyResults$compQW=="TP"),]
+dailyLoadTP$cumLoad <- (cumsum(dailyLoadTP$loadKg))/1000
+dailyLoadTP09 <- dailyLoadTP[which(dailyLoadTP$wy_val=="2009"),]
+dailyLoadTP09$cumLoad <- (cumsum(dailyLoadTP09$loadKg))/1000
+dailyLoadTP10 <- dailyLoadTP[which(dailyLoadTP$wy_val=="2010"),]
+dailyLoadTP10$cumLoad <- (cumsum(dailyLoadTP10$loadKg))/1000
+dailyLoadTP11 <- dailyLoadTP[which(dailyLoadTP$wy_val=="2011"),]
+dailyLoadTP11$cumLoad <- (cumsum(dailyLoadTP11$loadKg))/1000
+dailyLoadTP12 <- dailyLoadTP[which(dailyLoadTP$wy_val=="2012"),]
+dailyLoadTP12$cumLoad <- (cumsum(dailyLoadTP12$loadKg))/1000
+dailyLoadTP13 <- dailyLoadTP[which(dailyLoadTP$wy_val=="2013"),]
+dailyLoadTP13$cumLoad <- (cumsum(dailyLoadTP13$loadKg))/1000
+dailyLoadTP14 <- dailyLoadTP[which(dailyLoadTP$wy_val=="2014"),]
+dailyLoadTP14$cumLoad <- (cumsum(dailyLoadTP14$loadKg))/1000
+dailyLoadTP15 <- dailyLoadTP[which(dailyLoadTP$wy_val=="2015"),]
+dailyLoadTP15$cumLoad <- (cumsum(dailyLoadTP15$loadKg))/1000
+
 dailyLoadTSS <- allDailyResults[which(allDailyResults$compQW=="TSS"),]
+dailyLoadTSS$cumLoad <- (cumsum(dailyLoadTSS$loadKg))/1000000
+dailyLoadTSS09 <- dailyLoadTSS[which(dailyLoadTSS$wy_val=="2009"),]
+dailyLoadTSS09$cumLoad <- (cumsum(dailyLoadTSS09$loadKg))/1000000
+dailyLoadTSS10 <- dailyLoadTSS[which(dailyLoadTSS$wy_val=="2010"),]
+dailyLoadTSS10$cumLoad <- (cumsum(dailyLoadTSS10$loadKg))/1000000
+dailyLoadTSS11 <- dailyLoadTSS[which(dailyLoadTSS$wy_val=="2011"),]
+dailyLoadTSS11$cumLoad <- (cumsum(dailyLoadTSS11$loadKg))/1000000
+dailyLoadTSS12 <- dailyLoadTSS[which(dailyLoadTSS$wy_val=="2012"),]
+dailyLoadTSS12$cumLoad <- (cumsum(dailyLoadTSS12$loadKg))/1000000
+dailyLoadTSS13 <- dailyLoadTSS[which(dailyLoadTSS$wy_val=="2013"),]
+dailyLoadTSS13$cumLoad <- (cumsum(dailyLoadTSS13$loadKg))/1000000
+dailyLoadTSS14 <- dailyLoadTSS[which(dailyLoadTSS$wy_val=="2014"),]
+dailyLoadTSS14$cumLoad <- (cumsum(dailyLoadTSS14$loadKg))/1000000
+dailyLoadTSS15 <- dailyLoadTSS[which(dailyLoadTSS$wy_val=="2015"),]
+dailyLoadTSS15$cumLoad <- (cumsum(dailyLoadTSS15$loadKg))/1000000
+
+allDailyResults[which(allDailyResults$site=="04087119"),]$plotColor <- "blue"
+allDailyResults[which(allDailyResults$site=="04087050"),]$plotColor <- "red"
+allDailyResults[which(allDailyResults$site=="04087142"),]$plotColor <- "green"
+allDailyResults[which(allDailyResults$site=="04087030"),]$plotColor <- "pink"
+allDailyResults[which(allDailyResults$site=="04087120"),]$plotColor <- "brown"
+allDailyResults[which(allDailyResults$site=="04087088"),]$plotColor <- "purple"
+
+xMinLim <- as.POSIXct(min(allDailyResults$plotDate))
+xMaxLim <- as.POSIXct(max(allDailyResults$plotDate))
+xMin09 <- as.POSIXct(min(allDailyResults[which(allDailyResults$wy_val=="2009"),]$plotDate))
+xMax09 <- as.POSIXct(max(allDailyResults[which(allDailyResults$wy_val=="2009"),]$plotDate))
+xMin10 <- as.POSIXct(min(allDailyResults[which(allDailyResults$wy_val=="2010"),]$plotDate))
+xMax10 <- as.POSIXct(max(allDailyResults[which(allDailyResults$wy_val=="2010"),]$plotDate))
+xMin11 <- as.POSIXct(min(allDailyResults[which(allDailyResults$wy_val=="2011"),]$plotDate))
+xMax11 <- as.POSIXct(max(allDailyResults[which(allDailyResults$wy_val=="2011"),]$plotDate))
+xMin12 <- as.POSIXct(min(allDailyResults[which(allDailyResults$wy_val=="2012"),]$plotDate))
+xMax12 <- as.POSIXct(max(allDailyResults[which(allDailyResults$wy_val=="2012"),]$plotDate))
+xMin13 <- as.POSIXct(min(allDailyResults[which(allDailyResults$wy_val=="2013"),]$plotDate))
+xMax13 <- as.POSIXct(max(allDailyResults[which(allDailyResults$wy_val=="2013"),]$plotDate))
+xMin14 <- as.POSIXct(min(allDailyResults[which(allDailyResults$wy_val=="2014"),]$plotDate))
+xMax14 <- as.POSIXct(max(allDailyResults[which(allDailyResults$wy_val=="2014"),]$plotDate))
+xMin15 <- as.POSIXct(min(allDailyResults[which(allDailyResults$wy_val=="2015"),]$plotDate))
+xMax15 <- as.POSIXct(max(allDailyResults[which(allDailyResults$wy_val=="2015"),]$plotDate))
+
+mainTxt <- "Cumulative load (kilotons) of Chloride"
+pdf(paste(pathToSave,"/","AllClCumLoadPlot.pdf",sep=""),width=10,height=8)
+par(mfrow=c(3,3))
+plot(dailyLoadCl[which(dailyLoadCl$site=="04087119"),]$plotDate,((cumsum(dailyLoadCl[which(dailyLoadCl$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,600),col="blue",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadCl[which(dailyLoadCl$site=="04087050"),]$plotDate,((cumsum(dailyLoadCl[which(dailyLoadCl$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,600),col="red",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadCl[which(dailyLoadCl$site=="04087142"),]$plotDate,((cumsum(dailyLoadCl[which(dailyLoadCl$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,600),col="green",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadCl[which(dailyLoadCl$site=="04087030"),]$plotDate,((cumsum(dailyLoadCl[which(dailyLoadCl$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,600),col="pink",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadCl[which(dailyLoadCl$site=="04087120"),]$plotDate,((cumsum(dailyLoadCl[which(dailyLoadCl$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,600),col="orange",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadCl[which(dailyLoadCl$site=="04087088"),]$plotDate,((cumsum(dailyLoadCl[which(dailyLoadCl$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,600),col="purple",xlim=c(xMinLim,xMaxLim))
+mainTxt <- "Water Year 2009"
+plot(dailyLoadCl09[which(dailyLoadCl09$site=="04087119"),]$plotDate,((cumsum(dailyLoadCl09[which(dailyLoadCl09$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="blue",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadCl09[which(dailyLoadCl09$site=="04087050"),]$plotDate,((cumsum(dailyLoadCl09[which(dailyLoadCl09$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="red",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadCl09[which(dailyLoadCl09$site=="04087142"),]$plotDate,((cumsum(dailyLoadCl09[which(dailyLoadCl09$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="green",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadCl09[which(dailyLoadCl09$site=="04087030"),]$plotDate,((cumsum(dailyLoadCl09[which(dailyLoadCl09$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="pink",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadCl09[which(dailyLoadCl09$site=="04087120"),]$plotDate,((cumsum(dailyLoadCl09[which(dailyLoadCl09$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="orange",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadCl09[which(dailyLoadCl09$site=="04087088"),]$plotDate,((cumsum(dailyLoadCl09[which(dailyLoadCl09$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="purple",xlim=c(xMin09,xMax09))
+mainTxt <- "Water Year 2010"
+plot(dailyLoadCl10[which(dailyLoadCl10$site=="04087119"),]$plotDate,((cumsum(dailyLoadCl10[which(dailyLoadCl10$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="blue",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadCl10[which(dailyLoadCl10$site=="04087050"),]$plotDate,((cumsum(dailyLoadCl10[which(dailyLoadCl10$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="red",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadCl10[which(dailyLoadCl10$site=="04087142"),]$plotDate,((cumsum(dailyLoadCl10[which(dailyLoadCl10$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="green",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadCl10[which(dailyLoadCl10$site=="04087030"),]$plotDate,((cumsum(dailyLoadCl10[which(dailyLoadCl10$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="pink",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadCl10[which(dailyLoadCl10$site=="04087120"),]$plotDate,((cumsum(dailyLoadCl10[which(dailyLoadCl10$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="orange",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadCl10[which(dailyLoadCl10$site=="04087088"),]$plotDate,((cumsum(dailyLoadCl10[which(dailyLoadCl10$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="purple",xlim=c(xMin10,xMax10))
+mainTxt <- "Water Year 2011"
+plot(dailyLoadCl11[which(dailyLoadCl11$site=="04087119"),]$plotDate,((cumsum(dailyLoadCl11[which(dailyLoadCl11$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="blue",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadCl11[which(dailyLoadCl11$site=="04087050"),]$plotDate,((cumsum(dailyLoadCl11[which(dailyLoadCl11$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="red",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadCl11[which(dailyLoadCl11$site=="04087142"),]$plotDate,((cumsum(dailyLoadCl11[which(dailyLoadCl11$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="green",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadCl11[which(dailyLoadCl11$site=="04087030"),]$plotDate,((cumsum(dailyLoadCl11[which(dailyLoadCl11$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="pink",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadCl11[which(dailyLoadCl11$site=="04087120"),]$plotDate,((cumsum(dailyLoadCl11[which(dailyLoadCl11$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="orange",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadCl11[which(dailyLoadCl11$site=="04087088"),]$plotDate,((cumsum(dailyLoadCl11[which(dailyLoadCl11$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="purple",xlim=c(xMin11,xMax11))
+mainTxt <- "Water Year 2012"
+plot(dailyLoadCl12[which(dailyLoadCl12$site=="04087119"),]$plotDate,((cumsum(dailyLoadCl12[which(dailyLoadCl12$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="blue",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadCl12[which(dailyLoadCl12$site=="04087050"),]$plotDate,((cumsum(dailyLoadCl12[which(dailyLoadCl12$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="red",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadCl12[which(dailyLoadCl12$site=="04087142"),]$plotDate,((cumsum(dailyLoadCl12[which(dailyLoadCl12$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="green",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadCl12[which(dailyLoadCl12$site=="04087030"),]$plotDate,((cumsum(dailyLoadCl12[which(dailyLoadCl12$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="pink",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadCl12[which(dailyLoadCl12$site=="04087120"),]$plotDate,((cumsum(dailyLoadCl12[which(dailyLoadCl12$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="orange",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadCl12[which(dailyLoadCl12$site=="04087088"),]$plotDate,((cumsum(dailyLoadCl12[which(dailyLoadCl12$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="purple",xlim=c(xMin12,xMax12))
+mainTxt <- "Water Year 2013"
+plot(dailyLoadCl13[which(dailyLoadCl13$site=="04087119"),]$plotDate,((cumsum(dailyLoadCl13[which(dailyLoadCl13$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="blue",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadCl13[which(dailyLoadCl13$site=="04087050"),]$plotDate,((cumsum(dailyLoadCl13[which(dailyLoadCl13$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="red",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadCl13[which(dailyLoadCl13$site=="04087142"),]$plotDate,((cumsum(dailyLoadCl13[which(dailyLoadCl13$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="green",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadCl13[which(dailyLoadCl13$site=="04087030"),]$plotDate,((cumsum(dailyLoadCl13[which(dailyLoadCl13$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="pink",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadCl13[which(dailyLoadCl13$site=="04087120"),]$plotDate,((cumsum(dailyLoadCl13[which(dailyLoadCl13$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="orange",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadCl13[which(dailyLoadCl13$site=="04087088"),]$plotDate,((cumsum(dailyLoadCl13[which(dailyLoadCl13$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="purple",xlim=c(xMin13,xMax13))
+mainTxt <- "Water Year 2014"
+plot(dailyLoadCl14[which(dailyLoadCl14$site=="04087119"),]$plotDate,((cumsum(dailyLoadCl14[which(dailyLoadCl14$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="blue",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadCl14[which(dailyLoadCl14$site=="04087050"),]$plotDate,((cumsum(dailyLoadCl14[which(dailyLoadCl14$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="red",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadCl14[which(dailyLoadCl14$site=="04087142"),]$plotDate,((cumsum(dailyLoadCl14[which(dailyLoadCl14$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="green",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadCl14[which(dailyLoadCl14$site=="04087030"),]$plotDate,((cumsum(dailyLoadCl14[which(dailyLoadCl14$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="pink",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadCl14[which(dailyLoadCl14$site=="04087120"),]$plotDate,((cumsum(dailyLoadCl14[which(dailyLoadCl14$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="orange",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadCl14[which(dailyLoadCl14$site=="04087088"),]$plotDate,((cumsum(dailyLoadCl14[which(dailyLoadCl14$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="purple",xlim=c(xMin14,xMax14))
+mainTxt <- "Water Year 2015"
+plot(dailyLoadCl15[which(dailyLoadCl15$site=="04087119"),]$plotDate,((cumsum(dailyLoadCl15[which(dailyLoadCl15$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="blue",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadCl15[which(dailyLoadCl15$site=="04087050"),]$plotDate,((cumsum(dailyLoadCl15[which(dailyLoadCl15$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="red",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadCl15[which(dailyLoadCl15$site=="04087142"),]$plotDate,((cumsum(dailyLoadCl15[which(dailyLoadCl15$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="green",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadCl15[which(dailyLoadCl15$site=="04087030"),]$plotDate,((cumsum(dailyLoadCl15[which(dailyLoadCl15$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="pink",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadCl15[which(dailyLoadCl15$site=="04087120"),]$plotDate,((cumsum(dailyLoadCl15[which(dailyLoadCl15$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="orange",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadCl15[which(dailyLoadCl15$site=="04087088"),]$plotDate,((cumsum(dailyLoadCl15[which(dailyLoadCl15$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,150),col="purple",xlim=c(xMin15,xMax15))
+barplot(0,0,axes=FALSE)
+legend("center",lwd=c(3,3,3,3,3,3),col=c("blue","red","green","pink","orange","purple"),legend=c("Honey Creek","Little Menomonee","Menomonee and 16th Street","Menomonee Falls","Menomonee @ Wawautosa","Underwood Creek"))
+dev.off()
 
 mainTxt <- "Cumulative load (kilotons) of E Coli"
-pdf(paste(pathToSave,"/","EcCumLoadPlot.pdf",sep=""),width=10,height=8)
-par(mfrom=c(3,3))
-dailyLoad
-
-mainTxt <- paste("Cumulative load (kilotons) of ",compQW," at station ",siteNo," with 95% CIs",sep="")
-pdf(paste(pathToSave,"/",siteNo,compQW,"cumLoadPlot.pdf",sep=""),width=10,height=8)
-plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLoad,xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,max(dailyLoadCounts$cumHigh)))
+pdf(paste(pathToSave,"/","AllEcCumLoadPlot.pdf",sep=""),width=10,height=8)
+par(mfrow=c(3,3))
+plot(dailyLoadEc[which(dailyLoadEc$site=="04087119"),]$plotDate,((cumsum(dailyLoadEc[which(dailyLoadEc$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,1000000),col="blue",xlim=c(xMinLim,xMaxLim))
 par(new=T)
-plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumHigh,xlab="",type="l",col="blue",lty="dashed",ylab="",ylim=c(0,max(dailyLoadCounts$cumHigh)))
+plot(dailyLoadEc[which(dailyLoadEc$site=="04087050"),]$plotDate,((cumsum(dailyLoadEc[which(dailyLoadEc$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,1000000),col="red",xlim=c(xMinLim,xMaxLim))
 par(new=T)
-plot(dailyLoadCounts$plotDate,dailyLoadCounts$cumLow,xlab="",type="l",col="blue",lty="dashed",ylab="",ylim=c(0,max(dailyLoadCounts$cumHigh)))
+plot(dailyLoadEc[which(dailyLoadEc$site=="04087142"),]$plotDate,((cumsum(dailyLoadEc[which(dailyLoadEc$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,1000000),col="green",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadEc[which(dailyLoadEc$site=="04087030"),]$plotDate,((cumsum(dailyLoadEc[which(dailyLoadEc$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,1000000),col="pink",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadEc[which(dailyLoadEc$site=="04087120"),]$plotDate,((cumsum(dailyLoadEc[which(dailyLoadEc$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,1000000),col="orange",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadEc[which(dailyLoadEc$site=="04087088"),]$plotDate,((cumsum(dailyLoadEc[which(dailyLoadEc$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,1000000),col="purple",xlim=c(xMinLim,xMaxLim))
+mainTxt <- "Water Year 2009"
+plot(dailyLoadEc09[which(dailyLoadEc09$site=="04087119"),]$plotDate,((cumsum(dailyLoadEc09[which(dailyLoadEc09$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="blue",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadEc09[which(dailyLoadEc09$site=="04087050"),]$plotDate,((cumsum(dailyLoadEc09[which(dailyLoadEc09$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="red",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadEc09[which(dailyLoadEc09$site=="04087142"),]$plotDate,((cumsum(dailyLoadEc09[which(dailyLoadEc09$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="green",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadEc09[which(dailyLoadEc09$site=="04087030"),]$plotDate,((cumsum(dailyLoadEc09[which(dailyLoadEc09$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="pink",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadEc09[which(dailyLoadEc09$site=="04087120"),]$plotDate,((cumsum(dailyLoadEc09[which(dailyLoadEc09$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="orange",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadEc09[which(dailyLoadEc09$site=="04087088"),]$plotDate,((cumsum(dailyLoadEc09[which(dailyLoadEc09$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="purple",xlim=c(xMin09,xMax09))
+mainTxt <- "Water Year 2010"
+plot(dailyLoadEc10[which(dailyLoadEc10$site=="04087119"),]$plotDate,((cumsum(dailyLoadEc10[which(dailyLoadEc10$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="blue",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadEc10[which(dailyLoadEc10$site=="04087050"),]$plotDate,((cumsum(dailyLoadEc10[which(dailyLoadEc10$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="red",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadEc10[which(dailyLoadEc10$site=="04087142"),]$plotDate,((cumsum(dailyLoadEc10[which(dailyLoadEc10$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="green",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadEc10[which(dailyLoadEc10$site=="04087030"),]$plotDate,((cumsum(dailyLoadEc10[which(dailyLoadEc10$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="pink",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadEc10[which(dailyLoadEc10$site=="04087120"),]$plotDate,((cumsum(dailyLoadEc10[which(dailyLoadEc10$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="orange",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadEc10[which(dailyLoadEc10$site=="04087088"),]$plotDate,((cumsum(dailyLoadEc10[which(dailyLoadEc10$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="purple",xlim=c(xMin10,xMax10))
+mainTxt <- "Water Year 2011"
+plot(dailyLoadEc11[which(dailyLoadEc11$site=="04087119"),]$plotDate,((cumsum(dailyLoadEc11[which(dailyLoadEc11$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="blue",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadEc11[which(dailyLoadEc11$site=="04087050"),]$plotDate,((cumsum(dailyLoadEc11[which(dailyLoadEc11$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="red",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadEc11[which(dailyLoadEc11$site=="04087142"),]$plotDate,((cumsum(dailyLoadEc11[which(dailyLoadEc11$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="green",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadEc11[which(dailyLoadEc11$site=="04087030"),]$plotDate,((cumsum(dailyLoadEc11[which(dailyLoadEc11$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="pink",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadEc11[which(dailyLoadEc11$site=="04087120"),]$plotDate,((cumsum(dailyLoadEc11[which(dailyLoadEc11$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="orange",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadEc11[which(dailyLoadEc11$site=="04087088"),]$plotDate,((cumsum(dailyLoadEc11[which(dailyLoadEc11$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="purple",xlim=c(xMin11,xMax11))
+mainTxt <- "Water Year 2012"
+plot(dailyLoadEc12[which(dailyLoadEc12$site=="04087119"),]$plotDate,((cumsum(dailyLoadEc12[which(dailyLoadEc12$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="blue",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadEc12[which(dailyLoadEc12$site=="04087050"),]$plotDate,((cumsum(dailyLoadEc12[which(dailyLoadEc12$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="red",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadEc12[which(dailyLoadEc12$site=="04087142"),]$plotDate,((cumsum(dailyLoadEc12[which(dailyLoadEc12$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="green",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadEc12[which(dailyLoadEc12$site=="04087030"),]$plotDate,((cumsum(dailyLoadEc12[which(dailyLoadEc12$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="pink",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadEc12[which(dailyLoadEc12$site=="04087120"),]$plotDate,((cumsum(dailyLoadEc12[which(dailyLoadEc12$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="orange",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadEc12[which(dailyLoadEc12$site=="04087088"),]$plotDate,((cumsum(dailyLoadEc12[which(dailyLoadEc12$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="purple",xlim=c(xMin12,xMax12))
+mainTxt <- "Water Year 2013"
+plot(dailyLoadEc13[which(dailyLoadEc13$site=="04087119"),]$plotDate,((cumsum(dailyLoadEc13[which(dailyLoadEc13$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="blue",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadEc13[which(dailyLoadEc13$site=="04087050"),]$plotDate,((cumsum(dailyLoadEc13[which(dailyLoadEc13$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="red",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadEc13[which(dailyLoadEc13$site=="04087142"),]$plotDate,((cumsum(dailyLoadEc13[which(dailyLoadEc13$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="green",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadEc13[which(dailyLoadEc13$site=="04087030"),]$plotDate,((cumsum(dailyLoadEc13[which(dailyLoadEc13$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="pink",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadEc13[which(dailyLoadEc13$site=="04087120"),]$plotDate,((cumsum(dailyLoadEc13[which(dailyLoadEc13$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="orange",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadEc13[which(dailyLoadEc13$site=="04087088"),]$plotDate,((cumsum(dailyLoadEc13[which(dailyLoadEc13$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="purple",xlim=c(xMin13,xMax13))
+mainTxt <- "Water Year 2014"
+plot(dailyLoadEc14[which(dailyLoadEc14$site=="04087119"),]$plotDate,((cumsum(dailyLoadEc14[which(dailyLoadEc14$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="blue",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadEc14[which(dailyLoadEc14$site=="04087050"),]$plotDate,((cumsum(dailyLoadEc14[which(dailyLoadEc14$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="red",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadEc14[which(dailyLoadEc14$site=="04087142"),]$plotDate,((cumsum(dailyLoadEc14[which(dailyLoadEc14$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="green",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadEc14[which(dailyLoadEc14$site=="04087030"),]$plotDate,((cumsum(dailyLoadEc14[which(dailyLoadEc14$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="pink",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadEc14[which(dailyLoadEc14$site=="04087120"),]$plotDate,((cumsum(dailyLoadEc14[which(dailyLoadEc14$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="orange",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadEc14[which(dailyLoadEc14$site=="04087088"),]$plotDate,((cumsum(dailyLoadEc14[which(dailyLoadEc14$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="purple",xlim=c(xMin14,xMax14))
+mainTxt <- "Water Year 2015"
+plot(dailyLoadEc15[which(dailyLoadEc15$site=="04087119"),]$plotDate,((cumsum(dailyLoadEc15[which(dailyLoadEc15$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="blue",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadEc15[which(dailyLoadEc15$site=="04087050"),]$plotDate,((cumsum(dailyLoadEc15[which(dailyLoadEc15$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="red",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadEc15[which(dailyLoadEc15$site=="04087142"),]$plotDate,((cumsum(dailyLoadEc15[which(dailyLoadEc15$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="green",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadEc15[which(dailyLoadEc15$site=="04087030"),]$plotDate,((cumsum(dailyLoadEc15[which(dailyLoadEc15$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="pink",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadEc15[which(dailyLoadEc15$site=="04087120"),]$plotDate,((cumsum(dailyLoadEc15[which(dailyLoadEc15$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="orange",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadEc15[which(dailyLoadEc15$site=="04087088"),]$plotDate,((cumsum(dailyLoadEc15[which(dailyLoadEc15$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,10000),col="purple",xlim=c(xMin15,xMax15))
+barplot(0,0,axes=FALSE)
+legend("center",lwd=c(3,3,3,3,3,3),col=c("blue","red","green","pink","orange","purple"),legend=c("Honey Creek","Little Menomonee","Menomonee and 16th Street","Menomonee Falls","Menomonee @ Wawautosa","Underwood Creek"))
 dev.off()
+
+mainTxt <- "Cumulative load (kilotons) of Fecal Coliform"
+pdf(paste(pathToSave,"/","AllFecCumLoadPlot.pdf",sep=""),width=10,height=8)
+par(mfrow=c(3,3))
+plot(dailyLoadFec[which(dailyLoadFec$site=="04087119"),]$plotDate,((cumsum(dailyLoadFec[which(dailyLoadFec$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,6500),col="blue",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadFec[which(dailyLoadFec$site=="04087050"),]$plotDate,((cumsum(dailyLoadFec[which(dailyLoadFec$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,6500),col="red",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadFec[which(dailyLoadFec$site=="04087142"),]$plotDate,((cumsum(dailyLoadFec[which(dailyLoadFec$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,6500),col="green",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadFec[which(dailyLoadFec$site=="04087030"),]$plotDate,((cumsum(dailyLoadFec[which(dailyLoadFec$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,6500),col="pink",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadFec[which(dailyLoadFec$site=="04087120"),]$plotDate,((cumsum(dailyLoadFec[which(dailyLoadFec$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,6500),col="orange",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadFec[which(dailyLoadFec$site=="04087088"),]$plotDate,((cumsum(dailyLoadFec[which(dailyLoadFec$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,6500),col="purple",xlim=c(xMinLim,xMaxLim))
+mainTxt <- "Water Year 2009"
+plot(dailyLoadFec09[which(dailyLoadFec09$site=="04087119"),]$plotDate,((cumsum(dailyLoadFec09[which(dailyLoadFec09$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="blue",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadFec09[which(dailyLoadFec09$site=="04087050"),]$plotDate,((cumsum(dailyLoadFec09[which(dailyLoadFec09$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="red",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadFec09[which(dailyLoadFec09$site=="04087142"),]$plotDate,((cumsum(dailyLoadFec09[which(dailyLoadFec09$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="green",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadFec09[which(dailyLoadFec09$site=="04087030"),]$plotDate,((cumsum(dailyLoadFec09[which(dailyLoadFec09$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="pink",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadFec09[which(dailyLoadFec09$site=="04087120"),]$plotDate,((cumsum(dailyLoadFec09[which(dailyLoadFec09$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="orange",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadFec09[which(dailyLoadFec09$site=="04087088"),]$plotDate,((cumsum(dailyLoadFec09[which(dailyLoadFec09$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="purple",xlim=c(xMin09,xMax09))
+mainTxt <- "Water Year 2010"
+plot(dailyLoadFec10[which(dailyLoadFec10$site=="04087119"),]$plotDate,((cumsum(dailyLoadFec10[which(dailyLoadFec10$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="blue",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadFec10[which(dailyLoadFec10$site=="04087050"),]$plotDate,((cumsum(dailyLoadFec10[which(dailyLoadFec10$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="red",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadFec10[which(dailyLoadFec10$site=="04087142"),]$plotDate,((cumsum(dailyLoadFec10[which(dailyLoadFec10$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="green",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadFec10[which(dailyLoadFec10$site=="04087030"),]$plotDate,((cumsum(dailyLoadFec10[which(dailyLoadFec10$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="pink",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadFec10[which(dailyLoadFec10$site=="04087120"),]$plotDate,((cumsum(dailyLoadFec10[which(dailyLoadFec10$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="orange",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadFec10[which(dailyLoadFec10$site=="04087088"),]$plotDate,((cumsum(dailyLoadFec10[which(dailyLoadFec10$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="purple",xlim=c(xMin10,xMax10))
+mainTxt <- "Water Year 2011"
+plot(dailyLoadFec11[which(dailyLoadFec11$site=="04087119"),]$plotDate,((cumsum(dailyLoadFec11[which(dailyLoadFec11$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="blue",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadFec11[which(dailyLoadFec11$site=="04087050"),]$plotDate,((cumsum(dailyLoadFec11[which(dailyLoadFec11$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="red",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadFec11[which(dailyLoadFec11$site=="04087142"),]$plotDate,((cumsum(dailyLoadFec11[which(dailyLoadFec11$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="green",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadFec11[which(dailyLoadFec11$site=="04087030"),]$plotDate,((cumsum(dailyLoadFec11[which(dailyLoadFec11$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="pink",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadFec11[which(dailyLoadFec11$site=="04087120"),]$plotDate,((cumsum(dailyLoadFec11[which(dailyLoadFec11$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="orange",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadFec11[which(dailyLoadFec11$site=="04087088"),]$plotDate,((cumsum(dailyLoadFec11[which(dailyLoadFec11$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="purple",xlim=c(xMin11,xMax11))
+mainTxt <- "Water Year 2012"
+plot(dailyLoadFec12[which(dailyLoadFec12$site=="04087119"),]$plotDate,((cumsum(dailyLoadFec12[which(dailyLoadFec12$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="blue",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadFec12[which(dailyLoadFec12$site=="04087050"),]$plotDate,((cumsum(dailyLoadFec12[which(dailyLoadFec12$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="red",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadFec12[which(dailyLoadFec12$site=="04087142"),]$plotDate,((cumsum(dailyLoadFec12[which(dailyLoadFec12$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="green",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadFec12[which(dailyLoadFec12$site=="04087030"),]$plotDate,((cumsum(dailyLoadFec12[which(dailyLoadFec12$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="pink",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadFec12[which(dailyLoadFec12$site=="04087120"),]$plotDate,((cumsum(dailyLoadFec12[which(dailyLoadFec12$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="orange",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadFec12[which(dailyLoadFec12$site=="04087088"),]$plotDate,((cumsum(dailyLoadFec12[which(dailyLoadFec12$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="purple",xlim=c(xMin12,xMax12))
+mainTxt <- "Water Year 2013"
+plot(dailyLoadFec13[which(dailyLoadFec13$site=="04087119"),]$plotDate,((cumsum(dailyLoadFec13[which(dailyLoadFec13$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="blue",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadFec13[which(dailyLoadFec13$site=="04087050"),]$plotDate,((cumsum(dailyLoadFec13[which(dailyLoadFec13$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="red",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadFec13[which(dailyLoadFec13$site=="04087142"),]$plotDate,((cumsum(dailyLoadFec13[which(dailyLoadFec13$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="green",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadFec13[which(dailyLoadFec13$site=="04087030"),]$plotDate,((cumsum(dailyLoadFec13[which(dailyLoadFec13$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="pink",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadFec13[which(dailyLoadFec13$site=="04087120"),]$plotDate,((cumsum(dailyLoadFec13[which(dailyLoadFec13$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="orange",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadFec13[which(dailyLoadFec13$site=="04087088"),]$plotDate,((cumsum(dailyLoadFec13[which(dailyLoadFec13$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="purple",xlim=c(xMin13,xMax13))
+mainTxt <- "Water Year 2014"
+plot(dailyLoadFec14[which(dailyLoadFec14$site=="04087119"),]$plotDate,((cumsum(dailyLoadFec14[which(dailyLoadFec14$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="blue",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadFec14[which(dailyLoadFec14$site=="04087050"),]$plotDate,((cumsum(dailyLoadFec14[which(dailyLoadFec14$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="red",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadFec14[which(dailyLoadFec14$site=="04087142"),]$plotDate,((cumsum(dailyLoadFec14[which(dailyLoadFec14$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="green",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadFec14[which(dailyLoadFec14$site=="04087030"),]$plotDate,((cumsum(dailyLoadFec14[which(dailyLoadFec14$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="pink",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadFec14[which(dailyLoadFec14$site=="04087120"),]$plotDate,((cumsum(dailyLoadFec14[which(dailyLoadFec14$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="orange",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadFec14[which(dailyLoadFec14$site=="04087088"),]$plotDate,((cumsum(dailyLoadFec14[which(dailyLoadFec14$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="purple",xlim=c(xMin14,xMax14))
+mainTxt <- "Water Year 2015"
+plot(dailyLoadFec15[which(dailyLoadFec15$site=="04087119"),]$plotDate,((cumsum(dailyLoadFec15[which(dailyLoadFec15$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="blue",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadFec15[which(dailyLoadFec15$site=="04087050"),]$plotDate,((cumsum(dailyLoadFec15[which(dailyLoadFec15$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="red",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadFec15[which(dailyLoadFec15$site=="04087142"),]$plotDate,((cumsum(dailyLoadFec15[which(dailyLoadFec15$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="green",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadFec15[which(dailyLoadFec15$site=="04087030"),]$plotDate,((cumsum(dailyLoadFec15[which(dailyLoadFec15$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="pink",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadFec15[which(dailyLoadFec15$site=="04087120"),]$plotDate,((cumsum(dailyLoadFec15[which(dailyLoadFec15$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="orange",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadFec15[which(dailyLoadFec15$site=="04087088"),]$plotDate,((cumsum(dailyLoadFec15[which(dailyLoadFec15$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,4000),col="purple",xlim=c(xMin15,xMax15))
+barplot(0,0,axes=FALSE)
+legend("center",lwd=c(3,3,3,3,3,3),col=c("blue","red","green","pink","orange","purple"),legend=c("Honey Creek","Little Menomonee","Menomonee and 16th Street","Menomonee Falls","Menomonee @ Wawautosa","Underwood Creek"))
+dev.off()
+
+mainTxt <- "Cumulative load (tons) of Total Phosphorus"
+pdf(paste(pathToSave,"/","AllTPCumLoadPlot.pdf",sep=""),width=10,height=8)
+par(mfrow=c(3,3))
+plot(dailyLoadTP[which(dailyLoadTP$site=="04087119"),]$plotDate,((cumsum(dailyLoadTP[which(dailyLoadTP$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,100),col="blue",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTP[which(dailyLoadTP$site=="04087050"),]$plotDate,((cumsum(dailyLoadTP[which(dailyLoadTP$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,100),col="red",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTP[which(dailyLoadTP$site=="04087142"),]$plotDate,((cumsum(dailyLoadTP[which(dailyLoadTP$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,100),col="green",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTP[which(dailyLoadTP$site=="04087030"),]$plotDate,((cumsum(dailyLoadTP[which(dailyLoadTP$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,100),col="pink",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTP[which(dailyLoadTP$site=="04087120"),]$plotDate,((cumsum(dailyLoadTP[which(dailyLoadTP$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,100),col="orange",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTP[which(dailyLoadTP$site=="04087088"),]$plotDate,((cumsum(dailyLoadTP[which(dailyLoadTP$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,100),col="purple",xlim=c(xMinLim,xMaxLim))
+mainTxt <- "Water Year 2009"
+plot(dailyLoadTP09[which(dailyLoadTP09$site=="04087119"),]$plotDate,((cumsum(dailyLoadTP09[which(dailyLoadTP09$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="blue",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTP09[which(dailyLoadTP09$site=="04087050"),]$plotDate,((cumsum(dailyLoadTP09[which(dailyLoadTP09$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="red",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTP09[which(dailyLoadTP09$site=="04087142"),]$plotDate,((cumsum(dailyLoadTP09[which(dailyLoadTP09$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="green",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTP09[which(dailyLoadTP09$site=="04087030"),]$plotDate,((cumsum(dailyLoadTP09[which(dailyLoadTP09$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="pink",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTP09[which(dailyLoadTP09$site=="04087120"),]$plotDate,((cumsum(dailyLoadTP09[which(dailyLoadTP09$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="orange",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTP09[which(dailyLoadTP09$site=="04087088"),]$plotDate,((cumsum(dailyLoadTP09[which(dailyLoadTP09$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="purple",xlim=c(xMin09,xMax09))
+mainTxt <- "Water Year 2010"
+plot(dailyLoadTP10[which(dailyLoadTP10$site=="04087119"),]$plotDate,((cumsum(dailyLoadTP10[which(dailyLoadTP10$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="blue",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTP10[which(dailyLoadTP10$site=="04087050"),]$plotDate,((cumsum(dailyLoadTP10[which(dailyLoadTP10$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="red",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTP10[which(dailyLoadTP10$site=="04087142"),]$plotDate,((cumsum(dailyLoadTP10[which(dailyLoadTP10$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="green",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTP10[which(dailyLoadTP10$site=="04087030"),]$plotDate,((cumsum(dailyLoadTP10[which(dailyLoadTP10$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="pink",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTP10[which(dailyLoadTP10$site=="04087120"),]$plotDate,((cumsum(dailyLoadTP10[which(dailyLoadTP10$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="orange",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTP10[which(dailyLoadTP10$site=="04087088"),]$plotDate,((cumsum(dailyLoadTP10[which(dailyLoadTP10$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="purple",xlim=c(xMin10,xMax10))
+mainTxt <- "Water Year 2011"
+plot(dailyLoadTP11[which(dailyLoadTP11$site=="04087119"),]$plotDate,((cumsum(dailyLoadTP11[which(dailyLoadTP11$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="blue",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTP11[which(dailyLoadTP11$site=="04087050"),]$plotDate,((cumsum(dailyLoadTP11[which(dailyLoadTP11$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="red",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTP11[which(dailyLoadTP11$site=="04087142"),]$plotDate,((cumsum(dailyLoadTP11[which(dailyLoadTP11$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="green",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTP11[which(dailyLoadTP11$site=="04087030"),]$plotDate,((cumsum(dailyLoadTP11[which(dailyLoadTP11$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="pink",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTP11[which(dailyLoadTP11$site=="04087120"),]$plotDate,((cumsum(dailyLoadTP11[which(dailyLoadTP11$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="orange",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTP11[which(dailyLoadTP11$site=="04087088"),]$plotDate,((cumsum(dailyLoadTP11[which(dailyLoadTP11$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="purple",xlim=c(xMin11,xMax11))
+mainTxt <- "Water Year 2012"
+plot(dailyLoadTP12[which(dailyLoadTP12$site=="04087119"),]$plotDate,((cumsum(dailyLoadTP12[which(dailyLoadTP12$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="blue",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTP12[which(dailyLoadTP12$site=="04087050"),]$plotDate,((cumsum(dailyLoadTP12[which(dailyLoadTP12$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="red",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTP12[which(dailyLoadTP12$site=="04087142"),]$plotDate,((cumsum(dailyLoadTP12[which(dailyLoadTP12$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="green",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTP12[which(dailyLoadTP12$site=="04087030"),]$plotDate,((cumsum(dailyLoadTP12[which(dailyLoadTP12$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="pink",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTP12[which(dailyLoadTP12$site=="04087120"),]$plotDate,((cumsum(dailyLoadTP12[which(dailyLoadTP12$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="orange",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTP12[which(dailyLoadTP12$site=="04087088"),]$plotDate,((cumsum(dailyLoadTP12[which(dailyLoadTP12$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="purple",xlim=c(xMin12,xMax12))
+mainTxt <- "Water Year 2013"
+plot(dailyLoadTP13[which(dailyLoadTP13$site=="04087119"),]$plotDate,((cumsum(dailyLoadTP13[which(dailyLoadTP13$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="blue",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTP13[which(dailyLoadTP13$site=="04087050"),]$plotDate,((cumsum(dailyLoadTP13[which(dailyLoadTP13$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="red",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTP13[which(dailyLoadTP13$site=="04087142"),]$plotDate,((cumsum(dailyLoadTP13[which(dailyLoadTP13$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="green",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTP13[which(dailyLoadTP13$site=="04087030"),]$plotDate,((cumsum(dailyLoadTP13[which(dailyLoadTP13$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="pink",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTP13[which(dailyLoadTP13$site=="04087120"),]$plotDate,((cumsum(dailyLoadTP13[which(dailyLoadTP13$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="orange",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTP13[which(dailyLoadTP13$site=="04087088"),]$plotDate,((cumsum(dailyLoadTP13[which(dailyLoadTP13$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="purple",xlim=c(xMin13,xMax13))
+mainTxt <- "Water Year 2014"
+plot(dailyLoadTP14[which(dailyLoadTP14$site=="04087119"),]$plotDate,((cumsum(dailyLoadTP14[which(dailyLoadTP14$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="blue",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTP14[which(dailyLoadTP14$site=="04087050"),]$plotDate,((cumsum(dailyLoadTP14[which(dailyLoadTP14$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="red",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTP14[which(dailyLoadTP14$site=="04087142"),]$plotDate,((cumsum(dailyLoadTP14[which(dailyLoadTP14$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="green",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTP14[which(dailyLoadTP14$site=="04087030"),]$plotDate,((cumsum(dailyLoadTP14[which(dailyLoadTP14$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="pink",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTP14[which(dailyLoadTP14$site=="04087120"),]$plotDate,((cumsum(dailyLoadTP14[which(dailyLoadTP14$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="orange",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTP14[which(dailyLoadTP14$site=="04087088"),]$plotDate,((cumsum(dailyLoadTP14[which(dailyLoadTP14$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="purple",xlim=c(xMin14,xMax14))
+mainTxt <- "Water Year 2015"
+plot(dailyLoadTP15[which(dailyLoadTP15$site=="04087119"),]$plotDate,((cumsum(dailyLoadTP15[which(dailyLoadTP15$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="blue",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTP15[which(dailyLoadTP15$site=="04087050"),]$plotDate,((cumsum(dailyLoadTP15[which(dailyLoadTP15$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="red",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTP15[which(dailyLoadTP15$site=="04087142"),]$plotDate,((cumsum(dailyLoadTP15[which(dailyLoadTP15$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="green",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTP15[which(dailyLoadTP15$site=="04087030"),]$plotDate,((cumsum(dailyLoadTP15[which(dailyLoadTP15$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="pink",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTP15[which(dailyLoadTP15$site=="04087120"),]$plotDate,((cumsum(dailyLoadTP15[which(dailyLoadTP15$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="orange",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTP15[which(dailyLoadTP15$site=="04087088"),]$plotDate,((cumsum(dailyLoadTP15[which(dailyLoadTP15$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,40),col="purple",xlim=c(xMin15,xMax15))
+barplot(0,0,axes=FALSE)
+legend("center",lwd=c(3,3,3,3,3,3),col=c("blue","red","green","pink","orange","purple"),legend=c("Honey Creek","Little Menomonee","Menomonee and 16th Street","Menomonee Falls","Menomonee @ Wawautosa","Underwood Creek"))
+dev.off()
+
+mainTxt <- "Cumulative load (kilotons) of Total Suspended Solids"
+pdf(paste(pathToSave,"/","AllTSSCumLoadPlot.pdf",sep=""),width=10,height=8)
+par(mfrow=c(3,3))
+plot(dailyLoadTSS[which(dailyLoadTSS$site=="04087119"),]$plotDate,((cumsum(dailyLoadTSS[which(dailyLoadTSS$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,30),col="blue",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTSS[which(dailyLoadTSS$site=="04087050"),]$plotDate,((cumsum(dailyLoadTSS[which(dailyLoadTSS$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,30),col="red",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTSS[which(dailyLoadTSS$site=="04087142"),]$plotDate,((cumsum(dailyLoadTSS[which(dailyLoadTSS$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,30),col="green",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTSS[which(dailyLoadTSS$site=="04087030"),]$plotDate,((cumsum(dailyLoadTSS[which(dailyLoadTSS$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,30),col="pink",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTSS[which(dailyLoadTSS$site=="04087120"),]$plotDate,((cumsum(dailyLoadTSS[which(dailyLoadTSS$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,30),col="orange",xlim=c(xMinLim,xMaxLim))
+par(new=T)
+plot(dailyLoadTSS[which(dailyLoadTSS$site=="04087088"),]$plotDate,((cumsum(dailyLoadTSS[which(dailyLoadTSS$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,30),col="purple",xlim=c(xMinLim,xMaxLim))
+mainTxt <- "Water Year 2009"
+plot(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087119"),]$plotDate,((cumsum(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="blue",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087050"),]$plotDate,((cumsum(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="red",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087142"),]$plotDate,((cumsum(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="green",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087030"),]$plotDate,((cumsum(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="pink",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087120"),]$plotDate,((cumsum(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="orange",xlim=c(xMin09,xMax09))
+par(new=T)
+plot(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087088"),]$plotDate,((cumsum(dailyLoadTSS09[which(dailyLoadTSS09$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="purple",xlim=c(xMin09,xMax09))
+mainTxt <- "Water Year 2010"
+plot(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087119"),]$plotDate,((cumsum(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="blue",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087050"),]$plotDate,((cumsum(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="red",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087142"),]$plotDate,((cumsum(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="green",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087030"),]$plotDate,((cumsum(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="pink",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087120"),]$plotDate,((cumsum(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="orange",xlim=c(xMin10,xMax10))
+par(new=T)
+plot(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087088"),]$plotDate,((cumsum(dailyLoadTSS10[which(dailyLoadTSS10$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="purple",xlim=c(xMin10,xMax10))
+mainTxt <- "Water Year 2011"
+plot(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087119"),]$plotDate,((cumsum(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="blue",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087050"),]$plotDate,((cumsum(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="red",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087142"),]$plotDate,((cumsum(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="green",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087030"),]$plotDate,((cumsum(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="pink",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087120"),]$plotDate,((cumsum(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="orange",xlim=c(xMin11,xMax11))
+par(new=T)
+plot(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087088"),]$plotDate,((cumsum(dailyLoadTSS11[which(dailyLoadTSS11$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="purple",xlim=c(xMin11,xMax11))
+mainTxt <- "Water Year 2012"
+plot(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087119"),]$plotDate,((cumsum(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="blue",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087050"),]$plotDate,((cumsum(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="red",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087142"),]$plotDate,((cumsum(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="green",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087030"),]$plotDate,((cumsum(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="pink",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087120"),]$plotDate,((cumsum(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="orange",xlim=c(xMin12,xMax12))
+par(new=T)
+plot(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087088"),]$plotDate,((cumsum(dailyLoadTSS12[which(dailyLoadTSS12$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="purple",xlim=c(xMin12,xMax12))
+mainTxt <- "Water Year 2013"
+plot(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087119"),]$plotDate,((cumsum(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="blue",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087050"),]$plotDate,((cumsum(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="red",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087142"),]$plotDate,((cumsum(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="green",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087030"),]$plotDate,((cumsum(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="pink",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087120"),]$plotDate,((cumsum(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="orange",xlim=c(xMin13,xMax13))
+par(new=T)
+plot(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087088"),]$plotDate,((cumsum(dailyLoadTSS13[which(dailyLoadTSS13$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="purple",xlim=c(xMin13,xMax13))
+mainTxt <- "Water Year 2014"
+plot(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087119"),]$plotDate,((cumsum(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="blue",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087050"),]$plotDate,((cumsum(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="red",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087142"),]$plotDate,((cumsum(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="green",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087030"),]$plotDate,((cumsum(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="pink",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087120"),]$plotDate,((cumsum(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="orange",xlim=c(xMin14,xMax14))
+par(new=T)
+plot(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087088"),]$plotDate,((cumsum(dailyLoadTSS14[which(dailyLoadTSS14$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="purple",xlim=c(xMin14,xMax14))
+mainTxt <- "Water Year 2015"
+plot(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087119"),]$plotDate,((cumsum(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087119"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="blue",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087050"),]$plotDate,((cumsum(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087050"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="red",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087142"),]$plotDate,((cumsum(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087142"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="green",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087030"),]$plotDate,((cumsum(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087030"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="pink",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087120"),]$plotDate,((cumsum(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087120"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="orange",xlim=c(xMin15,xMax15))
+par(new=T)
+plot(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087088"),]$plotDate,((cumsum(dailyLoadTSS15[which(dailyLoadTSS15$site=="04087088"),]$loadKg))/1000000),xlab="Date",type="l",lwd=3,ylab="Cumulative load (kilotons)",main=mainTxt,ylim=c(0,15),col="purple",xlim=c(xMin15,xMax15))
+barplot(0,0,axes=FALSE)
+legend("center",lwd=c(3,3,3,3,3,3),col=c("blue","red","green","pink","orange","purple"),legend=c("Honey Creek","Little Menomonee","Menomonee and 16th Street","Menomonee Falls","Menomonee @ Wawautosa","Underwood Creek"))
+dev.off()
+
   
