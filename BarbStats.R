@@ -18,6 +18,7 @@ for (i in 1:length(sites)) {
       Q10 <- quantile(flowData$flow,.9,names=FALSE,na.rm=TRUE)
       Q50 <- quantile(flowData$flow,.5,names=FALSE,na.rm=TRUE)
       Qmax <- max(flowData$flow,na.rm=TRUE)
+      Qmin <- min(flowData$flow,na.rm=TRUE)
       cat(Q90,i,site,sep=" ")
     } else {
       cat("no data available for site",site,startdate,enddate,sep=" ")
@@ -25,6 +26,7 @@ for (i in 1:length(sites)) {
       Q10 <- NA
       Q50 <- NA
       Qmax <- NA
+      Qmin <- NA
     }
     urlpeak <- "http://nwis.waterdata.usgs.gov/nwis/peak?site_no"
     url <- paste(urlpeak,"=",site,"&agency_cd=USGS&format=rdb&begin_date=",startdate,"&end_date=",enddate,sep="")
@@ -36,7 +38,7 @@ for (i in 1:length(sites)) {
       colnames(peakValues)<-c('date','discharge')
       QinstMax <- max(peakValues$discharge,na.rm=TRUE)
     }
-    barbStats <- as.data.frame(cbind(site,Q90,Q10,Q50,Qmax,waterYear,QinstMax),stringsAsFactors=FALSE)
+    barbStats <- as.data.frame(cbind(site,Q90,Q10,Q50,Qmax,Qmin,waterYear,QinstMax),stringsAsFactors=FALSE)
     BarbStats[[j+((i-1)*4)]] <- barbStats
   }
 }
