@@ -1,6 +1,6 @@
 library(dataRetrieval)
 setwd("C:/Users/jlthomps/Desktop/git/GLRIBMPs")
-sites <- c("04086600","040869415","04087000","04087030","04087070","04087088","04087119","04087120","04087159","04087204","04087214","04087220")
+sites <- c("040869416","04087118","04086600","040869415","04087000","04087030","04087070","04087088","04087119","04087120","04087159","04087204","04087214","04087220")
 water_years <- c("2004","2007","2010","2013")
 BarbStats=list()
 for (i in 1:length(sites)) {
@@ -22,6 +22,9 @@ for (i in 1:length(sites)) {
     } else {
       cat("no data available for site",site,startdate,enddate,sep=" ")
       Q90 <- paste("no data available for site",site,startdate,enddate,sep=" ")
+      Q10 <- NA
+      Q50 <- NA
+      Qmax <- NA
     }
     urlpeak <- "http://nwis.waterdata.usgs.gov/nwis/peak?site_no"
     url <- paste(urlpeak,"=",site,"&agency_cd=USGS&format=rdb&begin_date=",startdate,"&end_date=",enddate,sep="")

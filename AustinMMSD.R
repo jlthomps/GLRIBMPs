@@ -97,9 +97,15 @@ for (k in 1:6) {
     
     #calculate instantaneous load flux
     adaps_data_reg$dischCombL <- adaps_data_reg$dischComb*28.3168466
-    adaps_data_reg$loadFlux <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWreg/1000000)
-    adaps_data_reg$loadFluxhigh <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWhigh/1000000)
-    adaps_data_reg$loadFluxlow <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWlow/1000000)
+    if (compQW %in% c("Cl","TSS","TP")) {
+      adaps_data_reg$loadFlux <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWreg/1000000)
+      adaps_data_reg$loadFluxhigh <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWhigh/1000000)
+      adaps_data_reg$loadFluxlow <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWlow/1000000)
+    } else {
+      adaps_data_reg$loadFlux <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWreg*10)
+      adaps_data_reg$loadFluxhigh <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWhigh*10)
+      adaps_data_reg$loadFluxlow <- adaps_data_reg$dischCombL * (adaps_data_reg$compQWlow*10)
+    }
     
     #roll up to daily
     adaps_data_regLoad <- adaps_data_reg[!is.na(adaps_data_reg$loadFlux),c(2,11,15,20,27:33)]
