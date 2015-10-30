@@ -2,6 +2,9 @@ GLRI notes
 
 2015 next steps:
 
+Oct 2015
+
+
 GLRI EoF
 
 Current regressions for East River look good, want to refine and finalize, then move on to other sites. Using all storm events split out (not grouped), running all together, all non-estimated and non-frozen and all non-estimated and frozen. Rainmaker interval of 1 hour gets the storms. Soil moisture from NWIS wasn't that great, plus isn't always available, so not using. Maybe still want to look into snowmelt, snow depth, other NOAA data. Maybe temperature? 
