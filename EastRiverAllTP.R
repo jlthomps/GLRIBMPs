@@ -4,6 +4,8 @@ load("dataSubEastRiverAll.RData")
 aov_data <- aov(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data_sub)
 reg_lm <- lm(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data=data_sub)
 
+# for pre-BMP installation at this site, limit to data before November of 2014
+data_sub <- data_sub[which(data_sub$decYear<2014.3),]
 
 library(GSqwsr)
 library(dataRetrieval)
@@ -41,7 +43,7 @@ modelResult <- returnPrelim$modelStuff
 modelReturn <- returnPrelim$DT.mod
 
 #Save plotSteps to file:
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/plotStepsGLRI.R")
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/plotStepsGLRIAll.R")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/analyzeStepsGLRI.R")
 pdf(paste(pathToSave,"/",investigateResponse,"_plotSteps.pdf",sep=""))
 plotStepsGLRIAll(steps,data_sub_cens,transformResponse)

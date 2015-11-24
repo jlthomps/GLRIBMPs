@@ -3,12 +3,13 @@ storm_vol_load <- read.csv("EastRiverVolumesLoads.csv",header=T,stringsAsFactors
 storm_vol_load$Start <- strptime(storm_vol_load$Start,format="%m/%d/%Y %H:%M")
 storm_vol_load$Stop <- strptime(storm_vol_load$Stop,format="%m/%d/%Y %H:%M")
 colnames(storm_vol_load) <- c("Start","End","estimated","type","frozen","num","num_split","peakDisch","stormRunoff","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad")
-source("/Users/jlthomps/GLRIBMPs/RRainmaker.R")
+#source("/Users/jlthomps/GLRIBMPs/RRainmaker.R")
 library(dataRetrieval)
+library(Rainmaker)
 site_no <- "441624088045601"
 StartDt <- strftime(min(storm_vol_load[which(storm_vol_load$frozen=='N'),]$Start,na.rm=TRUE) - (60*60*24*5),'%Y-%m-%d')
 EndDt <- strftime(max(storm_vol_load[which(storm_vol_load$frozen=='N'),]$End,na.rm=TRUE) + (60*60*24*5),'%Y-%m-%d')
-adaps_precip_in <- retrieveUnitNWISData(site_no,'00045',StartDt,EndDt,format="tsv")
+adaps_precip_in <- readNWISuv(site_no,'00045',StartDt,EndDt,tz="America/Chicago")
 library(stringr)
 colnames(adaps_precip_in) <- c("agency_cd","site_no","pdate","tz_cd","rain","remark")
 df <- adaps_precip_in[,c(5,3)]

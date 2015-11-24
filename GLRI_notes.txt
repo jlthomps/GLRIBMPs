@@ -2,7 +2,13 @@ GLRI notes
 
 2015 next steps:
 
-Oct 2015
+Nov 2015
+
+Updated precip for SW1/East River and processed new .RData files for All (not split, frozen and non), frozen, split, base (not split, not frozen, not estimated)
+for this site, cut off pre-BMP at November 1st, 2014
+sent Matt new pics
+Need to get EI and add in snow to regressions
+Then run and get Dale/Steve agreement/approval before moving on to other sites/states
 
 
 GLRI EoF
@@ -17,11 +23,9 @@ Current regressions for East River look good, want to refine and finalize, then 
 * Add ability to us multi-gages/polygons for a edge of field site, like the old program
 * run regressions for responses other than suspended sediment and phosphorus, nitrogen and maybe others
 * Look at adding calculation of loads (in spreadsheet) into R
-* implement paired sites
 * baseflow separation? using HISEP output? Or add in HISEP?
 * deal with missing data (alternate staid estimates, other) and censored data (1/2 non-detect, other?)
 * other possible forcing factors (temperature, manure application, snow, etc)
-* AWRA presentation
 
 refinement/finishing of surrogate regressions workflow, run regressions for many sites and quantify possibility of change detection
 look at adding an element of monte carlo (talk to John)
@@ -29,10 +33,6 @@ Todd would like to maybe examine strength of regression and percentage change ne
 
 
 Extra - move GCLAS to R for use in computing loads in stream sites? 
-
-
-
-
 
 
 GLRI

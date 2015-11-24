@@ -41,7 +41,7 @@ modelResult <- returnPrelim$modelStuff
 modelReturn <- returnPrelim$DT.mod
 
 #Save plotSteps to file:
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/plotStepsGLRI.R")
+source("/Users/jlthomps/Desktop/git/GLRIBMPs/plotStepsGLRIAll.R")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/analyzeStepsGLRI.R")
 pdf(paste(pathToSave,"/",investigateResponse,"_plotSteps.pdf",sep=""))
 plotStepsGLRIAll(steps,data_sub_cens,transformResponse)

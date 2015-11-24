@@ -10,9 +10,9 @@ library(dataRetrieval)
 #read in file of precip exported from adaps (data is not all available via NWISWeb)
 adaps_precip_in <- read.csv("eastRiverPrecip.rdb",header=T,stringsAsFactors=FALSE,sep="\t",comment.char="#")
 library(stringr)
-adaps_precip_in$time <- str_pad(adaps_precip_in$TIME,6,side="left",pad="0")
-adaps_precip_in$pdate <- as.POSIXct(paste(adaps_precip_in$DATE,adaps_precip_in$time),format="%Y%m%d %H%M%S")
-df <- adaps_precip_in[,c(4,10)]
+#adaps_precip_in$time <- str_pad(adaps_precip_in$TIME,6,side="left",pad="0")
+adaps_precip_in$pdate <- as.POSIXct(adaps_precip_in$DATETIME,format="%Y%m%d%H%M%S")
+df <- adaps_precip_in[,c(3,8)]
 colnames(df) <- c("rain","pdate")
 df$rain <- as.numeric(df$rain)
 
@@ -22,10 +22,10 @@ colnames(rainmaker_out) <- c("stormnum","StartDate","EndDate","rain")
 storm_rainmaker <- RMIntense(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",edate="EndDate",depth="rain",xmin=c(5,10,15,30,60))
 antecedent_rain <- RMarf(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",days=c(1,3,5,7),varnameout="ARF")
 source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMErosivityIndex.R")
-#erosivity_index <- RMErosivityIndex(df,storm_rainmaker)
+erosivity_index <- RMErosivityIndex(df,storm_rainmaker)
 storm_rainmaker <- merge(storm_rainmaker,antecedent_rain,by.x="stormnum",by.y="stormnum")
 
-# cutting out storms with frozen ground or estimated QW numbers reduces 120 to 62
+# cutting out storms with frozen ground or estimated QW numbers reduces 147 to 76
 storm_vol_load_sub <- storm_vol_load[which(storm_vol_load$estimated=='N'),]
 # keep all events split out, goes to 36 because of a couple combined
 storm_vol_load_Start <- aggregate(storm_vol_load_sub$Start, list(storm_vol_load_sub$num_split), FUN = min)
@@ -66,9 +66,9 @@ data_merge <- merge(data_merge,storm_rainmaker_agg_enddt,by.x="Group.1",by.y="Gr
 data_merge <- merge(data_merge,storm_rainmaker_agg_sum,by.x="Group.1",by.y="Group.1")
 storm_vol_load_merge$num <- c(1:nrow(storm_vol_load_merge))
 data_merge <- merge(data_merge,storm_vol_load_merge,by.x="Group.1",by.y="num")
-data_merge$decYear <- paste(strftime(data_merge$End,"%Y"),".",as.POSIXlt(data_merge$End)$yday+1,sep="")
-data_sub <- data_merge[,c(2:11,14:24,27:29)]
-colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad","peakDisch","frozen","decYear")
+data_merge$decYear <- paste(strftime(data_merge$End,"%Y"),".",str_pad(as.POSIXlt(data_merge$End)$yday+1,3,side="left",pad="0"),sep="")
+data_sub <- data_merge[,c(2:11,14:29)]
+colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad","Start","End","peakDisch","frozen","decYear")
 data_sub$p5max.inches.per.hour <- ifelse(data_sub$p5max.inches.per.hour==-9,0,data_sub$p5max.inches.per.hour)
 data_sub$p10max.inches.per.hour <- ifelse(data_sub$p10max.inches.per.hour==-9,0,data_sub$p10max.inches.per.hour)
 data_sub$p15max.inches.per.hour <- ifelse(data_sub$p15max.inches.per.hour==-9,0,data_sub$p15max.inches.per.hour)
