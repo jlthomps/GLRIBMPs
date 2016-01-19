@@ -1,5 +1,15 @@
 GLRI notes
 
+Transition Issues/Questions:
+
+Sample Splitting - workflow for EST is there - called SampleSplitWorkflowMI.R
+--will work to run from a computer not in EST, as long as StormStart and StormEnd are entered in same (always EST) as they use for sampling
+--is treated as a character field, then fooled into UTC, like downloaded data, and adjusted to EST in labDataOutMI function 
+
+
+
+
+
 2015 next steps:
 
 Nov 2015

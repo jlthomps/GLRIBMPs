@@ -1,4 +1,6 @@
-setwd('/Users/jlthomps/Desktop/git/GLRIBMPs/')
+# Workflow to merge and save Rdata file for the GLRI East River site
+setwd('M:/NonPoint Evaluation/GLRI Edge-of-field/JessicaStuff')
+
 #read in storm event startdate, enddate, estimated, type, frozen, number, peakDisch, runoff amount and loads from file
 storm_vol_load <- read.csv("EastRiverVolumesLoads.csv",header=T,stringsAsFactors=FALSE)
 storm_vol_load$Start <- strptime(storm_vol_load$Start,format="%m/%d/%Y %H:%M")
@@ -10,11 +12,21 @@ library(dataRetrieval)
 #read in file of precip exported from adaps (data is not all available via NWISWeb)
 adaps_precip_in <- read.csv("eastRiverPrecip.rdb",header=T,stringsAsFactors=FALSE,sep="\t",comment.char="#")
 library(stringr)
-#adaps_precip_in$time <- str_pad(adaps_precip_in$TIME,6,side="left",pad="0")
 adaps_precip_in$pdate <- as.POSIXct(adaps_precip_in$DATETIME,format="%Y%m%d%H%M%S")
 df <- adaps_precip_in[,c(3,8)]
 colnames(df) <- c("rain","pdate")
 df$rain <- as.numeric(df$rain)
+###################################################################################################################
+# If precip data is available on NWISWeb, can use this section instead of the above
+#site_no <- "441624088045601"
+#StartDt <- strftime(min(storm_vol_load[which(storm_vol_load$frozen=='N'),]$Start,na.rm=TRUE) - (60*60*24*5),'%Y-%m-%d')
+#EndDt <- strftime(max(storm_vol_load[which(storm_vol_load$frozen=='N'),]$End,na.rm=TRUE) + (60*60*24*5),'%Y-%m-%d')
+#adaps_precip_in <- readNWISuv(site_no,'00045',StartDt,EndDt,tz="America/Chicago")
+#library(stringr)
+#colnames(adaps_precip_in) <- c("agency_cd","site_no","pdate","tz_cd","rain","remark")
+#df <- adaps_precip_in[,c(5,3)]
+#colnames(df) <- c("rain","pdate")
+#####################################################################################################################
 
 # run Rainmaker on imported precip data
 rainmaker_out <- as.data.frame(RMevents(df,ieHr=.5,rainthresh=0,rain="rain",time="pdate")[1])
@@ -43,6 +55,7 @@ storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_End, by = "nu
 storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_peak, by = "num")
 storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_est, by="num")
 
+# add storm number to storm_vol_load_merge data frame
 storms_list <- storm_vol_load_merge[,c(11,12)]
 storms_list$Start <- storms_list$Start - (120*60)
 storms_list$num <- c(1:nrow(storms_list))
@@ -54,8 +67,7 @@ for (i in 1:noreps) {
     storm_rainmaker$stormnum[i] <- ifelse(as.numeric(storm_rainmaker$StartDate.x[i]-storms_list$Start[j])*as.numeric(storms_list$End[j]-storm_rainmaker$EndDate.x[i])>=0,storms_list$num[j],storm_rainmaker$stormnum[i])
   }
 }
-#storm_rainmaker_agg <- aggregate(storm_rainmaker,list(storm_rainmaker$num), c(min(x$startdate),max(x$enddate),max(x$theisen),max(x$p5max.inches.per.hour),max(x$p10max.inches.per.hour),max(x$p15max.inches.per.hour),max(x$p30max.inches.per.hour),max(x$p60max.inches.per.hour),max(x$ei)))
-#storm_rainmaker_agg <- ddply(storm_rainmaker[,2:3], c("storm_rainmaker$num"), summarize, min_start=min(df$enddate),max_theisen=max(df$theisen))
+
 # aggregate data to the storm level, using min start, max end, sum of rain and duration and max of intensities and ARFs. down to 34
 storm_rainmaker_agg_startdt <- aggregate(storm_rainmaker$StartDate.x,list(storm_rainmaker$stormnum), min)
 storm_rainmaker_agg_enddt <- aggregate(storm_rainmaker$EndDate.x,list(storm_rainmaker$stormnum),max)
@@ -66,6 +78,8 @@ data_merge <- merge(data_merge,storm_rainmaker_agg_enddt,by.x="Group.1",by.y="Gr
 data_merge <- merge(data_merge,storm_rainmaker_agg_sum,by.x="Group.1",by.y="Group.1")
 storm_vol_load_merge$num <- c(1:nrow(storm_vol_load_merge))
 data_merge <- merge(data_merge,storm_vol_load_merge,by.x="Group.1",by.y="num")
+
+# add decimal year, narrow create data_sub with desired columns from data_merge and replace -9 values (NAs) with 0s
 data_merge$decYear <- paste(strftime(data_merge$End,"%Y"),".",str_pad(as.POSIXlt(data_merge$End)$yday+1,3,side="left",pad="0"),sep="")
 data_sub <- data_merge[,c(2:11,14:29)]
 colnames(data_sub) <- c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad","Start","End","peakDisch","frozen","decYear")
@@ -90,6 +104,7 @@ data_sub$frozen <- ifelse(data_sub$frozen=='Y','2','1')
 # save data_sub with merged data ready for regression
 save(data_sub,file="dataSubEastRiverAll.RData")
 
+#create a series of basic plots to show the precip and storms next to one another
 siteName <- "EastRiverAll"
 pathToSave <- paste("/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
 pdf(paste(pathToSave,"/","PrecipAndStorms.pdf",sep=""))

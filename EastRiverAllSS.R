@@ -4,6 +4,8 @@ load("dataSubEastRiverAll.RData")
 aov_data <- aov(SSLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data_sub)
 reg_lm <- lm(SSLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data=data_sub)
 
+# for pre-BMP installation at this site, limit to data before November of 2014
+data_sub <- data_sub[which(data_sub$decYear<2014.3),]
 
 library(GSqwsr)
 library(dataRetrieval)
