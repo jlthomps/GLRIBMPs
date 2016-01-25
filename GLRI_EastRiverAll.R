@@ -33,29 +33,35 @@ rainmaker_out <- as.data.frame(RMevents(df,ieHr=.5,rainthresh=0,rain="rain",time
 colnames(rainmaker_out) <- c("stormnum","StartDate","EndDate","rain")
 storm_rainmaker <- RMIntense(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",edate="EndDate",depth="rain",xmin=c(5,10,15,30,60))
 antecedent_rain <- RMarf(df,date="pdate",rain="rain",rainmaker_out,sdate="StartDate",days=c(1,3,5,7),varnameout="ARF")
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/RMErosivityIndex.R")
 erosivity_index <- RMErosivityIndex(df,storm_rainmaker)
 storm_rainmaker <- merge(storm_rainmaker,antecedent_rain,by.x="stormnum",by.y="stormnum")
+storm_rainmaker <- merge(storm_rainmaker,erosivity_index,by.x="stormnum",by.y="stormnum")
 
-# cutting out storms with frozen ground or estimated QW numbers reduces 147 to 76
+# cutting out storms with estimated QW numbers
 storm_vol_load_sub <- storm_vol_load[which(storm_vol_load$estimated=='N'),]
-# keep all events split out, goes to 36 because of a couple combined
+
+# find minimum start date in storm_vol_load_sub
 storm_vol_load_Start <- aggregate(storm_vol_load_sub$Start, list(storm_vol_load_sub$num_split), FUN = min)
 colnames(storm_vol_load_Start) <- c("num","Start")
+# find maximum end date in storm_vol_load_sub
 storm_vol_load_End <- aggregate(storm_vol_load_sub$End, list(storm_vol_load_sub$num_split), FUN = max)
 colnames(storm_vol_load_End) <- c("num","End")
+# find maximum peak discharge in storm_vol_load_sub
 storm_vol_load_peak <- aggregate(storm_vol_load_sub$peakDisch, list(storm_vol_load_sub$num_split), FUN = max)
 colnames(storm_vol_load_peak) <- c("num","peakDisch")
+# sum load numbers for each constituent for each storm split number
 storm_vol_load_load <- aggregate(storm_vol_load_sub[,10:18], list(storm_vol_load_sub$num_split), FUN = sum)
 colnames(storm_vol_load_load) <- c("num","SSLoad","ChlorideLoad","NitrateLoad","AmmoniumLoad","TKNLoad","DissPLoad","TPLoad","TNLoad","OrgNLoad")
+# find unique storm numbers and frozen status
 storm_vol_load_est <- unique(storm_vol_load_sub[,c(5,7)])
 colnames(storm_vol_load_est) <- c("frozen","num")
+# merge all sub data frames based on storm number
 storm_vol_load_merge <- merge(storm_vol_load_load, storm_vol_load_Start, by = "num")
 storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_End, by = "num")
 storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_peak, by = "num")
 storm_vol_load_merge <- merge(storm_vol_load_merge, storm_vol_load_est, by="num")
 
-# add storm number to storm_vol_load_merge data frame
+# add storm number to storm_rainmaker data frame
 storms_list <- storm_vol_load_merge[,c(11,12)]
 storms_list$Start <- storms_list$Start - (120*60)
 storms_list$num <- c(1:nrow(storms_list))
@@ -68,7 +74,7 @@ for (i in 1:noreps) {
   }
 }
 
-# aggregate data to the storm level, using min start, max end, sum of rain and duration and max of intensities and ARFs. down to 34
+# aggregate data to the storm level, using min start, max end, sum of rain and duration and max of intensities and ARFs. 
 storm_rainmaker_agg_startdt <- aggregate(storm_rainmaker$StartDate.x,list(storm_rainmaker$stormnum), min)
 storm_rainmaker_agg_enddt <- aggregate(storm_rainmaker$EndDate.x,list(storm_rainmaker$stormnum),max)
 storm_rainmaker_agg_sum <- aggregate(storm_rainmaker[,4:5],list(storm_rainmaker$stormnum),sum)
@@ -102,11 +108,11 @@ data_sub$frozen <- ifelse(data_sub$frozen=='Y','2','1')
 
 
 # save data_sub with merged data ready for regression
-save(data_sub,file="dataSubEastRiverAll.RData")
+save(data_sub,file="M:/NonPoint Evaluation/GLRI Edge-of-field/JessicaStuff/GLRI/dataSubEastRiverAll.RData")
 
 #create a series of basic plots to show the precip and storms next to one another
 siteName <- "EastRiverAll"
-pathToSave <- paste("/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
+pathToSave <- paste("M:/NonPoint Evaluation/GLRI Edge-of-field/JessicaStuff/GLRI/",siteName[1],sep="")
 pdf(paste(pathToSave,"/","PrecipAndStorms.pdf",sep=""))
 par(mfrow=c(4,1))
 plot(adaps_precip_in$pdate,adaps_precip_in$VALUE,type="l",col="blue",ylab="precip")

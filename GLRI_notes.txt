@@ -1,16 +1,29 @@
 GLRI notes
 
-Transition Issues/Questions:
 
 Sample Splitting - workflow for EST is there - called SampleSplitWorkflowMI.R
 --will work to run from a computer not in EST, as long as StormStart and StormEnd are entered in same (always EST) as they use for sampling
 --is treated as a character field, then fooled into UTC, like downloaded data, and adjusted to EST in labDataOutMI function 
 
+East River walk-through:
+
+files needed:
+rdb precip export from NWIS (eg eastRiverPrecip.rdb)
+csv load file created from excel file (eg EastRiverVolumesLoads.csv)
+Run GLRI_EastRiverAll.R to read in data, run Rainmaker and merge datasets (saved as dataSubEastRiverAll.RData)
+if needed, can use GLRI_EastRiverSplit to create a dataset of only non-frozen events (dataSubEastRiverSplit.RData)
+and can use GLRI_EastRiverFrozen to create a dataset of only frozen events (dataSubEastRiverFrozen.RData)
+
+Once data is merged and saved, to run the regressions:
+There are a variety of files, for different constituents, and frozen/all/nonfrozen combinations
+EastRiverSplitTP.R, EastRiverFrozenTP.R, EastRiverAll.R, EastRiverNonFrozen.R, etc
+These are basically the same, but set up to run stepwise regression for the different combinations
+They specify a location folder (eg M:\NonPoint Evaluation\GLRI Edge-of-field\JessicaStuff\GLRI\EastRiverFrozen) to write the files to
 
 
+###############################################################################################################################################################
 
 
-2015 next steps:
 
 Nov 2015
 

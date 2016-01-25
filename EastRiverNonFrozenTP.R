@@ -1,8 +1,9 @@
-setwd('/Users/jlthomps/Desktop/git/GLRIBMPs/')
-load("dataSubEastRiverAll.RData")
+# load previously saved data
+load("M:/NonPoint Evaluation/GLRI Edge-of-field/JessicaStuff/GLRI/dataSubEastRiverAll.RData")
 
 data_sub <- data_sub[which(data_sub$frozen=="1"),]
 
+# run analysis of variance and linear regression model
 aov_data <- aov(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data_sub)
 reg_lm <- lm(TPLoad~intensity*p5max.inches.per.hour*p10max.inches.per.hour*p15max.inches.per.hour*p30max.inches.per.hour*p60max.inches.per.hour*ARF1*ARF3*ARF5*ARF7*rain_amount*duration*peakDisch,data=data_sub)
 
@@ -19,9 +20,9 @@ investigateResponse <- "TPLoading"
 transformResponse <- "lognormal"
 
 
-pathToSave <- paste("/Users/jlthomps/Documents/R/GLRI/",siteName[1],sep="")
-data_sub_cens <- importQW(data_sub,c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","rain_amount","duration","peakDisch","frozen","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
-data_sub_cens2 <- data_sub_cens[,c(1:13,15:16)]
+pathToSave <- paste("M:/NonPoint Evaluation/GLRI Edge-of-field/JessicaStuff/GLRI/",siteName[1],sep="")
+data_sub_cens <- importQW(data_sub,c("intensity","p5max.inches.per.hour","p10max.inches.per.hour","p15max.inches.per.hour","p30max.inches.per.hour","p60max.inches.per.hour","ARF1","ARF3","ARF5","ARF7","EI","rain_amount","duration","peakDisch","frozen","decYear"),"TPLoad","remark","",0.005,"User","tons","Unk","","00665","TPLoading")
+data_sub_cens2 <- data_sub_cens[,c(1:14,16:17)]
 ##########################################################
 # Preliminary Assessment Plots:
 pdf(paste(pathToSave,"/",investigateResponse,"_InitialQQGraphs.pdf",sep=""))
@@ -45,8 +46,8 @@ modelResult <- returnPrelim$modelStuff
 modelReturn <- returnPrelim$DT.mod
 
 #Save plotSteps to file:
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/plotStepsGLRIAll.R")
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/analyzeStepsGLRI.R")
+source("M:/NonPoint Evaluation/GLRI Edge-of-field/JessicaStuff/GLRI/plotStepsGLRIAll.R")
+#source("M:/NonPoint Evaluation/GLRI Edge-of-field/JessicaStuff/GLRI/analyzeStepsGLRI.R")
 pdf(paste(pathToSave,"/",investigateResponse,"_plotSteps.pdf",sep=""))
 plotStepsGLRIAll(steps,data_sub_cens,transformResponse)
 dev.off()
@@ -79,7 +80,7 @@ dev.off()
 #####################################################
 # Print summary in console:
 fileName <- paste(pathToSave,"/", investigateResponse,"Summary_2.txt", sep="")
-source("/Users/jlthomps/Desktop/git/GLRIBMPs/summaryPrintoutGLRI.R")
+source("M:/NonPoint Evaluation/GLRI Edge-of-field/JessicaStuff/GLRI/summaryPrintoutGLRI.R")
 summaryPrintoutGLRI(modelReturn, siteINFO, saveOutput=TRUE,fileName)
 #####################################################
 
